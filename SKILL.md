@@ -4,7 +4,7 @@ description: "图片PPT（image-ppt）：将书籍、PDF 或任意文字材料�
 agent_created: true
 ---
 
-# 图片PPT — 文字材料转可编辑PPT工作流（通用方法论）
+# 图片PPT — 用 AI 生图做出精美可编辑 PPT（通用方法论）
 
 ## Overview
 
