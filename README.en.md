@@ -12,6 +12,17 @@ An agent skill for **Codex / Claude Code and other agent environments** that tur
 
 **Recommended environment: Codex + GPT-Image 2.0.** Codex reads the document, orchestrates the pipeline, and assembles files; GPT-Image 2.0 renders PPT pages with consistent style and pixel-accurate text.
 
+## Origin & Credits
+
+The core workflow and three prompts in this skill are derived from the following sources, generalized and adapted into a universal methodology:
+
+| Role | Source | Author |
+|------|--------|--------|
+| Original tutorial | Xiaoheihe community: "Youth Study AI Edition — Zero-base Beautiful Editable PPT with GPT 5.6" | 玩家22186848 |
+| Reference approach | Bilibili academic PPT workflow | Creator「一往无前河井」 |
+
+> Thanks to the original authors for their quality content. This skill generalizes and adapts their work for broader scenarios (classroom presentations, book sharing, lab meetings, project reports, pitch events) and more AI platforms (Codex, GPT, Claude, Kimi, Doubao, WorkBuddy, Tongyi, etc.).
+
 ## Why Codex + GPT-Image 2.0
 
 | Stage | Recommended | Why |
