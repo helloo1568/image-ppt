@@ -1,3 +1,9 @@
+<p align="center">
+  <a href="./README.md">简体中文</a> | <b>English</b>
+</p>
+
+---
+
 # Image PPT Skill · Turn Text into Editable PPTs
 
 ![GitHub stars](https://img.shields.io/github/stars/helloo1568/image-ppt?style=flat-square)
@@ -5,8 +11,6 @@
 ![Skill](https://img.shields.io/badge/Skill-Agent-111111?style=flat-square)
 ![Codex](https://img.shields.io/badge/Codex-Recommended-222222?style=flat-square)
 ![GPT-Image 2.0](https://img.shields.io/badge/GPT--Image%202.0-Recommended-0A7CFF?style=flat-square)
-
-> 🌏 **中文版: [README.md](./README.md)**
 
 An agent skill for **Codex / Claude Code and other agent environments** that turns books, PDFs, or any text material into **beautiful, editable PPTX decks** — not a pile of static images you cannot touch.
 

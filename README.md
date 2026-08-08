@@ -1,3 +1,9 @@
+<p align="center">
+  <b>简体中文</b> | <a href="./README.en.md">English</a>
+</p>
+
+---
+
 # 图片PPT Skill · 文字材料转可编辑PPT
 
 ![GitHub stars](https://img.shields.io/github/stars/helloo1568/image-ppt?style=flat-square)
@@ -5,8 +11,6 @@
 ![Skill](https://img.shields.io/badge/Skill-Agent-111111?style=flat-square)
 ![Codex](https://img.shields.io/badge/Codex-Recommended-222222?style=flat-square)
 ![GPT-Image 2.0](https://img.shields.io/badge/GPT--Image%202.0-Recommended-0A7CFF?style=flat-square)
-
-> 🌏 **English version: [README.en.md](./README.en.md)**
 
 一个适配 **Codex / Claude Code 等 Agent 环境**的 PPT 生成技能：把书籍、PDF 或任意文字材料，变成**精美且可编辑的 PPTX**，而不是一张张没法改的图片。
 
