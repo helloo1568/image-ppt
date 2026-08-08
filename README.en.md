@@ -79,7 +79,7 @@ Image PPT: convert this Markdown into an editable 16:9 PPTX.
 ## Highlights
 
 - 🧠 **Reads the material**: extracts author background, structure, key ideas, examples, quotes, and takeaways
-- 🎨 **Four style previews**: 4 previews with different colors/layouts/visual styles — pick one before rendering
+- 🎨 **Four style previews**: a single 2×2 grid composite image showing 4 color/layout/visual styles at once — pick one before rendering
 - 🖼 **Page-by-page rendering**: one core idea per page, with structure diagrams, timelines, and relationship maps
 - 📦 **Editable PPTX**: complex visuals kept as hi-res images, main text rebuilt as native PPT text boxes
 - 🔁 **Iterative restore**: 1-3 pages per pass; confirm one page's quality before batch-processing the rest
@@ -148,7 +148,7 @@ git clone https://github.com/helloo1568/image-ppt.git ~/.codex/skills/image-ppt
 The skill is a structured workflow the agent walks through:
 
 1. **Read the material** — extract author background, structure, key ideas, examples, quotes, takeaways
-2. **Design styles** — ask about a reference template, generate 4 style previews (GPT-Image 2.0 strongly recommended)
+2. **Design styles** — ask about a reference template, generate a 2×2 grid composite preview (4 styles in one image, GPT-Image 2.0 strongly recommended)
 3. **User picks** — show previews, wait for a style choice
 4. **Render pages** — cover → agenda → content → summary → thanks, in the chosen style
 5. **Merge PPTX** — embed image pages in 16:9 order, output a downloadable .pptx
