@@ -45,6 +45,9 @@ The core workflow and three prompts in this skill are derived from the following
 Source material (PDF / book / text)
     │
     ▼
+⓪ Pre-flight questions   Confirm source, reference style, use case, page count
+    │
+    ▼
 ① Extract content + design styles   Read the material, build an outline, generate 4 style previews
     │
     ▼
@@ -185,7 +188,7 @@ image-ppt/
 No. Codex is the recommended environment (document reading + GPT-Image 2.0 + python-pptx in one flow), but the three prompts work in any AI that can read documents and generate images.
 
 **Do I have to use GPT-Image 2.0?**
-No. It offers the best text rendering and cross-page consistency; swap the model name in the prompts for whatever you use.
+No. It offers the best text rendering and cross-page consistency; the prompts are model-agnostic, so any image generation model works.
 
 **Is the generated PPT directly editable?**
 Step 2 produces an image-based PPT (one image per page, not editable). Step 3 restores pages into an editable PPTX with main text as native text boxes.
