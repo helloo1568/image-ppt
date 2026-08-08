@@ -147,14 +147,15 @@ git clone https://github.com/helloo1568/image-ppt.git ~/.codex/skills/image-ppt
 
 The skill is a structured workflow the agent walks through:
 
-1. **Read the material** — extract author background, structure, key ideas, examples, quotes, takeaways
-2. **Design styles** — ask about a reference template, generate a 2×2 grid composite preview (4 styles in one image, GPT-Image 2.0 strongly recommended)
-3. **User picks** — show previews, wait for a style choice
-4. **Render pages** — cover → agenda → content → summary → thanks, in the chosen style
-5. **Merge PPTX** — embed image pages in 16:9 order, output a downloadable .pptx
-6. **Restore editability** — rebuild 1-3 pages per pass: complex visuals as images, main text as native text boxes
-7. **Compare & iterate** — render a preview against the original; keep iterating on obvious gaps
-8. **Delivery notes** — report what is editable text vs. image, and any font substitutions
+1. **Pre-flight questions** — confirm source material, reference style, use case, expected page count
+2. **Read the material** — extract author background, structure, key ideas, examples, quotes, takeaways
+3. **Design styles** — generate a 2×2 grid composite preview (4 styles in one image, GPT-Image 2.0 strongly recommended)
+4. **User picks** — show previews, wait for a style choice
+5. **Render pages** — cover → agenda → content → summary → thanks, in the chosen style
+6. **Merge PPTX** — embed image pages in 16:9 order, output a downloadable .pptx
+7. **Restore editability** — rebuild 1-3 pages per pass: complex visuals as images, main text as native text boxes
+8. **Compare & iterate** — render a preview against the original; keep iterating on obvious gaps
+9. **Delivery notes** — report what is editable text vs. image, and any font substitutions
 
 Details in [`SKILL.md`](./SKILL.md); the three core prompts live in [`references/prompts.md`](./references/prompts.md).
 
