@@ -10,7 +10,7 @@ agent_created: true
 
 本技能提供一套完整的三步工作流，将书籍 PDF、论文、报告等文字材料转化为精美且可编辑的 PowerPoint 演示文稿。工作流源自小黑盒社区教程（作者：玩家22186848），参考 B 站 UP 主「一往无前河井」的学术 PPT 制作思路，经泛化后适用于课堂汇报、读书分享、组会汇报、项目汇报、比赛路演等多种场景。
 
-**推荐运行环境：Codex + GPT-Image 2.0。** Codex 负责文档读取、流程编排与 PPTX 拼装/还原（shell + python-pptx 一条龙）；GPT-Image 2.0 负责绘制风格统一、文字精准的 PPT 页面。Step 1/2 的提示词中"image2图像生成模型"在 Codex 环境对应 **GPT-Image 2.0**，在 GPT/ChatGPT 环境对应其原生图像模型，在其他环境替换为实际使用的生图工具。
+**强烈推荐运行环境：Codex + GPT-Image 2.0。** Codex 负责文档读取、流程编排与 PPTX 拼装/还原（shell + python-pptx 一条龙）；GPT-Image 2.0 负责绘制风格统一、文字精准的 PPT 页面。Step 1/2 的提示词中"image2图像生成模型"在 Codex 环境对应 **GPT-Image 2.0**，在 GPT/ChatGPT 环境对应其原生图像模型，在其他环境替换为实际使用的生图工具。
 
 **平台无关**：这套方法论的核心是三段提示词 + 三步流程，可在任何具备「文档读取、图像生成、文件输出」能力的 AI 助手中使用（Codex、ChatGPT/GPT、Claude、Kimi、豆包、WorkBuddy、通义等）。执行时仅需将文中标注的通用能力映射到你当前使用的 AI 工具即可。
 
@@ -64,7 +64,7 @@ agent_created: true
 
 ### 适配说明
 
-- **Codex（推荐）**：用文档读取能力提炼内容，再调用图像生成（推荐 GPT-Image 2.0）生成预览图。Prompt 1 中的"image2图像生成模型"对应 GPT-Image 2.0。
+- **Codex（推荐）**：用文档读取能力提炼内容，再调用图像生成（强烈推荐 GPT-Image 2.0）生成预览图。Prompt 1 中的"image2图像生成模型"对应 GPT-Image 2.0。
 - **具备原生图像生成能力的 AI（如 GPT）**：直接将源材料 PDF + 参考风格图片 + Prompt 1 一起发送，AI 会调用其图像模型生成预览。
 - **通过外部工具生图的 AI（如 Claude、WorkBuddy）**：先用文档读取能力提炼内容，再调用可用的生图工具生成预览图。Prompt 1 中的"image2图像生成模型"替换为实际使用的生图工具。
 
@@ -83,7 +83,7 @@ agent_created: true
 
 ### 适配说明
 
-- **Codex（推荐）**：循环调用图像生成（推荐 GPT-Image 2.0）逐页绘制，再用 python-pptx 脚本合并为 .pptx。Prompt 2 中的"image2图像生成图片"对应 GPT-Image 2.0。
+- **Codex（推荐）**：循环调用图像生成（强烈推荐 GPT-Image 2.0）逐页绘制，再用 python-pptx 脚本合并为 .pptx。Prompt 2 中的"image2图像生成图片"对应 GPT-Image 2.0。
 - **具备原生图像生成能力的 AI（如 GPT）**：发送 Prompt 2（见 `references/prompts.md`），AI 会逐页生成并自动合并为 pptx。
 - **通过外部工具生图的 AI**：手动编排——先循环调用生图工具生成每页图片，再用 PPT 生成器或 python-pptx 脚本合并。注意部分 AI 单次对话只能调用一次工具，需分多轮完成所有页面生成。
 

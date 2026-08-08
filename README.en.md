@@ -14,7 +14,7 @@
 
 An agent skill for **Codex / Claude Code and other agent environments** that turns books, PDFs, or any text material into **beautiful, editable PPTX decks** — not a pile of static images you cannot touch.
 
-**Recommended environment: Codex + GPT-Image 2.0.** Codex reads the document, orchestrates the pipeline, and assembles files; GPT-Image 2.0 renders PPT pages with consistent style and pixel-accurate text.
+**Strongly recommended environment: Codex + GPT-Image 2.0.** Codex reads the document, orchestrates the pipeline, and assembles files; GPT-Image 2.0 renders PPT pages with consistent style and pixel-accurate text.
 
 ## Origin & Credits
 
@@ -27,7 +27,7 @@ The core workflow and three prompts in this skill are derived from the following
 
 > Thanks to the original authors for their quality content. This skill generalizes and adapts their work for broader scenarios (classroom presentations, book sharing, lab meetings, project reports, pitch events) and more AI platforms (Codex, GPT, Claude, Kimi, Doubao, WorkBuddy, Tongyi, etc.).
 
-## Why Codex + GPT-Image 2.0
+## Why We Strongly Recommend Codex + GPT-Image 2.0
 
 | Stage | Recommended | Why |
 |-------|-------------|-----|
@@ -71,7 +71,7 @@ Turn this PDF into a class-presentation PPT. Generate 4 style previews first; I'
 More example requests:
 
 ```text
-Turn this book into a book-sharing deck; generate images with GPT-Image 2.0.
+Turn this book into a book-sharing deck; generate images (GPT-Image 2.0 strongly recommended).
 Make a lab-meeting PPT from this report, following the template style I uploaded.
 Image PPT: convert this Markdown into an editable 16:9 PPTX.
 ```
@@ -104,7 +104,7 @@ Image PPT: convert this Markdown into an editable 16:9 PPTX.
 
 | Platform | Status | Notes |
 |----------|--------|-------|
-| **Codex** | Recommended | Full pipeline: read docs, GPT-Image 2.0 rendering, python-pptx assembly/restore |
+| **Codex** | Recommended | Full pipeline: read docs, GPT-Image 2.0 rendering (strongly recommended), python-pptx assembly/restore |
 | Claude Code | Works | Strong text/orchestration; image gen needs an external tool |
 | GPT / ChatGPT | Works | Native image capability; just paste the three prompts |
 | WorkBuddy | Works | Document reading + local toolchain per adaptation notes |
@@ -148,7 +148,7 @@ git clone https://github.com/helloo1568/image-ppt.git ~/.codex/skills/image-ppt
 The skill is a structured workflow the agent walks through:
 
 1. **Read the material** — extract author background, structure, key ideas, examples, quotes, takeaways
-2. **Design styles** — ask about a reference template, generate 4 style previews with GPT-Image 2.0
+2. **Design styles** — ask about a reference template, generate 4 style previews (GPT-Image 2.0 strongly recommended)
 3. **User picks** — show previews, wait for a style choice
 4. **Render pages** — cover → agenda → content → summary → thanks, in the chosen style
 5. **Merge PPTX** — embed image pages in 16:9 order, output a downloadable .pptx
