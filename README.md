@@ -4,7 +4,7 @@
 
 ---
 
-# 图片PPT Skill · 文字材料转可编辑PPT
+# 图片PPT Skill · 用 AI 生图做出精美可编辑 PPT
 
 ![GitHub stars](https://img.shields.io/github/stars/helloo1568/image-ppt?style=flat-square)
 ![License](https://img.shields.io/github/license/helloo1568/image-ppt?style=flat-square)
@@ -12,7 +12,9 @@
 ![Codex](https://img.shields.io/badge/Codex-Recommended-222222?style=flat-square)
 ![GPT-Image 2.0](https://img.shields.io/badge/GPT--Image%202.0-Recommended-0A7CFF?style=flat-square)
 
-一个适配 **Codex / Claude Code 等 Agent 环境**的 PPT 生成技能：把书籍、PDF 或任意文字材料，变成**精美且可编辑的 PPTX**，而不是一张张没法改的图片。
+一个适配 **Codex / Claude Code 等 Agent 环境**的 PPT 生成技能。核心思路与传统 PPT 工具完全不同：**先用 AI 图像生成模型逐页绘制高颜值 PPT 页面**，再将图片智能还原为**可编辑的 PPTX**——既有图片级的视觉质感，又能正常修改文字。
+
+把书籍、PDF 或任意文字材料，变成专业、美观、可直接编辑的 PowerPoint 演示文稿。适用于课堂汇报、读书分享、组会汇报、项目汇报、比赛路演等场景。
 
 **强烈推荐运行环境：Codex + GPT-Image 2.0**。Codex 负责读懂文档、编排流程、拼装文件；GPT-Image 2.0 负责绘制风格统一、文字精准的 PPT 页面。
 

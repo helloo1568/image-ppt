@@ -4,7 +4,7 @@
 
 ---
 
-# Image PPT Skill · Turn Text into Editable PPTs
+# Image PPT Skill · Beautiful Editable PPTs via AI Image Generation
 
 ![GitHub stars](https://img.shields.io/github/stars/helloo1568/image-ppt?style=flat-square)
 ![License](https://img.shields.io/github/license/helloo1568/image-ppt?style=flat-square)
@@ -12,7 +12,9 @@
 ![Codex](https://img.shields.io/badge/Codex-Recommended-222222?style=flat-square)
 ![GPT-Image 2.0](https://img.shields.io/badge/GPT--Image%202.0-Recommended-0A7CFF?style=flat-square)
 
-An agent skill for **Codex / Claude Code and other agent environments** that turns books, PDFs, or any text material into **beautiful, editable PPTX decks** — not a pile of static images you cannot touch.
+An agent skill for **Codex / Claude Code and other agent environments**. The core idea is fundamentally different from traditional PPT tools: **first use AI image generation to render each PPT page as a high-quality image**, then intelligently restore the images into **editable PPTX** — image-grade visual quality with fully editable text.
+
+Turn books, PDFs, or any text material into professional, beautiful, and directly editable PowerPoint presentations. Great for classroom presentations, book sharing, lab meetings, project reports, and pitch events.
 
 **Strongly recommended environment: Codex + GPT-Image 2.0.** Codex reads the document, orchestrates the pipeline, and assembles files; GPT-Image 2.0 renders PPT pages with consistent style and pixel-accurate text.
 
