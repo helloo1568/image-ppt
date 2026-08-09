@@ -84,7 +84,7 @@ Image PPT: convert this Markdown into an editable 16:9 PPTX.
 ## Highlights
 
 - 🧠 **Reads the material**: extracts author background, structure, key ideas, examples, quotes, and takeaways
-- 🎨 **Four style previews**: a single 2×2 grid composite image showing 4 color/layout/visual styles at once — pick one before rendering
+- 🎨 **Four style previews**: 4 separate preview images showing different color/layout/visual styles — pick one before rendering
 - 🖼 **Page-by-page rendering**: one core idea per page, with structure diagrams, timelines, and relationship maps
 - 📦 **Editable PPTX**: complex visuals kept as hi-res images, main text rebuilt as native PPT text boxes
 - 🔁 **Iterative restore**: 1-3 pages per pass; confirm one page's quality before batch-processing the rest
@@ -154,7 +154,7 @@ The skill is a structured workflow the agent walks through:
 
 1. **Pre-flight questions** — confirm source material, reference style, use case, expected page count
 2. **Read the material** — extract author background, structure, key ideas, examples, quotes, takeaways
-3. **Design styles** — generate a 2×2 grid composite preview (4 styles in one image, GPT-Image 2.0 strongly recommended)
+3. **Design styles** — generate 4 separate style previews (GPT-Image 2.0 strongly recommended)
 4. **User picks** — show previews, wait for a style choice
 5. **Render pages** — cover → agenda → content → summary → thanks, in the chosen style
 6. **Merge PPTX** — embed image pages in 16:9 order, output a downloadable .pptx
