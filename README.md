@@ -2,213 +2,212 @@
   <b>简体中文</b> | <a href="./README.en.md">English</a>
 </p>
 
----
+# image-ppt
 
-# 图片PPT Skill · 用 AI 生图做出精美可编辑 PPT
+[![GitHub stars](https://img.shields.io/github/stars/helloo1568/image-ppt?style=flat-square)](https://github.com/helloo1568/image-ppt)
+[![License](https://img.shields.io/github/license/helloo1568/image-ppt?style=flat-square)](./LICENSE)
+![Agent Skill](https://img.shields.io/badge/Agent-Skill-111111?style=flat-square)
+![PowerPoint](https://img.shields.io/badge/Output-PPTX-B7472A?style=flat-square)
 
-![GitHub stars](https://img.shields.io/github/stars/helloo1568/image-ppt?style=flat-square)
-![License](https://img.shields.io/github/license/helloo1568/image-ppt?style=flat-square)
-![Skill](https://img.shields.io/badge/Skill-Agent-111111?style=flat-square)
-![Codex](https://img.shields.io/badge/Codex-Recommended-222222?style=flat-square)
-![GPT-Image 2.0](https://img.shields.io/badge/GPT--Image%202.0-Recommended-0A7CFF?style=flat-square)
+将书籍、PDF、论文、报告和 Markdown 等材料转化为图片版或可编辑 PowerPoint 的 Agent Skill。
 
-一个适配 **Codex / Claude Code 等 Agent 环境**的 PPT 生成技能。核心思路与传统 PPT 工具完全不同：**先用 AI 图像生成模型逐页绘制高颜值 PPT 页面**，再将图片智能还原为**可编辑的 PPTX**——既有图片级的视觉质感，又能正常修改文字。
+它采用分阶段工作流：先理解内容并提供四套风格缩略图供用户选择，再逐页生成图片版 PPT；只有用户明确要求时，才继续还原为可编辑 PPTX。
 
-把书籍、PDF 或任意文字材料，变成专业、美观、可直接编辑的 PowerPoint 演示文稿。适用于课堂汇报、读书分享、组会汇报、项目汇报、比赛路演等场景。
+![image-ppt preview](./social-preview.png)
 
-**强烈推荐运行环境：Codex + GPT-Image 2.0**。Codex 负责读懂文档、编排流程、拼装文件；GPT-Image 2.0 负责绘制风格统一、文字精准的 PPT 页面。
+## 功能
 
-## 来源与致谢
+- 从长文档中提炼适合演示的结构、观点、案例和结论
+- 生成四套不同视觉方向的风格缩略图供用户选型
+- 按选定风格逐页生成统一的 PPT 页面图片
+- 将页面图片确定性合并为 16:9 图片版 PPTX
+- 可选地将主要文字、简单形状和图表还原为可编辑元素
+- 使用制作规格记录需求、页序、准确数据和逐页状态，支持中断后继续
 
-本技能的核心工作流与三段提示词源自以下优质内容，经泛化适配后形成通用方法论：
-
-| 角色 | 来源 | 作者 |
-|------|------|------|
-| 原始教程 | 小黑盒社区《青年大学习AI版：零基础用GPT5.6做精美可编辑PPT》 | 玩家22186848 |
-| 参考思路 | B站学术PPT制作流程 | UP主「一往无前河井」 |
-
-> 感谢原作者分享的优质内容。本技能在其基础上进行了泛化与适配，使其适用于课堂汇报、读书分享、组会汇报、项目汇报、比赛路演等多种场景，并兼容更多 AI 平台（Codex、GPT、Claude、Kimi、豆包、WorkBuddy、通义等）。
-
-## 为什么强烈推荐 Codex + GPT-Image 2.0
-
-| 环节 | 推荐工具 | 为什么 |
-|------|---------|--------|
-| 文档理解与流程编排 | **Codex** | 有 shell 权限，能读长文档、循环生图、自动合并/还原 PPTX，一次跑完三步流程 |
-| 页面绘制 | **GPT-Image 2.0** | 像素级文字渲染、跨页风格一致、商业级排版，能精确还原模板气质 |
-| PPTX 拼装 | Codex + python-pptx | 图片页按 16:9 顺序嵌入，输出可下载 .pptx |
-
-> 本技能也兼容其他具备「文档读取 + 图像生成 + 文件输出」能力的 AI 助手（GPT、Claude、Kimi、豆包、WorkBuddy 等），按提示词中的适配说明取用即可。
-
-## 三步工作流
-
-```
-源材料（PDF / 书籍 / 文字）
-    │
-    ▼
-⓪ 开始前询问   确认源材料、参考风格、使用场景、页数预期
-    │
-    ▼
-① 内容提炼 + 风格设计   读懂材料、提炼大纲，生成 4 套风格预览供选择
-    │
-    ▼
-② 图片版 PPT 生成       按选定风格逐页绘制，合并为可下载 .pptx
-    │
-    ▼
-③ 可编辑 PPTX 还原      逐页拆解为「复杂视觉保真 + 文字可编辑」的 PPTX
-```
-
-## 30 秒开始
-
-直接把这段话发给有 shell 权限的 AI Agent（推荐 Codex）：
+## 工作流
 
 ```text
-帮我安装 image-ppt 技能。请把 https://github.com/helloo1568/image-ppt 克隆到本地技能目录，
-安装完成后检查 SKILL.md、references/ 是否存在。装好后我说"帮我把这本书做成 PPT"就会触发它。
+源材料
+  ↓
+需求确认
+  ↓
+内容提炼与四套风格缩略图
+  ↓ 用户选择一种风格
+图片版 PPT 逐页生成与合并
+  ↓ 用户明确要求可编辑化
+可编辑 PPTX 还原（可选）
 ```
 
-安装后直接对 Agent 说：
+默认有两个不可自动跳过的确认节点：
 
-```text
-帮我把这份 PDF 做成课堂汇报 PPT，先按提示词生成 4 套风格预览，我选一套再继续。
-```
+1. 确认源材料、参考风格、使用场景和页数预期
+2. 展示四套风格缩略图后等待用户选择
 
-也可以试这些请求：
+用户可以明确说“跳过缩略图”“你替我选择风格”或“只制作图片版”，让流程按授权范围快进。普通的“帮我生成 PPT”不构成跳过授权。
 
-```text
-帮我把这本书做成读书分享 PPT，配图强烈推荐用 GPT-Image 2.0 生成。
-把这份报告做成组会汇报 PPT，参考我上传的模板风格。
-图片PPT：把这份 Markdown 变成 16:9 可编辑 PPTX。
-```
+## 风格缩略图是什么
 
-## 效果
+本项目中的“缩略图”不是单张 PPT 页面缩小后的图片，也不是把四种风格拼成一个 2×2 对比图。
 
-- 🧠 **读懂材料**：自动提炼作者背景、全文结构、主要观点、典型案例、经典语句与现实意义
-- 🎨 **四套风格预览**：生成 4 张独立预览图，分别展示不同配色/排版/视觉风格，选定后再开工
-- 🖼 **逐页绘制**：每页突出一个核心观点，配结构图、时间轴、人物关系图等可视化
-- 📦 **可编辑 PPTX**：复杂视觉保留为高清图片，主要文字还原为 PPT 原生文本框
-- 🔁 **逐页迭代**：每次还原 1-3 页，先确认一页质量再批量推进
+每套风格缩略图都是一张类似 PowerPoint“幻灯片浏览视图”的横向总览图：
 
-## 适合 / 不适合
+- 一张图只展示一种完整设计风格
+- 图中以 3×2、4×2 或相近网格排列 6–8 张迷你 16:9 幻灯片
+- 页面通常覆盖封面、核心数据、正文、图表、案例和总结/行动页
+- 四套缩略图使用相同的页面顺序和内容，只改变配色、字体、版式、图形语言和素材风格
+- 四张风格缩略图分别展示并编号为 1–4，等待用户选型
 
-**✅ 合适**：大学课堂小组汇报 / 读书分享 / 组会文献汇报 / 项目汇报 / 比赛路演 / 课程作业
-
-**❌ 不合适**：需要多人实时协作编辑的文档（建议直接用 Office 在线协作）、大段表格数据型汇报（图片版信息密度有限）
-
-## 常见使用场景
-
-| 任务 | 推荐方式 |
-|------|---------|
-| 一本书变成读书分享 PPT | 三步全流程，重点提炼核心观点与金句 |
-| 论文 / 文献做组会汇报 | 用 Prompt 1 提炼结构，配流程图、关系图 |
-| 课程作业 / 课堂展示 | 参考模板图 + 四套风格预览，快速定稿 |
-| 比赛路演 / 项目汇报 | 突出结论与亮点页，控制页数与节奏 |
-| 已有图片版 PPT 要改文字 | 直接用 Prompt 3 逐页还原为可编辑 PPTX |
-
-## 平台支持
-
-| 平台 | 状态 | 说明 |
-|------|------|------|
-| **Codex** | 推荐 | 完整跑通三步流程：读文档、（强烈推荐 GPT-Image 2.0）生图、python-pptx 拼装/还原 |
-| Claude Code | 可用 | 文本/编排能力强；生图需接入外部图像工具 |
-| GPT / ChatGPT | 可用 | 原生图像能力，直接粘贴三段提示词即可 |
-| WorkBuddy | 可用 | 支持文档读取与本地工具链，按适配说明执行 |
-| Kimi / 豆包 / 通义 | 部分可用 | 需自行确认其图像生成与文件输出能力 |
+这种方式能在正式生成整套页面前，同时检查单页设计和跨页一致性。
 
 ## 安装
 
-### 方式一：一行命令安装（推荐）
+将仓库克隆到 Agent 的技能目录。不同产品的技能目录可能不同，请以当前产品文档为准。
+
+### Codex
 
 ```bash
-npx skills add https://github.com/helloo1568/image-ppt --skill image-ppt
-```
-
-### 方式二：发给 AI 自动安装
-
-> 帮我安装 `image-ppt` 这个 skill。按下面步骤做：
->
-> 1. 确保本地技能目录存在（`~/.claude/skills/` 或 `~/.codex/skills/`，不存在就创建）
-> 2. 执行 `git clone https://github.com/helloo1568/image-ppt.git <技能目录>/image-ppt`
-> 3. 验证 `SKILL.md`、`references/prompts.md` 存在
-> 4. 告诉我安装好了，之后我说"做一份 PPT"之类的话就会触发
-
-### 方式三：手动克隆
-
-```bash
-git clone https://github.com/helloo1568/image-ppt.git ~/.claude/skills/image-ppt
-# 或放入 Codex 技能目录
 git clone https://github.com/helloo1568/image-ppt.git ~/.codex/skills/image-ppt
 ```
 
-### 触发方式
+### Claude Code
 
-装好后 Agent 会在对话里自动发现并调用。触发关键词：
-
-- "帮我把这本书做成 PPT"
-- "把这份 PDF 做成课堂汇报 PPT"
-- "图片PPT 生成读书分享演示文稿"
-- "基于这份材料做一份可编辑 PPTX"
-- "image-ppt"
-
-## 使用流程
-
-Skill 是结构化工作流，Agent 会逐步引导：
-
-1. **开始前询问** — 确认源材料、参考风格、使用场景、页数预期
-2. **读懂材料** — 读取 PDF/文档，提炼作者背景、结构、观点、案例、金句与现实意义
-3. **风格设计** — 强烈推荐用 GPT-Image 2.0 生成 4 张独立风格预览图
-4. **用户选择** — 展示预览，等待选定一套风格
-5. **逐页生成** — 按选定风格逐页绘制（封面 → 目录 → 内容页 → 总结 → 致谢）
-6. **合并 PPTX** — 图片页按 16:9 顺序嵌入，输出可下载 .pptx
-7. **可编辑还原** — 逐页拆解（每次 1-3 页）：复杂视觉转图片、主要文字转原生文本框
-8. **对照迭代** — 渲染预览与原图对照，明显差距继续迭代
-9. **交付说明** — 说明哪些是可编辑文本、哪些保留为图片、字体替代情况
-
-详细说明见 [`SKILL.md`](./SKILL.md)，三段核心提示词见 [`references/prompts.md`](./references/prompts.md)。
-
-## 目录结构
-
+```bash
+git clone https://github.com/helloo1568/image-ppt.git ~/.claude/skills/image-ppt
 ```
+
+安装后确认以下文件存在：
+
+```text
+image-ppt/SKILL.md
+image-ppt/references/prompts.md
+```
+
+需要运行图片合并脚本时安装依赖：
+
+```bash
+python -m pip install -r requirements.txt
+```
+
+## 快速开始
+
+向 Agent 提供材料，并说明使用场景和页数：
+
+```text
+使用 image-ppt，把这份 PDF 做成 12 页课堂汇报 PPT。
+没有参考模板。先生成四套幻灯片浏览视图式风格缩略图，我选定后再继续。
+```
+
+其他示例：
+
+```text
+把这本书做成读书分享 PPT，约 15 页，没有参考风格。
+把这份周报做成周例会图片版 PPT，不需要可编辑还原。
+从这份图片版 PPT 开始，只执行可编辑化还原。
+跳过风格缩略图，你替我选择适合管理层汇报的风格。
+```
+
+## 输出
+
+根据用户授权范围，技能可以生成：
+
+- 四张独立的幻灯片浏览视图式风格缩略图
+- 按页码排序的 PNG/JPEG 页面图片
+- 每页为整张图片的图片版 `.pptx`
+- 主要信息可编辑的混合式 `.pptx`（可选）
+- 临时制作规格 `deck-spec.md`，用于记录状态和恢复任务
+
+## 确定性合并脚本
+
+`scripts/build_image_ppt.py` 按文件名自然排序，将 PNG/JPEG 页面图片合并成 PPTX：
+
+```bash
+python scripts/build_image_ppt.py ./slides ./output/deck.pptx
+```
+
+推荐使用零填充文件名：
+
+```text
+01-cover.png
+02-dashboard.png
+03-analysis.png
+```
+
+常用选项：
+
+```bash
+python scripts/build_image_ppt.py ./slides ./deck.pptx --fit cover
+python scripts/build_image_ppt.py ./slides ./deck.pptx --fit contain --background FFFFFF
+```
+
+脚本默认创建 16:9 幻灯片，保存后会重新打开文件并核对页数。运行脚本需要 Python、Pillow 和 python-pptx。
+
+## 项目结构
+
+```text
 image-ppt/
-├── SKILL.md              ← Skill 主文件：三步工作流与适配说明
-├── README.md             ← 本文件（中文）
-├── README.en.md          ← English version
-├── manifest.yaml         ← 技能清单（版本、触发词、安全声明）
-└── references/
-    └── prompts.md        ← 三段核心提示词（可直接复制使用）
+├── SKILL.md
+├── README.md
+├── README.en.md
+├── LICENSE
+├── manifest.yaml
+├── requirements.txt
+├── .gitignore
+├── agents/
+│   └── openai.yaml
+├── references/
+│   ├── prompts.md
+│   └── deck-spec-template.md
+├── scripts/
+│   └── build_image_ppt.py
+├── social-preview.jpg
+└── social-preview.png
 ```
 
-## 核心提示词
+## 平台与工具
 
-三段提示词直接可用，详见 [`references/prompts.md`](./references/prompts.md)：
+技能本身不绑定具体图像模型。推荐在具备以下能力的 Agent 环境中使用：
 
-- **Prompt 1** — 内容提炼与风格设计：读懂材料、生成 4 套风格预览
-- **Prompt 2** — 图片版 PPT 生成：按选定风格逐页绘制并合并
-- **Prompt 3** — 可编辑 PPTX 还原：「复杂视觉保真 + 主要文字可编辑」混合策略
+- 读取 PDF、Markdown 和长文本
+- 调用图像生成模型
+- 运行本地脚本并输出文件
+- 检查生成图片和 PPTX
 
-## FAQ
+Codex 可以负责材料读取、流程编排和 PPTX 拼装。图像页面可由 GPT Image、Agnes、Midjourney 或其他可用模型生成。若外部工具不支持图生图，应把选定缩略图提炼为稳定的文字视觉规范，再逐页复用。
 
-**必须用 Codex 吗？**
-不是。Codex 是推荐环境（文档读取 + GPT-Image 2.0 + python-pptx 一条龙），但三段提示词在任何能读文档、能生图的 AI 里都能用。
+## 限制
 
-**必须用 GPT-Image 2.0 吗？**
-不是。GPT-Image 2.0 在文字渲染和跨页一致性上表现最好；其他图像模型也能用，提示词不绑定特定模型，直接使用即可。
+- 图像模型可能生成错字、错误数字或不一致的跨页样式，必须逐页验收
+- 图片版 PPT 的页面内容不可直接编辑
+- 可编辑还原采用“复杂视觉保真 + 主要信息可编辑”的混合策略，不能保证所有元素完全原生化
+- 高密度表格和需要精确计算的图表更适合程序化制作，不适合完全依赖生图
+- 不同 Agent 和图像服务的文件能力、尺寸限制、费用和内容政策不同
 
-**生成的 PPT 能直接编辑吗？**
-第 2 步产出的是图片版 PPT（每页一张图，不可编辑）；第 3 步会逐页还原成可编辑 PPTX，主要文字用 PPT 原生文本框重建。
+## 安全与隐私
 
-**一次能还原多少页？**
-建议每次 1-3 页。拆得太多，元素拆分效果会明显下降。
+- 仓库不包含 API Key 或账号凭证
+- `build_image_ppt.py` 只读取本地图片并写入本地 PPTX，不发起网络请求
+- 实际使用的外部图像或文档服务可能上传提示词、材料或页面内容，请遵守对应服务的隐私政策
+- 不要把含密钥的 `config.json`、环境变量文件或私有材料提交到仓库
 
-**这个技能会联网或上传数据吗？**
-不会。纯提示词方法论，所有执行都在你的 AI 环境中完成。
+## 参与贡献
 
-## Roadmap
+欢迎提交 Issue 和 Pull Request。建议在提交前：
 
-- 补充更多真实案例与效果图
-- 增加书籍结构图 / 时间轴 / 人物关系图的固定版式
-- 提供可直接运行的 python-pptx 合并脚本
-- 整理上架 ClawHub / 各平台 Skill 商店
+1. 保持 `SKILL.md` 简洁，并把长提示词或模板放入 `references/`
+2. 不在仓库中加入 API Key、生成缓存或用户材料
+3. 运行 `python -m py_compile scripts/build_image_ppt.py`
+4. 使用至少一组真实材料检查需求门禁、四套缩略图选型和 PPTX 合并流程
+5. 同步更新中文与英文 README
 
-## License
+## 来源与致谢
 
-[MIT](./LICENSE) © 2026 风清云影（helloo1568）
+本技能的早期工作流参考了：
+
+- 小黑盒社区教程《青年大学习AI版：零基础用GPT5.6做精美可编辑PPT》，作者“玩家22186848”
+- B 站 UP 主“一往无前河井”的学术 PPT 制作思路
+
+感谢原作者和社区贡献者分享方法与实践经验。
+
+## 许可证
+
+[MIT License](./LICENSE) © 2026 风清云影（helloo1568）

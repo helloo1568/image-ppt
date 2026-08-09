@@ -2,210 +2,213 @@
   <a href="./README.md">简体中文</a> | <b>English</b>
 </p>
 
----
+# image-ppt
 
-# Image PPT Skill · Beautiful Editable PPTs via AI Image Generation
+[![GitHub stars](https://img.shields.io/github/stars/helloo1568/image-ppt?style=flat-square)](https://github.com/helloo1568/image-ppt)
+[![License](https://img.shields.io/github/license/helloo1568/image-ppt?style=flat-square)](./LICENSE)
+![Agent Skill](https://img.shields.io/badge/Agent-Skill-111111?style=flat-square)
+![PowerPoint](https://img.shields.io/badge/Output-PPTX-B7472A?style=flat-square)
 
-![GitHub stars](https://img.shields.io/github/stars/helloo1568/image-ppt?style=flat-square)
-![License](https://img.shields.io/github/license/helloo1568/image-ppt?style=flat-square)
-![Skill](https://img.shields.io/badge/Skill-Agent-111111?style=flat-square)
-![Codex](https://img.shields.io/badge/Codex-Recommended-222222?style=flat-square)
-![GPT-Image 2.0](https://img.shields.io/badge/GPT--Image%202.0-Recommended-0A7CFF?style=flat-square)
+An Agent Skill that turns books, PDFs, papers, reports, and Markdown into image-based or editable PowerPoint presentations.
 
-An agent skill for **Codex / Claude Code and other agent environments**. The core idea is fundamentally different from traditional PPT tools: **first use AI image generation to render each PPT page as a high-quality image**, then intelligently restore the images into **editable PPTX** — image-grade visual quality with fully editable text.
+The workflow is staged: understand the material, present four style thumbnails for selection, render the complete image-based deck, and restore editability only when the user explicitly requests it.
 
-Turn books, PDFs, or any text material into professional, beautiful, and directly editable PowerPoint presentations. Great for classroom presentations, book sharing, lab meetings, project reports, and pitch events.
+![image-ppt preview](./social-preview.png)
 
-**Strongly recommended environment: Codex + GPT-Image 2.0.** Codex reads the document, orchestrates the pipeline, and assembles files; GPT-Image 2.0 renders PPT pages with consistent style and pixel-accurate text.
+## Features
 
-## Origin & Credits
-
-The core workflow and three prompts in this skill are derived from the following sources, generalized and adapted into a universal methodology:
-
-| Role | Source | Author |
-|------|--------|--------|
-| Original tutorial | Xiaoheihe community: "Youth Study AI Edition — Zero-base Beautiful Editable PPT with GPT 5.6" | 玩家22186848 |
-| Reference approach | Bilibili academic PPT workflow | Creator「一往无前河井」 |
-
-> Thanks to the original authors for their quality content. This skill generalizes and adapts their work for broader scenarios (classroom presentations, book sharing, lab meetings, project reports, pitch events) and more AI platforms (Codex, GPT, Claude, Kimi, Doubao, WorkBuddy, Tongyi, etc.).
-
-## Why We Strongly Recommend Codex + GPT-Image 2.0
-
-| Stage | Recommended | Why |
-|-------|-------------|-----|
-| Document understanding & orchestration | **Codex** | Shell access to read long docs, loop image generation, and auto-assemble/restore PPTX in one run |
-| Page rendering | **GPT-Image 2.0** | Pixel-accurate text, cross-page style consistency, commercial-grade layout |
-| PPTX assembly | Codex + python-pptx | Embeds image pages in 16:9 order and outputs a downloadable .pptx |
-
-> Works in any AI assistant with document reading, image generation, and file output capabilities (GPT, Claude, Kimi, Doubao, WorkBuddy, etc.) — follow the adaptation notes in the prompts.
-
-## Three-Step Workflow
-
-```
-Source material (PDF / book / text)
-    │
-    ▼
-⓪ Pre-flight questions   Confirm source, reference style, use case, page count
-    │
-    ▼
-① Extract content + design styles   Read the material, build an outline, generate 4 style previews
-    │
-    ▼
-② Generate image-based PPT          Render pages in the chosen style, merge into a downloadable .pptx
-    │
-    ▼
-③ Restore an editable PPTX          Rebuild page by page ("visual fidelity + editable text")
-```
-
-## 30-Second Start
-
-Send this to an agent with shell access (Codex recommended):
-
-```text
-Install the image-ppt skill for me. Clone https://github.com/helloo1568/image-ppt into the local
-skills directory, then verify SKILL.md and references/ exist. After that, "turn this book into a PPT"
-will trigger it.
-```
-
-Then just say:
-
-```text
-Turn this PDF into a class-presentation PPT. Generate 4 style previews first; I'll pick one before you continue.
-```
-
-More example requests:
-
-```text
-Turn this book into a book-sharing deck; generate images (GPT-Image 2.0 strongly recommended).
-Make a lab-meeting PPT from this report, following the template style I uploaded.
-Image PPT: convert this Markdown into an editable 16:9 PPTX.
-```
-
-## Highlights
-
-- 🧠 **Reads the material**: extracts author background, structure, key ideas, examples, quotes, and takeaways
-- 🎨 **Four style previews**: 4 separate preview images showing different color/layout/visual styles — pick one before rendering
-- 🖼 **Page-by-page rendering**: one core idea per page, with structure diagrams, timelines, and relationship maps
-- 📦 **Editable PPTX**: complex visuals kept as hi-res images, main text rebuilt as native PPT text boxes
-- 🔁 **Iterative restore**: 1-3 pages per pass; confirm one page's quality before batch-processing the rest
-
-## Good Fit / Not a Fit
-
-**✅ Good fit**: classroom group presentations / book sharing / lab paper reviews / project reports / pitch events / coursework
-
-**❌ Not a fit**: real-time multi-user collaborative editing (use Office online instead), dense data-table reports (image-based pages have limited information density)
-
-## Common Use Cases
-
-| Task | Recommended Approach |
-|------|----------------------|
-| Book → book-sharing deck | Full three-step flow, emphasize key ideas and quotes |
-| Paper / literature → lab meeting | Prompt 1 to structure, add flow/relationship diagrams |
-| Coursework / classroom demo | Reference template + 4 style previews for a quick final |
-| Pitch / project report | Highlight conclusions and key-result pages, keep it tight |
-| Existing image deck needs text edits | Prompt 3 to restore pages into an editable PPTX |
-
-## Platform Support
-
-| Platform | Status | Notes |
-|----------|--------|-------|
-| **Codex** | Recommended | Full pipeline: read docs, GPT-Image 2.0 rendering (strongly recommended), python-pptx assembly/restore |
-| Claude Code | Works | Strong text/orchestration; image gen needs an external tool |
-| GPT / ChatGPT | Works | Native image capability; just paste the three prompts |
-| WorkBuddy | Works | Document reading + local toolchain per adaptation notes |
-| Kimi / Doubao / Tongyi | Partial | Confirm their image-generation and file-output capabilities |
-
-## Installation
-
-### One-liner (recommended)
-
-```bash
-npx skills add https://github.com/helloo1568/image-ppt --skill image-ppt
-```
-
-### Let the agent install it
-
-> Install the `image-ppt` skill for me:
->
-> 1. Make sure the local skills directory exists (`~/.claude/skills/` or `~/.codex/skills/`)
-> 2. Run `git clone https://github.com/helloo1568/image-ppt.git <skills-dir>/image-ppt`
-> 3. Verify `SKILL.md` and `references/prompts.md` exist
-> 4. Tell me when done; "make a PPT" will trigger it afterwards
-
-### Manual clone
-
-```bash
-git clone https://github.com/helloo1568/image-ppt.git ~/.claude/skills/image-ppt
-# or into the Codex skills directory
-git clone https://github.com/helloo1568/image-ppt.git ~/.codex/skills/image-ppt
-```
-
-### Trigger phrases
-
-- "Turn this book into a PPT"
-- "Make a class-presentation PPT from this PDF"
-- "Image PPT, generate a book-sharing deck"
-- "Make an editable PPTX from this material"
-- "image-ppt"
+- Extract presentation structure, ideas, examples, and conclusions from long documents
+- Generate four distinct style thumbnails before rendering the full deck
+- Render page images with a consistent selected visual system
+- Deterministically assemble ordered page images into a 16:9 PPTX
+- Optionally restore major text, simple shapes, and charts as editable elements
+- Persist requirements, page order, exact data, and per-page status for reliable resume
 
 ## Workflow
 
-The skill is a structured workflow the agent walks through:
-
-1. **Pre-flight questions** — confirm source material, reference style, use case, expected page count
-2. **Read the material** — extract author background, structure, key ideas, examples, quotes, takeaways
-3. **Design styles** — generate 4 separate style previews (GPT-Image 2.0 strongly recommended)
-4. **User picks** — show previews, wait for a style choice
-5. **Render pages** — cover → agenda → content → summary → thanks, in the chosen style
-6. **Merge PPTX** — embed image pages in 16:9 order, output a downloadable .pptx
-7. **Restore editability** — rebuild 1-3 pages per pass: complex visuals as images, main text as native text boxes
-8. **Compare & iterate** — render a preview against the original; keep iterating on obvious gaps
-9. **Delivery notes** — report what is editable text vs. image, and any font substitutions
-
-Details in [`SKILL.md`](./SKILL.md); the three core prompts live in [`references/prompts.md`](./references/prompts.md).
-
-## Repo Layout
-
+```text
+Source material
+  ↓
+Requirement confirmation
+  ↓
+Content outline and four style thumbnails
+  ↓ user selects a style
+Image-based page rendering and PPTX assembly
+  ↓ user explicitly requests editability
+Editable PPTX restoration (optional)
 ```
+
+The default workflow has two mandatory checkpoints:
+
+1. Confirm source material, reference style, use case, and expected page count
+2. Show four style thumbnails and wait for the user to select one
+
+Users may explicitly say “skip the thumbnails,” “choose the style for me,” or “only create the image-based deck.” A normal “make a PPT” request does not authorize skipping checkpoints.
+
+## What Is a Style Thumbnail?
+
+A style thumbnail is not a scaled-down single slide, and the four styles are not combined into one 2x2 comparison image.
+
+Each style thumbnail is one landscape image that resembles PowerPoint Slide Sorter view:
+
+- One image represents one consistent design direction
+- It contains 6–8 miniature 16:9 slides in a 3x2, 4x2, or similar grid
+- The slides normally cover the title, key metrics, content, chart, case, and summary/action page types
+- All four options use the same slide sequence and content
+- Only the color system, typography, layout system, graphic language, and media style change
+- The four images are shown separately and numbered 1–4 for selection
+
+This lets users judge both individual page design and cross-slide consistency before full rendering begins.
+
+## Installation
+
+Clone the repository into the skill directory used by your Agent product. The exact directory may differ by product.
+
+### Codex
+
+```bash
+git clone https://github.com/helloo1568/image-ppt.git ~/.codex/skills/image-ppt
+```
+
+### Claude Code
+
+```bash
+git clone https://github.com/helloo1568/image-ppt.git ~/.claude/skills/image-ppt
+```
+
+Verify that these files exist:
+
+```text
+image-ppt/SKILL.md
+image-ppt/references/prompts.md
+```
+
+Install dependencies when using the image assembly script:
+
+```bash
+python -m pip install -r requirements.txt
+```
+
+## Quick Start
+
+Provide the material, use case, and expected page count:
+
+```text
+Use image-ppt to turn this PDF into a 12-slide classroom presentation.
+I have no reference template. Generate four Slide Sorter-style thumbnails first and wait for my choice.
+```
+
+More examples:
+
+```text
+Turn this book into a 15-slide book-sharing deck with no reference style.
+Turn this weekly report into an image-based meeting deck; do not restore editability.
+Start from this existing image deck and only perform editable restoration.
+Skip the style thumbnails and choose an appropriate executive-report style for me.
+```
+
+## Outputs
+
+Depending on the authorized workflow stage, the skill can produce:
+
+- Four separate Slide Sorter-style thumbnail images
+- Ordered PNG/JPEG page images
+- An image-based `.pptx` with one full-page image per slide
+- A hybrid `.pptx` with major information restored as editable elements (optional)
+- A temporary `deck-spec.md` used for state and task recovery
+
+## Deterministic PPTX Assembly
+
+`scripts/build_image_ppt.py` naturally sorts PNG/JPEG files and assembles them into a PPTX:
+
+```bash
+python scripts/build_image_ppt.py ./slides ./output/deck.pptx
+```
+
+Use zero-padded filenames:
+
+```text
+01-cover.png
+02-dashboard.png
+03-analysis.png
+```
+
+Common options:
+
+```bash
+python scripts/build_image_ppt.py ./slides ./deck.pptx --fit cover
+python scripts/build_image_ppt.py ./slides ./deck.pptx --fit contain --background FFFFFF
+```
+
+The script creates 16:9 slides by default, reopens the saved file, and verifies the slide count. It requires Python, Pillow, and python-pptx.
+
+## Repository Layout
+
+```text
 image-ppt/
-├── SKILL.md              ← Main skill file: three-step workflow & adaptation notes
-├── README.md             ← Chinese README
-├── README.en.md          ← This file (English)
-├── manifest.yaml         ← Skill manifest (version, triggers, security notes)
-└── references/
-    └── prompts.md        ← Three copy-paste-ready core prompts
+├── SKILL.md
+├── README.md
+├── README.en.md
+├── LICENSE
+├── manifest.yaml
+├── requirements.txt
+├── .gitignore
+├── agents/
+│   └── openai.yaml
+├── references/
+│   ├── prompts.md
+│   └── deck-spec-template.md
+├── scripts/
+│   └── build_image_ppt.py
+├── social-preview.jpg
+└── social-preview.png
 ```
 
-## Core Prompts
+## Platforms and Tools
 
-- **Prompt 1** — Content extraction & style design: read the material, generate 4 style previews
-- **Prompt 2** — Image-based PPT generation: render pages in the chosen style and merge
-- **Prompt 3** — Editable PPTX restore: "visual fidelity + editable text" hybrid strategy
+The skill is not tied to one image model. It works best in an Agent environment that can:
 
-## FAQ
+- Read PDFs, Markdown, and long-form text
+- Call an image-generation model
+- Run local scripts and write files
+- Inspect generated images and PPTX files
 
-**Do I have to use Codex?**
-No. Codex is the recommended environment (document reading + GPT-Image 2.0 + python-pptx in one flow), but the three prompts work in any AI that can read documents and generate images.
+Codex can handle document reading, workflow orchestration, and PPTX assembly. Page images may be generated with GPT Image, Agnes, Midjourney, or another available model. When an external generator cannot use an image reference, convert the selected thumbnail into a stable text-based visual specification and reuse it on every page.
 
-**Do I have to use GPT-Image 2.0?**
-No. It offers the best text rendering and cross-page consistency; the prompts are model-agnostic, so any image generation model works.
+## Limitations
 
-**Is the generated PPT directly editable?**
-Step 2 produces an image-based PPT (one image per page, not editable). Step 3 restores pages into an editable PPTX with main text as native text boxes.
+- Image models may produce incorrect text, numbers, or inconsistent cross-slide styling; every page requires validation
+- Image-based slide contents are not directly editable
+- Editable restoration uses a hybrid “visual fidelity + editable information” strategy and cannot guarantee that every element becomes native PowerPoint content
+- Dense tables and calculation-sensitive charts are better produced programmatically
+- File capabilities, size limits, pricing, and content policies vary across Agent platforms and image providers
 
-**How many pages per restore pass?**
-1-3 pages at a time. Too many at once degrades the element-splitting quality.
+## Security and Privacy
 
-**Does this skill go online or upload data?**
-No. It is a pure prompt methodology — everything runs in your own AI environment.
+- The repository contains no API keys or account credentials
+- `build_image_ppt.py` reads local images and writes a local PPTX without network requests
+- External document or image services may upload prompts, source material, or page content; review the provider’s privacy policy
+- Never commit credential-bearing `config.json` files, environment files, or private source materials
 
-## Roadmap
+## Contributing
 
-- More real-world examples and preview images
-- Fixed layouts for structure diagrams / timelines / relationship maps
-- A ready-to-run python-pptx merge script
-- Listing on ClawHub and other skill marketplaces
+Issues and pull requests are welcome. Before submitting a change:
+
+1. Keep `SKILL.md` concise and place long prompts or templates under `references/`
+2. Do not add API keys, generated caches, or user source material
+3. Run `python -m py_compile scripts/build_image_ppt.py`
+4. Test requirement gating, four-thumbnail selection, and PPTX assembly with at least one realistic document
+5. Update both Chinese and English READMEs
+
+## Credits
+
+The early workflow was inspired by:
+
+- The Xiaoheihe tutorial “Youth Study AI Edition: Creating Beautiful Editable PPTs with GPT 5.6,” by 玩家22186848
+- Academic presentation workflows shared by Bilibili creator 一往无前河井
+
+Thanks to the original authors and community contributors for sharing their methods and experience.
 
 ## License
 
-[MIT](./LICENSE) © 2026 风清云影 (helloo1568)
+[MIT License](./LICENSE) © 2026 风清云影 (helloo1568)

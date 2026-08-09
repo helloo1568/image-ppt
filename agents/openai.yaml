@@ -1,0 +1,7 @@
+interface:
+  display_name: "图片 PPT"
+  short_description: "分阶段生成图片版或可编辑的精美 PPT"
+  default_prompt: "使用 $image-ppt 将我提供的材料分阶段制作成 PPT，先生成四套幻灯片浏览视图式缩略图让我选风格。"
+
+policy:
+  allow_implicit_invocation: true
