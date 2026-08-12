@@ -24,6 +24,26 @@
 - 可选地将主要文字、简单形状和图表还原为可编辑元素
 - 使用制作规格记录需求、页序、准确数据和逐页状态，支持中断后继续
 
+## 效果展示
+
+以下为使用本技能实际生成的 PPT 页面效果：
+
+**耕云 — AI 惠农产品创新赛道参赛 PPT**（新中式水墨风）
+
+<img src="./examples/gengyun-cover.jpg" width="560">
+
+**晚晴心语公众号运营周报**（同内容、两种风格对比）
+
+| B 套：深蓝金商务风 | C 套：新中式青绿金风 |
+|:---:|:---:|
+| <img src="./examples/wanqing-weekly-b-cover.jpg" width="380"> | <img src="./examples/wanqing-weekly-c-p1.jpg" width="380"> |
+
+**中老年情感公众号运营方案**（复古暖橙风）
+
+<img src="./examples/silver-emotion-p1.jpg" width="560">
+
+> 更多效果图见 `examples/` 目录。
+
 ## 工作流
 
 ```text
@@ -159,6 +179,14 @@ image-ppt/
 │   └── deck-spec-template.md
 ├── scripts/
 │   └── build_image_ppt.py
+├── examples/
+│   ├── gengyun-cover.jpg         ← 耕云参赛PPT（水墨风）
+│   ├── wanqing-weekly-b-cover.jpg ← 晚晴心语周报B套（商务风）
+│   ├── wanqing-weekly-c-p1.jpg    ← 晚晴心语周报C套（新中式风）
+│   ├── wanqing-weekly-c-p2.jpg
+│   ├── wanqing-weekly-c-p4.jpg
+│   ├── silver-emotion-p1.jpg      ← 中老年情感方案（复古风）
+│   └── silver-emotion-p2.jpg
 ├── social-preview.jpg
 └── social-preview.png
 ```

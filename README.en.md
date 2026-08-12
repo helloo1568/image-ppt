@@ -107,6 +107,26 @@ Start from this existing image deck and only perform editable restoration.
 Skip the style thumbnails and choose an appropriate executive-report style for me.
 ```
 
+## Examples
+
+Real PPT pages generated with this skill:
+
+**Gengyun — AI AgriTech Competition PPT** (Neo-Chinese ink-wash style)
+
+<img src="./examples/gengyun-cover.jpg" width="560">
+
+**Wanqing Weekly Report** (same content, two style variants)
+
+| Style B: Navy-gold corporate | Style C: Neo-Chinese green-gold |
+|:---:|:---:|
+| <img src="./examples/wanqing-weekly-b-cover.jpg" width="380"> | <img src="./examples/wanqing-weekly-c-p1.jpg" width="380"> |
+
+**Silver Emotion Account Proposal** (Vintage warm-orange style)
+
+<img src="./examples/silver-emotion-p1.jpg" width="560">
+
+> More examples in the `examples/` directory.
+
 ## Outputs
 
 Depending on the authorized workflow stage, the skill can produce:
@@ -160,6 +180,14 @@ image-ppt/
 │   └── deck-spec-template.md
 ├── scripts/
 │   └── build_image_ppt.py
+├── examples/
+│   ├── gengyun-cover.jpg         ← AgriTech PPT (ink-wash style)
+│   ├── wanqing-weekly-b-cover.jpg ← Weekly report Style B (corporate)
+│   ├── wanqing-weekly-c-p1.jpg    ← Weekly report Style C (Neo-Chinese)
+│   ├── wanqing-weekly-c-p2.jpg
+│   ├── wanqing-weekly-c-p4.jpg
+│   ├── silver-emotion-p1.jpg      ← Emotion account proposal (vintage)
+│   └── silver-emotion-p2.jpg
 ├── social-preview.jpg
 └── social-preview.png
 ```
