@@ -95,6 +95,18 @@ git clone https://github.com/helloo1568/image-ppt.git ~/.codex/skills/image-ppt
 git clone https://github.com/helloo1568/image-ppt.git ~/.claude/skills/image-ppt
 ```
 
+### 让 Agent 自动安装
+
+把这段话直接发给 Agent，它会自行完成克隆、验证和依赖安装：
+
+```text
+帮我安装 image-ppt 技能：
+1. 把 https://github.com/helloo1568/image-ppt.git 克隆到技能目录
+2. 确认 SKILL.md 和 references/prompts.md 存在
+3. 安装 requirements.txt 中的依赖
+4. 告诉我安装好了
+```
+
 安装后确认以下文件存在：
 
 ```text

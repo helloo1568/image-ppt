@@ -76,6 +76,18 @@ git clone https://github.com/helloo1568/image-ppt.git ~/.codex/skills/image-ppt
 git clone https://github.com/helloo1568/image-ppt.git ~/.claude/skills/image-ppt
 ```
 
+### Let the Agent install it
+
+Paste this prompt to your Agent and it will handle cloning, verification, and dependencies:
+
+```text
+Install the image-ppt skill for me:
+1. Clone https://github.com/helloo1568/image-ppt.git into the skill directory
+2. Verify SKILL.md and references/prompts.md exist
+3. Install dependencies from requirements.txt
+4. Tell me when done
+```
+
 Verify that these files exist:
 
 ```text
