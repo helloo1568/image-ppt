@@ -146,7 +146,18 @@ def test_max_width_downscales(tmp_path):
 def test_jpeg_quality_reencodes_and_shrinks(tmp_path):
     slides = tmp_path / "slides"
     slides.mkdir()
-    Image.linear_gradient("L").resize((3000, 1500)).convert("RGB").save(slides / "01.png")
+    # RGB noise: PNG stores it poorly, JPEG compresses it well, so the
+    # size assertion is robust across Pillow versions and platforms.
+    noise = Image.effect_noise((3000, 1500), 128)
+    rgb = Image.merge(
+        "RGB",
+        [
+            noise,
+            noise.transpose(Image.Transpose.ROTATE_180),
+            noise.transpose(Image.Transpose.FLIP_LEFT_RIGHT),
+        ],
+    )
+    rgb.save(slides / "01.png")
     plain = tmp_path / "plain.pptx"
     run_build(slides, plain)
     output = tmp_path / "deck.pptx"
