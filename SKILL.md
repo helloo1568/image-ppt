@@ -1,6 +1,6 @@
 ---
 name: image-ppt
-description: "将书籍、PDF、论文、报告或任意文字材料转化为图片版或可编辑 PowerPoint 的分阶段工作流。用于图片PPT、读书分享PPT、课堂/组会/项目汇报、比赛路演，以及用户要求用 AI 生图制作 PPT、先生成四套幻灯片浏览视图式风格缩略图、把图片版 PPT 还原为可编辑 PPTX 等任务。默认严格执行需求确认、四套风格缩略图、用户选型、完整生成和可选编辑化；只有用户明确授权时才可跳过交互阶段。别名：image-ppt、doc-to-editable-ppt。"
+description: 将书籍、PDF、论文、报告或任意文字材料转化为图片版或可编辑 PowerPoint 的分阶段工作流。用于图片PPT、读书分享PPT、课堂/组会/项目汇报、比赛路演，以及用户要求用 AI 生图制作 PPT、先生成四套幻灯片浏览视图式风格缩略图、把图片版 PPT 还原为可编辑 PPTX 等任务。默认严格执行需求确认、四套风格缩略图、用户选型、完整生成和可选编辑化；只有用户明确授权时才可跳过交互阶段。别名：image-ppt、doc-to-editable-ppt。
 ---
 
 # 图片 PPT
@@ -107,8 +107,8 @@ Codex 环境优先使用 `work/deck-spec.md`。每次恢复任务、上下文压
 3. 每次生成都包含锁定的视觉规范、该页准确内容和页码信息。
 4. 按 `01-title.png`、`02-title.png` 的形式编号文件，并实时更新逐页状态。
 5. 每页生成后检查画幅、文字、数据、裁切、溢出和风格一致性；验收一页再标记一页，发现问题只重做对应页面。
-6. 生图模型连续两次无法准确生成文字时，不得交付错误页面。改用“生成无字视觉背景 + 程序化叠加准确文字 + 栅格化”的混合方式，或减少页面文字后重做。
-7. 优先运行 `scripts/build_image_ppt.py <图片目录> <输出.pptx>`，按自然页序把图片嵌入 16:9 幻灯片。
+6. 生图模型连续两次无法准确生成文字时，不得交付错误页面。改用“生成无字视觉背景 + 程序化叠加准确文字 + 栅格化”的混合方式（文字叠加优先使用 `scripts/overlay_text.py`），或减少页面文字后重做。
+7. 优先运行 `scripts/build_image_ppt.py <图片目录> <输出.pptx>`，按自然页序把图片嵌入 16:9 幻灯片。页面图片很大时可加 `--max-width 1920 --jpeg-quality 85` 控制体积。
 8. 同时保留有序的逐页图片，便于检查或后续编辑化。
 9. 重新打开生成的 PPTX，核对页数、页序和画幅后再交付。除非用户明确要求可编辑化，否则在此停止。
 
@@ -138,7 +138,8 @@ Codex 环境优先使用 `work/deck-spec.md`。每次恢复任务、上下文压
 
 - `references/prompts.md`：三个阶段的可复用提示词。仅在进入对应状态后读取和使用。
 - `references/deck-spec-template.md`：跨轮次制作规格和逐页状态模板。
-- `scripts/build_image_ppt.py`：将自然排序的 PNG/JPEG 页面图片确定性合并为图片版 PPTX。
+- `scripts/build_image_ppt.py`：将自然排序的 PNG/JPEG 页面图片确定性合并为图片版 PPTX，支持 `--fit cover/contain/stretch`、`--max-width`、`--jpeg-quality`。
+- `scripts/overlay_text.py`：按 JSON 规格将准确文字确定性叠加到背景图上，用于生图模型文字不可靠时的兜底。示例规格见 `examples/overlay-spec.example.json`。
 
 ## 工具映射
 

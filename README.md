@@ -21,6 +21,7 @@
 - 生成四套不同视觉方向的风格缩略图供用户选型
 - 按选定风格逐页生成统一的 PPT 页面图片
 - 将页面图片确定性合并为 16:9 图片版 PPTX
+- 内置确定性文字叠加脚本，生图模型文字不可靠时程序化叠加准确文字
 - 可选地将主要文字、简单形状和图表还原为可编辑元素
 - 使用制作规格记录需求、页序、准确数据和逐页状态，支持中断后继续
 
@@ -169,9 +170,46 @@ python scripts/build_image_ppt.py ./slides ./output/deck.pptx
 ```bash
 python scripts/build_image_ppt.py ./slides ./deck.pptx --fit cover
 python scripts/build_image_ppt.py ./slides ./deck.pptx --fit contain --background FFFFFF
+python scripts/build_image_ppt.py ./slides ./deck.pptx --fit cover --max-width 1920 --jpeg-quality 85
 ```
 
-脚本默认创建 16:9 幻灯片，保存后会重新打开文件并核对页数。运行脚本需要 Python、Pillow 和 python-pptx。
+- `--fit cover`（默认）：图片铺满幻灯片，超出部分以居中裁剪收纳在画布内，不会溢出页面
+- `--fit contain`：完整显示图片并居中，`--background` 指定留白颜色
+- `--max-width 1920`：嵌入前把更宽的图片等比缩小，显著减小文件体积
+- `--jpeg-quality 85`：嵌入前重新编码为 JPEG，配合 `--max-width` 可把体积降低一个数量级；透明 PNG 会先合成到背景色
+
+脚本会自动应用 EXIF 方向信息，默认创建 16:9 幻灯片，保存后重新打开文件并核对页数。运行需要 Python 3.9+、Pillow 和 python-pptx。
+
+## 确定性文字叠加脚本
+
+当生图模型连续无法准确渲染文字时，`scripts/overlay_text.py` 提供确定性兜底：先让模型生成无字视觉背景，再用脚本程序化叠加准确文字。
+
+```bash
+python scripts/overlay_text.py overlay-spec.json [--font 字体路径或名称]
+```
+
+规格文件描述每页的背景与文字框，坐标为页面宽高的百分比，与分辨率无关：
+
+```json
+{
+  "pages": [
+    {
+      "background": "bg/01.png",
+      "output": "slides/01.png",
+      "texts": [
+        {
+          "text": "核心结论：增长 32%",
+          "x": 0.08, "y": 0.10, "w": 0.84, "h": 0.16,
+          "font_size": 72, "color": "#10233A",
+          "align": "center", "valign": "center", "bold": true
+        }
+      ]
+    }
+  ]
+}
+```
+
+支持多行（`\n`）、自动换行（中文逐字换行、英文按空格换行）、左/中/右对齐、上/中/下垂直对齐、行距与加粗。`font_size` 为像素字号（以 1920×1080 页面为基准）。背景也可以用 `"background": "#FFFFFF"` 加 `width`/`height` 直接生成纯色页。完整示例见 `examples/overlay-spec.example.json`。
 
 ## 项目结构
 
@@ -180,25 +218,36 @@ image-ppt/
 ├── SKILL.md
 ├── README.md
 ├── README.en.md
+├── CHANGELOG.md
 ├── LICENSE
 ├── manifest.yaml
 ├── requirements.txt
+├── requirements-dev.txt
 ├── .gitignore
+├── .github/
+│   └── workflows/
+│       └── ci.yml
 ├── agents/
 │   └── openai.yaml
 ├── references/
 │   ├── prompts.md
 │   └── deck-spec-template.md
 ├── scripts/
-│   └── build_image_ppt.py
+│   ├── build_image_ppt.py
+│   └── overlay_text.py
+├── tests/
+│   ├── conftest.py
+│   ├── test_build_image_ppt.py
+│   └── test_overlay_text.py
 ├── examples/
-│   ├── gengyun-cover.jpg         ← 耕云参赛PPT（水墨风）
+│   ├── gengyun-cover.jpg          ← 耕云参赛PPT（水墨风）
 │   ├── wanqing-weekly-b-cover.jpg ← 晚晴心语周报B套（商务风）
 │   ├── wanqing-weekly-c-p1.jpg    ← 晚晴心语周报C套（新中式风）
 │   ├── wanqing-weekly-c-p2.jpg
 │   ├── wanqing-weekly-c-p4.jpg
 │   ├── silver-emotion-p1.jpg      ← 中老年情感方案（复古风）
-│   └── silver-emotion-p2.jpg
+│   ├── silver-emotion-p2.jpg
+│   └── overlay-spec.example.json  ← 文字叠加示例规格
 ├── social-preview.jpg
 └── social-preview.png
 ```
@@ -247,6 +296,10 @@ Codex 可以负责材料读取、流程编排和 PPTX 拼装。图像页面可�
 - B 站 UP 主“一往无前河井”的学术 PPT 制作思路
 
 感谢原作者和社区贡献者分享方法与实践经验。
+
+## 版本历史
+
+见 [CHANGELOG.md](./CHANGELOG.md)。
 
 ## 许可证
 

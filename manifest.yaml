@@ -2,11 +2,12 @@
 
 name: image-ppt
 display_name: image-ppt
-version: 1.4.0
+version: 1.5.0
 description: >-
   将书籍、PDF 或任意文字材料分阶段转化为图片版或可编辑 PPT 的工作流技能（图片PPT）。
   默认流程：需求确认 → 四套幻灯片浏览视图式风格缩略图 → 用户选型 → 图片版PPT生成 → 可选的可编辑PPTX还原。
   仅在用户明确授权时跳过确认或预览阶段。
+  附带确定性图片合并与文字叠加脚本，生图文字不可靠时可程序化叠加准确文字。
   强烈推荐运行环境：Codex + GPT-Image 2.0（Codex 编排流程、GPT-Image 2.0 绘制页面）。
   平台无关，也可在任何具备文档读取、图像生成与文件输出能力的 AI 助手中使用。
   A platform-agnostic workflow to turn books/PDFs/text into beautiful, editable PPT decks.
@@ -29,7 +30,7 @@ platforms:
   - Codex (strongly recommended, with GPT-Image 2.0)
   - ChatGPT/GPT, Claude, Kimi, Doubao, WorkBuddy, Tongyi, etc.
 security_notes: >-
-  附带本地图片合并 PPTX 脚本，仅读取指定目录中的 PNG/JPEG 并写入指定 PPTX，
+  附带本地图片合并 PPTX 与文字叠加脚本，仅读写指定的本地图片、JSON 与 PPTX 文件，
   不包含网络请求、密钥处理、数据上传或越权系统操作。安全等级 P2（安全）。
 files:
   - SKILL.md
@@ -37,6 +38,8 @@ files:
   - README.en.md
   - requirements.txt
   - .gitignore
+  - agents/openai.yaml
   - references/prompts.md
   - references/deck-spec-template.md
   - scripts/build_image_ppt.py
+  - scripts/overlay_text.py

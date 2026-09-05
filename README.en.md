@@ -170,9 +170,46 @@ Common options:
 ```bash
 python scripts/build_image_ppt.py ./slides ./deck.pptx --fit cover
 python scripts/build_image_ppt.py ./slides ./deck.pptx --fit contain --background FFFFFF
+python scripts/build_image_ppt.py ./slides ./deck.pptx --fit cover --max-width 1920 --jpeg-quality 85
 ```
 
-The script creates 16:9 slides by default, reopens the saved file, and verifies the slide count. It requires Python, Pillow, and python-pptx.
+- `--fit cover` (default): the picture fills the slide; overflow is center-cropped inside the canvas and never spills past the page
+- `--fit contain`: show the whole picture centered, with `--background` controlling the letterbox color
+- `--max-width 1920`: proportionally downscale wider images before embedding, which greatly reduces file size
+- `--jpeg-quality 85`: re-encode images as JPEG before embedding; combined with `--max-width` this typically cuts deck size by an order of magnitude. Transparent PNGs are flattened onto the background color first
+
+The script applies EXIF orientation automatically, creates 16:9 slides by default, reopens the saved file, and verifies the slide count. It requires Python 3.9+, Pillow, and python-pptx.
+
+## Deterministic Text Overlay
+
+When image models repeatedly fail to render text accurately, `scripts/overlay_text.py` provides a deterministic fallback: generate text-free visual backgrounds first, then overlay accurate text programmatically.
+
+```bash
+python scripts/overlay_text.py overlay-spec.json [--font FONT_PATH_OR_NAME]
+```
+
+The spec describes each page's background and text boxes; coordinates are fractions of the page size, so they are resolution-independent:
+
+```json
+{
+  "pages": [
+    {
+      "background": "bg/01.png",
+      "output": "slides/01.png",
+      "texts": [
+        {
+          "text": "Key takeaway: 32% growth",
+          "x": 0.08, "y": 0.10, "w": 0.84, "h": 0.16,
+          "font_size": 72, "color": "#10233A",
+          "align": "center", "valign": "center", "bold": true
+        }
+      ]
+    }
+  ]
+}
+```
+
+Supports multi-line text (`\n`), automatic wrapping (character-based for CJK, space-based for Latin), left/center/right alignment, top/middle/bottom vertical alignment, line spacing, and bold. `font_size` is in pixels (tune for a 1920x1080 page). A page can also use a solid `"background": "#FFFFFF"` with explicit `width`/`height`. See `examples/overlay-spec.example.json` for a complete example.
 
 ## Repository Layout
 
@@ -248,6 +285,10 @@ The early workflow was inspired by:
 - Academic presentation workflows shared by Bilibili creator 一往无前河井
 
 Thanks to the original authors and community contributors for sharing their methods and experience.
+
+## Changelog
+
+See [CHANGELOG.md](./CHANGELOG.md).
 
 ## License
 
