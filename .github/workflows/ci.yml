@@ -7,10 +7,11 @@ on:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
+        os: [ubuntu-latest, windows-latest]
         python-version: ["3.10", "3.12", "3.13"]
     steps:
       - uses: actions/checkout@v4
@@ -23,3 +24,7 @@ jobs:
         run: ruff check .
       - name: Test
         run: python -m pytest tests/ -v
+      - name: Build editable example
+        run: python scripts/build_editable_ppt.py examples/editable-scene.example.json output/editable-demo.pptx
+      - name: Audit editable example
+        run: python scripts/audit_editability.py output/editable-demo.pptx --scene examples/editable-scene.example.json --strict

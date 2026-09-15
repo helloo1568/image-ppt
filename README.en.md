@@ -1,295 +1,120 @@
-<p align="center">
-  <a href="./README.md">简体中文</a> | <b>English</b>
-</p>
+# image-ppt 2.0
 
-# image-ppt
+**AI-generated visuals with editable PowerPoint text, shapes, tables, charts, and separate image assets.**
 
-[![GitHub stars](https://img.shields.io/github/stars/helloo1568/image-ppt?style=flat-square)](https://github.com/helloo1568/image-ppt)
-[![License](https://img.shields.io/github/license/helloo1568/image-ppt?style=flat-square)](./LICENSE)
-![Agent Skill](https://img.shields.io/badge/Agent-Skill-111111?style=flat-square)
-![PowerPoint](https://img.shields.io/badge/Output-PPTX-B7472A?style=flat-square)
+[中文](README.md) · [Skill](SKILL.md) · [Changelog](CHANGELOG.md) · [Research](references/research.md)
 
-An Agent Skill that turns books, PDFs, papers, reports, and Markdown into image-based or editable PowerPoint presentations.
+An open-source skill for agent environments such as Codex. The host agent reads documents, interprets images and generates visual assets. Local Python scripts compile and inspect the result.
 
-The workflow is staged: understand the material, present four style thumbnails for selection, render the complete image-based deck, and restore editability only when the user explicitly requests it.
+## What's new
 
-![image-ppt preview](./social-preview.png)
+- Editable-first authoring: plan native information layers before generating visual assets.
+- Image reconstruction: preserve visible content and layout while separating semantic elements.
+- A versioned JSON scene with stable IDs, geometry, stacking, groups and provenance.
+- Native text, shapes, arrows, nested groups, tables and charts with embedded workbooks.
+- Deterministic asset extraction from supplied bounding boxes and optional masks.
+- An editability audit that checks exported objects against the scene.
+- GPT Image 2.5 guidance for Flare exploration and Sunburst reference editing.
+- Existing image-only export and raster text overlay commands remain available.
 
-## Features
+See the [official image guide](https://developers.openai.com/api/docs/guides/image-generation).
+The host may not expose an image model selector. These recommendations are not a measured model benchmark.
 
-- Extract presentation structure, ideas, examples, and conclusions from long documents
-- Generate four distinct style thumbnails before rendering the full deck
-- Render page images with a consistent selected visual system
-- Deterministically assemble ordered page images into a 16:9 PPTX
-- Optionally restore major text, simple shapes, and charts as editable elements
-- Persist requirements, page order, exact data, and per-page status for reliable resume
+## Editability contract
 
-## Workflow
+| Content | Export | Editing |
+|---|---|---|
+| Headings, body copy, labels | Native text boxes | Text, font, position, color |
+| Geometry and diagrams | Native shapes, lines, groups | Geometry and style; ungroup to edit children |
+| Tables | Native tables | Cells and formatting |
+| Bar, column, line, pie, doughnut | Native charts with workbooks | Data and chart formatting |
+| Photos and complex illustrations | Separate image objects | Move, crop, resize, replace |
 
-```text
-Source material
-  ↓
-Requirement confirmation
-  ↓
-Content outline and four style thumbnails
-  ↓ user selects a style
-Image-based page rendering and PPTX assembly
-  ↓ user explicitly requests editability
-Editable PPTX restoration (optional)
-```
+Raster artwork does not become editable vector paths. Missing or occluded details cannot be recovered with guaranteed accuracy.
+**The local scripts do not perform OCR, automatic segmentation or image understanding.** Those steps belong to the host agent and its available vision/image tools.
 
-The default workflow has two mandatory checkpoints:
+## Quick start
 
-1. Confirm source material, reference style, use case, and expected page count
-2. Show four style thumbnails and wait for the user to select one
+Python 3.10+:
 
-Users may explicitly say “skip the thumbnails,” “choose the style for me,” or “only create the image-based deck.” A normal “make a PPT” request does not authorize skipping checkpoints.
-
-## What Is a Style Thumbnail?
-
-A style thumbnail is not a scaled-down single slide, and the four styles are not combined into one 2x2 comparison image.
-
-Each style thumbnail is one landscape image that resembles PowerPoint Slide Sorter view:
-
-- One image represents one consistent design direction
-- It contains 6–8 miniature 16:9 slides in a 3x2, 4x2, or similar grid
-- The slides normally cover the title, key metrics, content, chart, case, and summary/action page types
-- All four options use the same slide sequence and content
-- Only the color system, typography, layout system, graphic language, and media style change
-- The four images are shown separately and numbered 1–4 for selection
-
-This lets users judge both individual page design and cross-slide consistency before full rendering begins.
-
-## Installation
-
-Clone the repository into the skill directory used by your Agent product. The exact directory may differ by product.
-
-### Codex
-
-```bash
-git clone https://github.com/helloo1568/image-ppt.git ~/.codex/skills/image-ppt
-```
-
-### Claude Code
-
-```bash
-git clone https://github.com/helloo1568/image-ppt.git ~/.claude/skills/image-ppt
-```
-
-### Let the Agent install it
-
-Paste this prompt to your Agent and it will handle cloning, verification, and dependencies:
-
-```text
-Install the image-ppt skill for me:
-1. Clone https://github.com/helloo1568/image-ppt.git into the skill directory
-2. Verify SKILL.md and references/prompts.md exist
-3. Install dependencies from requirements.txt
-4. Tell me when done
-```
-
-Verify that these files exist:
-
-```text
-image-ppt/SKILL.md
-image-ppt/references/prompts.md
-```
-
-Install dependencies when using the image assembly script:
-
-```bash
+```sh
+git clone https://github.com/helloo1568/image-ppt.git
+cd image-ppt
 python -m pip install -r requirements.txt
+python scripts/build_editable_ppt.py examples/editable-scene.example.json output/editable-demo.pptx
+python scripts/audit_editability.py output/editable-demo.pptx --scene examples/editable-scene.example.json --output output/editability.json --strict
 ```
 
-## Quick Start
+[Download editable demo](examples/editable-demo.pptx) · [Scene source](examples/editable-scene.example.json)
 
-Provide the material, use case, and expected page count:
+The three-slide demo tests compilation of an authored scene, not automatic reconstruction accuracy. All chart values are illustrative.
+
+![Native data slide](examples/editable-preview-02.png)
+
+Install the complete repository as image-ppt in your host's skill directory, or provide SKILL.md to an agent supporting this format.
+Keep task materials and outputs in a separate working directory.
+
+## Example requests
 
 ```text
-Use image-ppt to turn this PDF into a 12-slide classroom presentation.
-I have no reference template. Generate four Slide Sorter-style thumbnails first and wait for my choice.
+Use $image-ppt to turn this report into a 10-slide editable deck.
+Use native text, diagrams, tables, and charts with verifiable data.
+Generate independent visual assets with GPT Image 2.5 where available.
+Choose an appropriate style, validate a representative slide, then finish the deck.
 ```
-
-More examples:
 
 ```text
-Turn this book into a 15-slide book-sharing deck with no reference style.
-Turn this weekly report into an image-based meeting deck; do not restore editability.
-Start from this existing image deck and only perform editable restoration.
-Skip the style thumbnails and choose an appropriate executive-report style for me.
+Use $image-ppt to reconstruct these slide images into editable PPTX.
+Preserve wording, layout and page order. Separate every element I need to edit.
+Remove duplicated content from the background and include the scene and assets.
 ```
 
-## Examples
+## Workflows
 
-Real PPT pages generated with this skill:
+- **Editable-first:** content → layout → separate visual assets → scene → native PPTX → review.
+- **Image-first:** content → slide images → image-only PPTX.
+- **Reconstruction:** normalized source pages → agent recognition → layer preparation → scene → native PPTX → comparison.
 
-**Gengyun — AI AgriTech Competition PPT** (Neo-Chinese ink-wash style)
+Read available material before asking unnecessary questions. Infer ordinary style/page-count preferences when reasonable.
+If the user requests four design options, generate four comparable contact sheets and wait for selection.
 
-<img src="./examples/gengyun-cover.jpg" width="560">
+## Commands and contract
 
-**Wanqing Weekly Report** (same content, two style variants)
+- build_editable_ppt.py: validate a scene and compile native objects.
+- audit_editability.py: inspect PPTX and optionally compare it with a scene; --strict fails on warnings.
+- extract_assets.py: crop known regions, apply supplied masks, record coordinates and hashes.
+- build_image_ppt.py: existing image-only assembler with natural sorting and fit controls.
+- overlay_text.py: existing deterministic raster text overlay.
 
-| Style B: Navy-gold corporate | Style C: Neo-Chinese green-gold |
-|:---:|:---:|
-| <img src="./examples/wanqing-weekly-b-cover.jpg" width="380"> | <img src="./examples/wanqing-weekly-c-p1.jpg" width="380"> |
+[Scene format](references/scene-format.md) · [Layer reconstruction](references/reconstruction.md) · [Models](references/models.md)
 
-**Silver Emotion Account Proposal** (Vintage warm-orange style)
+Scene coordinates are canvas pixels; fonts and strokes are points. Asset paths are relative to and confined to the scene directory.
+Group children use full-slide coordinates. Array order determines stacking.
+This version does not implement a generic SVG importer, merged table cells, automatic connector attachment, or inline rich text.
 
-<img src="./examples/silver-emotion-p1.jpg" width="560">
+## Validation
 
-> More examples in the `examples/` directory.
-
-## Outputs
-
-Depending on the authorized workflow stage, the skill can produce:
-
-- Four separate Slide Sorter-style thumbnail images
-- Ordered PNG/JPEG page images
-- An image-based `.pptx` with one full-page image per slide
-- A hybrid `.pptx` with major information restored as editable elements (optional)
-- A temporary `deck-spec.md` used for state and task recovery
-
-## Deterministic PPTX Assembly
-
-`scripts/build_image_ppt.py` naturally sorts PNG/JPEG files and assembles them into a PPTX:
-
-```bash
-python scripts/build_image_ppt.py ./slides ./output/deck.pptx
+```sh
+python -m pip install -r requirements-dev.txt
+python -m ruff check .
+python -m pytest tests/ -q
 ```
 
-Use zero-padded filenames:
-
-```text
-01-cover.png
-02-dashboard.png
-03-analysis.png
-```
-
-Common options:
-
-```bash
-python scripts/build_image_ppt.py ./slides ./deck.pptx --fit cover
-python scripts/build_image_ppt.py ./slides ./deck.pptx --fit contain --background FFFFFF
-python scripts/build_image_ppt.py ./slides ./deck.pptx --fit cover --max-width 1920 --jpeg-quality 85
-```
-
-- `--fit cover` (default): the picture fills the slide; overflow is center-cropped inside the canvas and never spills past the page
-- `--fit contain`: show the whole picture centered, with `--background` controlling the letterbox color
-- `--max-width 1920`: proportionally downscale wider images before embedding, which greatly reduces file size
-- `--jpeg-quality 85`: re-encode images as JPEG before embedding; combined with `--max-width` this typically cuts deck size by an order of magnitude. Transparent PNGs are flattened onto the background color first
-
-The script applies EXIF orientation automatically, creates 16:9 slides by default, reopens the saved file, and verifies the slide count. It requires Python 3.9+, Pillow, and python-pptx.
-
-## Deterministic Text Overlay
-
-When image models repeatedly fail to render text accurately, `scripts/overlay_text.py` provides a deterministic fallback: generate text-free visual backgrounds first, then overlay accurate text programmatically.
-
-```bash
-python scripts/overlay_text.py overlay-spec.json [--font FONT_PATH_OR_NAME]
-```
-
-The spec describes each page's background and text boxes; coordinates are fractions of the page size, so they are resolution-independent:
-
-```json
-{
-  "pages": [
-    {
-      "background": "bg/01.png",
-      "output": "slides/01.png",
-      "texts": [
-        {
-          "text": "Key takeaway: 32% growth",
-          "x": 0.08, "y": 0.10, "w": 0.84, "h": 0.16,
-          "font_size": 72, "color": "#10233A",
-          "align": "center", "valign": "center", "bold": true
-        }
-      ]
-    }
-  ]
-}
-```
-
-Supports multi-line text (`\n`), automatic wrapping (character-based for CJK, space-based for Latin), left/center/right alignment, top/middle/bottom vertical alignment, line spacing, and bold. `font_size` is in pixels (tune for a 1920x1080 page). A page can also use a solid `"background": "#FFFFFF"` with explicit `width`/`height`. See `examples/overlay-spec.example.json` for a complete example.
-
-## Repository Layout
-
-```text
-image-ppt/
-├── SKILL.md
-├── README.md
-├── README.en.md
-├── LICENSE
-├── manifest.yaml
-├── requirements.txt
-├── .gitignore
-├── agents/
-│   └── openai.yaml
-├── references/
-│   ├── prompts.md
-│   └── deck-spec-template.md
-├── scripts/
-│   └── build_image_ppt.py
-├── examples/
-│   ├── gengyun-cover.jpg         ← AgriTech PPT (ink-wash style)
-│   ├── wanqing-weekly-b-cover.jpg ← Weekly report Style B (corporate)
-│   ├── wanqing-weekly-c-p1.jpg    ← Weekly report Style C (Neo-Chinese)
-│   ├── wanqing-weekly-c-p2.jpg
-│   ├── wanqing-weekly-c-p4.jpg
-│   ├── silver-emotion-p1.jpg      ← Emotion account proposal (vintage)
-│   └── silver-emotion-p2.jpg
-├── social-preview.jpg
-└── social-preview.png
-```
-
-## Platforms and Tools
-
-The skill is not tied to one image model. It works best in an Agent environment that can:
-
-- Read PDFs, Markdown, and long-form text
-- Call an image-generation model
-- Run local scripts and write files
-- Inspect generated images and PPTX files
-
-Codex can handle document reading, workflow orchestration, and PPTX assembly. Page images may be generated with GPT Image, Agnes, Midjourney, or another available model. When an external generator cannot use an image reference, convert the selected thumbnail into a stable text-based visual specification and reuse it on every page.
-
-## Limitations
-
-- Image models may produce incorrect text, numbers, or inconsistent cross-slide styling; every page requires validation
-- Image-based slide contents are not directly editable
-- Editable restoration uses a hybrid “visual fidelity + editable information” strategy and cannot guarantee that every element becomes native PowerPoint content
-- Dense tables and calculation-sensitive charts are better produced programmatically
-- File capabilities, size limits, pricing, and content policies vary across Agent platforms and image providers
-
-## Security and Privacy
-
-- The repository contains no API keys or account credentials
-- `build_image_ppt.py` reads local images and writes a local PPTX without network requests
-- External document or image services may upload prompts, source material, or page content; review the provider’s privacy policy
-- Never commit credential-bearing `config.json` files, environment files, or private source materials
-
-## Contributing
-
-Issues and pull requests are welcome. Before submitting a change:
-
-1. Keep `SKILL.md` concise and place long prompts or templates under `references/`
-2. Do not add API keys, generated caches, or user source material
-3. Run `python -m py_compile scripts/build_image_ppt.py`
-4. Test requirement gating, four-thumbnail selection, and PPTX assembly with at least one realistic document
-5. Update both Chinese and English READMEs
+CI covers Windows/Linux and Python 3.10/3.12/3.13.
+Audit checks declared objects, not source-image completeness or visual similarity.
+Render and inspect every slide before delivery. The checked-in previews were exported with PowerPoint; automated tests do not require it.
 
 ## Credits
 
-The early workflow was inspired by:
+Research includes [PPT Master by Hugo He](https://github.com/hugohe3/ppt-master),
+[banana-slides](https://github.com/Anionex/banana-slides) and [PPTAgent](https://github.com/icip-cas/PPTAgent).
+The scene compiler is independently implemented; their code and dependencies are not bundled.
+See [research notes](references/research.md) for specific references and tradeoffs.
 
-- The Xiaoheihe tutorial “Youth Study AI Edition: Creating Beautiful Editable PPTs with GPT 5.6,” by 玩家22186848
-- Academic presentation workflows shared by Bilibili creator 一往无前河井
+Early workflow inspiration: Xiaoheihe author 玩家22186848 and Bilibili creator 一往无前河井.
+Historical visual samples remain under examples/ and do not demonstrate element-level reconstruction.
 
-Thanks to the original authors and community contributors for sharing their methods and experience.
+Local scripts perform no network requests and need no API key. Host AI services may receive supplied content.
+Exclude private source documents and credentials from shared outputs.
 
-## Changelog
-
-See [CHANGELOG.md](./CHANGELOG.md).
-
-## License
-
-[MIT License](./LICENSE) © 2026 风清云影 (helloo1568)
+[MIT](LICENSE) © 2026 风清云影（helloo1568）
