@@ -6,6 +6,30 @@
 
 [English](README.en.md) · [技能入口](SKILL.md) · [更新记录](CHANGELOG.md) · [方法调研](references/research.md)
 
+## 作品展示
+
+以下页面来自按本项目工作流制作的实际案例。图片直接保存在仓库中，便于在 GitHub 首页预览视觉完成度。
+
+### 雪线守望 · 高原冰川智能巡检与生态预警系统
+
+| 封面 | 项目痛点 |
+|---|---|
+| ![雪线守望封面](showcase/snowline-watch-01.png) | ![雪线守望项目痛点](showcase/snowline-watch-02.png) |
+
+| 解决方案 | 技术对比 |
+|---|---|
+| ![雪线守望解决方案](showcase/snowline-watch-03.png) | ![雪线守望技术对比](showcase/snowline-watch-04.png) |
+
+### 釉光新生 · 红金国赛风格
+
+| 项目痛点 | 解决方案 |
+|---|---|
+| ![釉光新生项目痛点](showcase/red-gold-competition-02.png) | ![釉光新生解决方案](showcase/red-gold-competition-03.png) |
+
+![釉光新生工艺技术](showcase/red-gold-competition-04.png)
+
+> 隐私说明：该案例第 1 页含有私人信息，未收入仓库，也未用于任何 GitHub 预览图。
+
 image-ppt 是运行在 Codex 等 Agent 环境中的开源技能。宿主 Agent 负责读取材料、视觉识别和调用自身生图能力；本地脚本只负责确定性合并、Scene v1 编译、素材裁剪和结果审查，不内置生图模型或自动调用收费 API。
 
 GPT Image 2.5 的官方定位中，Sunburst 面向高精度生成与编辑，Flare 面向快速、高质量的日常生成。这里的“最佳推荐”是本项目针对该工作流的组合建议，不是跨平台基准结论；如果 Codex 或其他 Agent 不暴露具体型号，应使用它实际提供的生图能力并如实记录后端。参见 [OpenAI 图像模型](https://developers.openai.com/api/docs/models) 和 [GPT Image 2.5 Flare](https://developers.openai.com/api/docs/models/gpt-image-2.5-flare)。

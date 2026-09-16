@@ -6,6 +6,30 @@
 
 [中文](README.md) · [Skill](SKILL.md) · [Changelog](CHANGELOG.md) · [Research](references/research.md)
 
+## Portfolio
+
+These slides come from projects produced with this workflow. The images live in the repository so the visual output is immediately visible on the GitHub project page.
+
+### Snowline Watch · Intelligent glacier inspection and ecological early warning
+
+| Cover | Problem |
+|---|---|
+| ![Snowline Watch cover](showcase/snowline-watch-01.png) | ![Snowline Watch problem](showcase/snowline-watch-02.png) |
+
+| Solution | Technology comparison |
+|---|---|
+| ![Snowline Watch solution](showcase/snowline-watch-03.png) | ![Snowline Watch technology comparison](showcase/snowline-watch-04.png) |
+
+### Glaze Reborn · Red-and-gold competition style
+
+| Problem | Solution |
+|---|---|
+| ![Glaze Reborn problem](showcase/red-gold-competition-02.png) | ![Glaze Reborn solution](showcase/red-gold-competition-03.png) |
+
+![Glaze Reborn process technology](showcase/red-gold-competition-04.png)
+
+> Privacy note: slide 1 of this case contains private information. It is not included in the repository and is not used in any GitHub preview.
+
 An open-source skill for agent environments such as Codex. The host agent reads documents, interprets images, and invokes its own image generation capability. Local Python scripts only assemble image decks, compile Scene v1, crop known assets, and inspect outputs; they do not bundle an image model or automatically call a paid API.
 
 OpenAI describes Sunburst as its most capable GPT Image 2.5 model for generation and editing, while Flare is optimized for fast, high-quality everyday generation. “Recommended” is this project's workflow recommendation, not a cross-platform benchmark. If an agent does not expose model selection, use the image capability it actually provides and do not claim a specific backend. See the [OpenAI model catalog](https://developers.openai.com/api/docs/models) and [GPT Image 2.5 Flare](https://developers.openai.com/api/docs/models/gpt-image-2.5-flare).

@@ -2,6 +2,13 @@
 
 本项目的所有显著变更都记录在此文件中。格式参考 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)，版本遵循语义化版本。
 
+## [Unreleased]
+
+### Added
+
+- 在中英文 README 首屏增加两套真实作品展示，并将安全页面预览图纳入仓库。
+- 红金案例仅公开第 2–4 页；含私人信息的第 1 页明确排除在版本控制和 GitHub 预览之外。
+
 ## [2.1.0] - 2026-09-16
 
 ### Changed
