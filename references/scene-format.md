@@ -7,6 +7,8 @@
 scene.json 保存可编辑内容和版面；assets/ 保存视觉素材。重新生成 PPTX 时不再调用生图。
 原始图片只供核对，用 slide.source_image 记录；编译器不会自动把它放进幻灯片。
 
+Step 2 的 `page-spec.json` 是上游语义契约，保存已确认文字、数据、来源和稳定 ID；Scene 必须沿用这些 ID 和内容，再补齐精确坐标、原生样式与实际素材路径。Page Spec 与页面图片冲突时先记录和确认，不得以图片 OCR 静默覆盖 Page Spec。
+
 ```json
 {
   "version": "1.0",

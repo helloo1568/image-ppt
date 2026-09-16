@@ -10,10 +10,12 @@ image-ppt 是运行在 Codex 等 Agent 环境中的开源技能。宿主 Agent �
 
 GPT Image 2.5 的官方定位中，Sunburst 面向高精度生成与编辑，Flare 面向快速、高质量的日常生成。这里的“最佳推荐”是本项目针对该工作流的组合建议，不是跨平台基准结论；如果 Codex 或其他 Agent 不暴露具体型号，应使用它实际提供的生图能力并如实记录后端。参见 [OpenAI 图像模型](https://developers.openai.com/api/docs/models) 和 [GPT Image 2.5 Flare](https://developers.openai.com/api/docs/models/gpt-image-2.5-flare)。
 
-## 2.0.1 的流程契约
+## 2.1.0 的流程契约
 
 - **唯一主流程**：新材料必须先形成内容方案和图片版，再按明确授权进入可编辑还原；不另起“编辑优先”捷径。
-- **硬状态机**：需求未齐不读正文；四套幻灯片浏览视图未选定不生成全稿；未授权不执行可编辑化。
+- **双确认门禁**：先单独确认内容大纲，再进入四套幻灯片浏览视图选型；内容未确认不得消耗生图资源。
+- **确定的风格豁免**：只有明确要求严格沿用指定模板、跳过预览或授权代选时按规则快进，不能由 Agent 自行判断。
+- **Page Spec 中间层**：图片生成时同步保存准确文字、数据、来源、稳定 ID 与结构意图，避免可编辑还原时重新 OCR 和猜测。
 - **显式快进**：只有“跳过预览”“你代选”“缺失项由你决定”等明确指令可跳过对应门禁，普通的“帮我做 PPT”不算授权。
 - **图片重建**：识别文字、几何、图片及遮挡，重建为有稳定 ID 的元素。
 - **原生导出**：文本、形状、箭头、嵌套组合、表格和五类图表；图表带内嵌数据工作簿。
@@ -47,6 +49,7 @@ Python 3.10+。克隆或下载项目：
 git clone https://github.com/helloo1568/image-ppt.git
 cd image-ppt
 python -m pip install -r requirements.txt
+python scripts/validate_page_spec.py examples/page-spec.example.json --strict
 ```
 
 把这个项目目录作为 image-ppt 技能交给支持 SKILL.md 的 Agent，或把完整目录安装到该宿主的技能目录。
@@ -80,7 +83,7 @@ python scripts/audit_editability.py output/editable-demo.pptx --scene examples/e
 
 ```text
 使用 $image-ppt 把这份报告做成 10 页可编辑 PPT。
-用于项目路演，没有指定参考风格。先按默认流程给我四套幻灯片浏览视图，等我选定后生成图片版，再继续还原可编辑版。
+用于项目路演，没有指定参考风格。先展示内容大纲等我确认，再给我四套幻灯片浏览视图；选定后生成图片版和 page-spec.json，再继续还原可编辑版。
 ```
 
 ```text
@@ -98,11 +101,13 @@ python scripts/audit_editability.py output/editable-demo.pptx --scene examples/e
 ```text
 确认源材料、参考风格、场景/受众、页数、交付范围
   ↓
-Step 1  内容提炼 + 四套幻灯片浏览视图
-  ↓ 等待用户选择（或已有明确代选/跳过授权）
-Step 2  逐页生成并验收图片 → 图片版 PPTX
+Step 1A 内容提炼 → 等待用户确认大纲
+  ↓
+Step 1B 四套幻灯片浏览视图 → 等待用户选择
+  ↓（严格沿用参考/跳过预览/代选按明确授权处理）
+Step 2  page-spec.json → 逐页生成并验收图片 → 图片版 PPTX
   ↓ 仅在用户明确要求可编辑版时
-Step 3  元素识别与分层 → scene.json → 原生可编辑 PPTX → 结构与视觉验收
+Step 3  Page Spec + 页面图片 → scene.json → 原生可编辑 PPTX → 结构与视觉验收
 ```
 
 普通任务表达不能跳过门禁。用户可以明确授权代定缺失项、代选风格或跳过四套预览；授权按最小范围解释。
@@ -112,6 +117,7 @@ Step 3  元素识别与分层 → scene.json → 原生可编辑 PPTX → 结构
 
 | 脚本 | 作用 |
 |---|---|
+| scripts/validate_page_spec.py | 验证内容确认、连续页序、稳定 ID、位置提示和页面图片交付状态 |
 | scripts/build_editable_ppt.py | 从 scene.json 构建原生对象并原子替换输出 |
 | scripts/audit_editability.py | 复查导出的 PPTX，可选与 scene 比较，导出报告 |
 | scripts/extract_assets.py | 根据已知 bbox 和可选灰度遮罩裁剪素材 |
@@ -119,12 +125,13 @@ Step 3  元素识别与分层 → scene.json → 原生可编辑 PPTX → 结构
 | scripts/overlay_text.py | 兼容旧版：将准确文字栅格叠加到背景 |
 
 ```sh
+python scripts/validate_page_spec.py work/page-spec.json --require-images --strict
 python scripts/extract_assets.py work/extract.json work/assets/slide-01
 python scripts/build_image_ppt.py work/slides output/image-deck.pptx --fit contain
 python scripts/overlay_text.py work/overlay.json
 ```
 
-坐标、路径、支持字段与局部修改见 [场景协议](references/scene-format.md)；
+图片生成与可编辑还原之间的语义契约见 [Page Spec](references/page-spec.md)，最终坐标、路径、支持字段与局部修改见 [场景协议](references/scene-format.md)；
 overlay.json 可参考 examples/overlay-spec.example.json，先填入实际背景路径；该旧版规格是模板，背景图未随仓库提供。
 遮挡、透明度、背景清理见 [重建指南](references/reconstruction.md)。
 本版不提供通用 SVG 导入、合并表格单元格、自动吸附连线或富文本段内样式。

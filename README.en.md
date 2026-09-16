@@ -1,4 +1,4 @@
-# image-ppt 2.0.1
+# image-ppt 2.1.0
 
 **Turn books, PDFs, reports, and text into polished presentations through one strict workflow: content design → image deck → editable PPTX reconstruction.**
 
@@ -10,10 +10,12 @@ An open-source skill for agent environments such as Codex. The host agent reads 
 
 OpenAI describes Sunburst as its most capable GPT Image 2.5 model for generation and editing, while Flare is optimized for fast, high-quality everyday generation. “Recommended” is this project's workflow recommendation, not a cross-platform benchmark. If an agent does not expose model selection, use the image capability it actually provides and do not claim a specific backend. See the [OpenAI model catalog](https://developers.openai.com/api/docs/models) and [GPT Image 2.5 Flare](https://developers.openai.com/api/docs/models/gpt-image-2.5-flare).
 
-## Workflow contract in 2.0.1
+## Workflow contract in 2.1.0
 
 - One main path: new source material must become an image deck before editable reconstruction. Do not replace the workflow with editable-first authoring.
-- Hard gates: do not read source content before requirements are complete; do not generate the full deck before the four slide-sorter options are selected; do not reconstruct without explicit authorization.
+- Two approval gates: present the content outline and wait for confirmation before generating the four slide-sorter options; do not create the full deck before style selection.
+- Deterministic style exemptions: only an explicit locked reference, preview skip, or delegated choice can change the four-option flow.
+- Page Spec bridge: preserve approved text, data, sources, stable IDs, and semantic intent while generating images so reconstruction does not repeat OCR or guess known content.
 - Explicit fast-forwarding: only clear instructions such as “skip previews,” “choose for me,” or “decide missing details” waive the corresponding gate.
 - Image reconstruction: preserve visible content and layout while separating semantic elements.
 - A versioned JSON scene with stable IDs, geometry, stacking, groups and provenance.
@@ -47,6 +49,7 @@ Python 3.10+:
 git clone https://github.com/helloo1568/image-ppt.git
 cd image-ppt
 python -m pip install -r requirements.txt
+python scripts/validate_page_spec.py examples/page-spec.example.json --strict
 python scripts/build_editable_ppt.py examples/editable-scene.example.json output/editable-demo.pptx
 python scripts/audit_editability.py output/editable-demo.pptx --scene examples/editable-scene.example.json --output output/editability.json --strict
 ```
@@ -74,7 +77,7 @@ The skill does not install an image plugin for another agent, search for API key
 
 ```text
 Use $image-ppt to turn this report into a 10-slide editable deck for a project pitch.
-I have no style reference. Show four slide-sorter design directions first and wait for my choice; then build the image deck and reconstruct the editable version.
+I have no style reference. Show the content outline and wait for approval, then show four slide-sorter directions. After selection, build the image deck and page-spec.json, then reconstruct the editable version.
 ```
 
 ```text
@@ -88,11 +91,13 @@ Remove duplicated content from the background and include the scene and assets.
 ```text
 Confirm source, style reference, audience/use case, page count, and delivery scope
   ↓
-Step 1  Content design + four separate slide-sorter overviews
-  ↓ wait for selection (unless explicitly delegated or skipped)
-Step 2  Generate and validate every slide image → image-only PPTX
+Step 1A Content outline → wait for approval
+  ↓
+Step 1B Four slide-sorter overviews → wait for selection
+  ↓ explicit locked-reference/skip/delegation rules only
+Step 2  page-spec.json → generate and validate every slide image → image-only PPTX
   ↓ only when editable reconstruction was explicitly requested
-Step 3  Recognize and separate elements → scene.json → native editable PPTX → structural and visual review
+Step 3  Page Spec + slide images → scene.json → native editable PPTX → structural and visual review
 ```
 
 Ordinary requests do not waive gates. Explicit authorization is interpreted narrowly.
@@ -100,13 +105,14 @@ Existing slide images or scanned PDF pages can enter Step 3 directly when recons
 
 ## Commands and contract
 
+- validate_page_spec.py: validate content approval, ordered pages, stable IDs, geometry hints, unresolved items, and approved image delivery.
 - build_editable_ppt.py: validate a scene and compile native objects.
 - audit_editability.py: inspect PPTX and optionally compare it with a scene; --strict fails on warnings.
 - extract_assets.py: crop known regions, apply supplied masks, record coordinates and hashes.
 - build_image_ppt.py: existing image-only assembler with natural sorting and fit controls.
 - overlay_text.py: existing deterministic raster text overlay.
 
-[Scene format](references/scene-format.md) · [Layer reconstruction](references/reconstruction.md) · [Models](references/models.md)
+[Page Spec](references/page-spec.md) · [Scene format](references/scene-format.md) · [Layer reconstruction](references/reconstruction.md) · [Models](references/models.md)
 
 Scene coordinates are canvas pixels; fonts and strokes are points. Asset paths are relative to and confined to the scene directory.
 Group children use full-slide coordinates. Array order determines stacking.
