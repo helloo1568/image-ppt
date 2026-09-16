@@ -1,7 +1,7 @@
 interface:
   display_name: "图片 PPT"
-  short_description: "分阶段生成图片版或可编辑的精美 PPT"
-  default_prompt: "使用 $image-ppt 将我提供的材料分阶段制作成 PPT，先生成四套幻灯片浏览视图式缩略图让我选风格。"
+  short_description: "用 AI 图片制作 PPT，拆分文字、图形与素材，保留原生编辑能力"
+  default_prompt: "使用 $image-ppt 将材料或幻灯片图片制作成可编辑 PPTX，保留准确文字与数据，分别拆出原生元素和独立图片素材。"
 
 policy:
   allow_implicit_invocation: true

@@ -1,306 +1,149 @@
-<p align="center">
-  <b>简体中文</b> | <a href="./README.en.md">English</a>
-</p>
+# 图片 PPT · image-ppt
 
-# image-ppt
+**用 GPT Image 2.5 创造视觉，把文字、图形、表格和图表交付为可编辑 PowerPoint 对象。**
 
-[![GitHub stars](https://img.shields.io/github/stars/helloo1568/image-ppt?style=flat-square)](https://github.com/helloo1568/image-ppt)
-[![License](https://img.shields.io/github/license/helloo1568/image-ppt?style=flat-square)](./LICENSE)
-![Agent Skill](https://img.shields.io/badge/Agent-Skill-111111?style=flat-square)
-![PowerPoint](https://img.shields.io/badge/Output-PPTX-B7472A?style=flat-square)
+[English](README.en.md) · [技能入口](SKILL.md) · [更新记录](CHANGELOG.md) · [方法调研](references/research.md)
 
-将书籍、PDF、论文、报告和 Markdown 等材料转化为图片版或可编辑 PowerPoint 的 Agent Skill。
+image-ppt 是运行在 Codex 等 Agent 环境中的开源技能。Agent 负责读材料、看图识别和生图，本地脚本负责确定性导出与检查。
 
-它采用分阶段工作流：先理解内容并提供四套风格缩略图供用户选择，再逐页生成图片版 PPT；只有用户明确要求时，才继续还原为可编辑 PPTX。
+## 2.0 有什么变化
 
-![image-ppt preview](./social-preview.png)
+- **编辑优先**：新 PPT 先规划原生信息层，再生成无字背景与独立素材。
+- **图片重建**：识别文字、几何、图片及遮挡，重建为有稳定 ID 的元素。
+- **原生导出**：文本、形状、箭头、嵌套组合、表格和五类图表；图表带内嵌数据工作簿。
+- **分层素材**：按指定坐标/遮罩输出 PNG，保留来源和哈希；照片、人物和插画可单独移动或替换。
+- **可复现修改**：scene.json 保存布局与内容，修改指定元素后直接重新导出。
+- **验收工具**：检查导出对象、文字、表格数据、图表数据、层级和原始整页底图残留。
+- **GPT Image 2.5 指南**：Flare 用于快速探索，Sunburst 用于精确参考编辑；依照宿主实际能力选择。
+- 保留图片版 PPT、文字叠加和四套风格比较能力；只在用户要求选型时等待确认。
 
-## 功能
+模型资料：[OpenAI 图像生成指南](https://developers.openai.com/api/docs/guides/image-generation)。
+推荐策略不是已运行的性能基准，也不保证你的宿主暴露具体型号。
 
-- 从长文档中提炼适合演示的结构、观点、案例和结论
-- 生成四套不同视觉方向的风格缩略图供用户选型
-- 按选定风格逐页生成统一的 PPT 页面图片
-- 将页面图片确定性合并为 16:9 图片版 PPTX
-- 内置确定性文字叠加脚本，生图模型文字不可靠时程序化叠加准确文字
-- 可选地将主要文字、简单形状和图表还原为可编辑元素
-- 使用制作规格记录需求、页序、准确数据和逐页状态，支持中断后继续
+## “每个元素可编辑”是什么意思
 
-## 效果展示
+| 元素 | 输出形式 | 可以修改 |
+|---|---|---|
+| 标题、正文、标签、页码 | 原生文本框 | 文案、字体、颜色、位置 |
+| 几何形状、箭头、流程节点 | 原生形状 / 组合 | 尺寸、样式，取消组合分别编辑 |
+| 表格 | 原生表格 | 单元格内容与格式 |
+| 柱形、条形、折线、饼图、环形图 | 原生图表 + 工作簿 | 数据与图表格式 |
+| 照片、人物、复杂插画 | 独立图片对象 | 移动、缩放、裁剪、替换 |
 
-以下为使用本技能实际生成的 PPT 页面效果：
-
-**耕云 — AI 惠农产品创新赛道参赛 PPT**（新中式水墨风）
-
-<img src="./examples/gengyun-cover.jpg" width="560">
-
-**晚晴心语公众号运营周报**（同内容、两种风格对比）
-
-| B 套：深蓝金商务风 | C 套：新中式青绿金风 |
-|:---:|:---:|
-| <img src="./examples/wanqing-weekly-b-cover.jpg" width="380"> | <img src="./examples/wanqing-weekly-c-p1.jpg" width="380"> |
-
-**中老年情感公众号运营方案**（复古暖橙风）
-
-<img src="./examples/silver-emotion-p1.jpg" width="560">
-
-> 更多效果图见 `examples/` 目录。
-
-## 工作流
-
-```text
-源材料
-  ↓
-需求确认
-  ↓
-内容提炼与四套风格缩略图
-  ↓ 用户选择一种风格
-图片版 PPT 逐页生成与合并
-  ↓ 用户明确要求可编辑化
-可编辑 PPTX 还原（可选）
-```
-
-默认有两个不可自动跳过的确认节点：
-
-1. 确认源材料、参考风格、使用场景和页数预期
-2. 展示四套风格缩略图后等待用户选择
-
-用户可以明确说“跳过缩略图”“你替我选择风格”或“只制作图片版”，让流程按授权范围快进。普通的“帮我生成 PPT”不构成跳过授权。
-
-## 风格缩略图是什么
-
-本项目中的“缩略图”不是单张 PPT 页面缩小后的图片，也不是把四种风格拼成一个 2×2 对比图。
-
-每套风格缩略图都是一张类似 PowerPoint“幻灯片浏览视图”的横向总览图：
-
-- 一张图只展示一种完整设计风格
-- 图中以 3×2、4×2 或相近网格排列 6–8 张迷你 16:9 幻灯片
-- 页面通常覆盖封面、核心数据、正文、图表、案例和总结/行动页
-- 四套缩略图使用相同的页面顺序和内容，只改变配色、字体、版式、图形语言和素材风格
-- 四张风格缩略图分别展示并编号为 1–4，等待用户选型
-
-这种方式能在正式生成整套页面前，同时检查单页设计和跨页一致性。
-
-## 安装
-
-将仓库克隆到 Agent 的技能目录。不同产品的技能目录可能不同，请以当前产品文档为准。
-
-### Codex
-
-```bash
-git clone https://github.com/helloo1568/image-ppt.git ~/.codex/skills/image-ppt
-```
-
-### Claude Code
-
-```bash
-git clone https://github.com/helloo1568/image-ppt.git ~/.claude/skills/image-ppt
-```
-
-### 让 Agent 自动安装
-
-把这段话直接发给 Agent，它会自行完成克隆、验证和依赖安装：
-
-```text
-帮我安装 image-ppt 技能：
-1. 把 https://github.com/helloo1568/image-ppt.git 克隆到技能目录
-2. 确认 SKILL.md 和 references/prompts.md 存在
-3. 安装 requirements.txt 中的依赖
-4. 告诉我安装好了
-```
-
-安装后确认以下文件存在：
-
-```text
-image-ppt/SKILL.md
-image-ppt/references/prompts.md
-```
-
-需要运行图片合并脚本时安装依赖：
-
-```bash
-python -m pip install -r requirements.txt
-```
+复杂插画内部仍是像素；被遮挡的信息也不能凭空准确恢复。
+**本地脚本不包含自动 OCR、分割模型或端到端图片理解。** 识别与必要的背景补全由宿主 Agent/视觉工具完成。
+不能把整页截图加几个文本框称作全部可编辑，也不能把 SVG 图片嵌入等同于原生导出。
 
 ## 快速开始
 
-向 Agent 提供材料，并说明使用场景和页数：
+Python 3.10+。克隆或下载项目：
+
+```sh
+git clone https://github.com/helloo1568/image-ppt.git
+cd image-ppt
+python -m pip install -r requirements.txt
+```
+
+把这个项目目录作为 image-ppt 技能交给支持 SKILL.md 的 Agent，或把完整目录安装到该宿主的技能目录。
+技能执行时把用户材料和产物放在独立工作目录。
+
+### 零 API 的功能示例
+
+```sh
+python scripts/build_editable_ppt.py examples/editable-scene.example.json output/editable-demo.pptx
+python scripts/audit_editability.py output/editable-demo.pptx --scene examples/editable-scene.example.json --output output/editability.json --strict
+```
+
+[下载三页可编辑示例](examples/editable-demo.pptx) · [查看场景 JSON](examples/editable-scene.example.json)
+
+示例使用明确编写的场景与历史图片素材，测试导出能力，不是图片自动识别准确率展示。
+数据页的数字全部为演示数据。
+
+![原生数据页](examples/editable-preview-02.png)
+
+### 对 Agent 说
 
 ```text
-使用 image-ppt，把这份 PDF 做成 12 页课堂汇报 PPT。
-没有参考模板。先生成四套幻灯片浏览视图式风格缩略图，我选定后再继续。
+使用 $image-ppt 把这份报告做成 10 页可编辑 PPT。
+标题、正文、流程图、表格和有可靠数据的图表都用原生对象；
+视觉素材用 GPT Image 2.5，人物与插画分别保留为可移动图片。
+你自行选择合适风格，先检查一页代表性样张，再完成全稿。
 ```
-
-其他示例：
 
 ```text
-把这本书做成读书分享 PPT，约 15 页，没有参考风格。
-把这份周报做成周例会图片版 PPT，不需要可编辑还原。
-从这份图片版 PPT 开始，只执行可编辑化还原。
-跳过风格缩略图，你替我选择适合管理层汇报的风格。
+使用 $image-ppt 将这些幻灯片图片还原成可编辑 PPTX。
+保持原始文字、布局与页序，把所有需要修改的元素独立拆出。
+复杂插画保留为单独图片，清理背景残影，并交付 scene.json 和素材。
 ```
-
-## 输出
-
-根据用户授权范围，技能可以生成：
-
-- 四张独立的幻灯片浏览视图式风格缩略图
-- 按页码排序的 PNG/JPEG 页面图片
-- 每页为整张图片的图片版 `.pptx`
-- 主要信息可编辑的混合式 `.pptx`（可选）
-- 临时制作规格 `deck-spec.md`，用于记录状态和恢复任务
-
-## 确定性合并脚本
-
-`scripts/build_image_ppt.py` 按文件名自然排序，将 PNG/JPEG 页面图片合并成 PPTX：
-
-```bash
-python scripts/build_image_ppt.py ./slides ./output/deck.pptx
-```
-
-推荐使用零填充文件名：
 
 ```text
-01-cover.png
-02-dashboard.png
-03-analysis.png
+只做图片版 PPT。先展示四套使用同一组内容的风格总览，等我选择。
 ```
 
-常用选项：
+## 三条路线
 
-```bash
-python scripts/build_image_ppt.py ./slides ./deck.pptx --fit cover
-python scripts/build_image_ppt.py ./slides ./deck.pptx --fit contain --background FFFFFF
-python scripts/build_image_ppt.py ./slides ./deck.pptx --fit cover --max-width 1920 --jpeg-quality 85
+1. **编辑优先**：材料 → 内容与版面 → 无字视觉/独立素材 → scene.json → 原生 PPTX → 验收。
+2. **图片优先**：材料 → 风格与逐页生图 → 图片版 PPTX。适合仅需展示的用户。
+3. **图片重建**：规范逐页输入 → Agent 识别元素 → 背景清理/主体分离 → scene.json → 原生 PPTX → 逐页对照。
+
+没有源文件或关键事实不明确时需要补充信息；一般风格和页数允许结合上下文推断。
+用户明确要求选择风格时才等待选择，不再对普通请求强制执行多轮门禁。
+
+## 工具
+
+| 脚本 | 作用 |
+|---|---|
+| scripts/build_editable_ppt.py | 从 scene.json 构建原生对象并原子替换输出 |
+| scripts/audit_editability.py | 复查导出的 PPTX，可选与 scene 比较，导出报告 |
+| scripts/extract_assets.py | 根据已知 bbox 和可选灰度遮罩裁剪素材 |
+| scripts/build_image_ppt.py | 兼容旧版：自然排序图片、拼装图片版 PPTX |
+| scripts/overlay_text.py | 兼容旧版：将准确文字栅格叠加到背景 |
+
+```sh
+python scripts/extract_assets.py work/extract.json work/assets/slide-01
+python scripts/build_image_ppt.py work/slides output/image-deck.pptx --fit contain
+python scripts/overlay_text.py work/overlay.json
 ```
 
-- `--fit cover`（默认）：图片铺满幻灯片，超出部分以居中裁剪收纳在画布内，不会溢出页面
-- `--fit contain`：完整显示图片并居中，`--background` 指定留白颜色
-- `--max-width 1920`：嵌入前把更宽的图片等比缩小，显著减小文件体积
-- `--jpeg-quality 85`：嵌入前重新编码为 JPEG，配合 `--max-width` 可把体积降低一个数量级；透明 PNG 会先合成到背景色
+坐标、路径、支持字段与局部修改见 [场景协议](references/scene-format.md)；
+overlay.json 可参考 examples/overlay-spec.example.json，先填入实际背景路径；该旧版规格是模板，背景图未随仓库提供。
+遮挡、透明度、背景清理见 [重建指南](references/reconstruction.md)。
+本版不提供通用 SVG 导入、合并表格单元格、自动吸附连线或富文本段内样式。
 
-脚本会自动应用 EXIF 方向信息，默认创建 16:9 幻灯片，保存后重新打开文件并核对页数。运行需要 Python 3.9+、Pillow 和 python-pptx。
+## 验证
 
-## 确定性文字叠加脚本
-
-当生图模型连续无法准确渲染文字时，`scripts/overlay_text.py` 提供确定性兜底：先让模型生成无字视觉背景，再用脚本程序化叠加准确文字。
-
-```bash
-python scripts/overlay_text.py overlay-spec.json [--font 字体路径或名称]
+```sh
+python -m pip install -r requirements-dev.txt
+python -m ruff check .
+python -m pytest tests/ -q
 ```
 
-规格文件描述每页的背景与文字框，坐标为页面宽高的百分比，与分辨率无关：
+CI 覆盖 Windows / Linux、Python 3.10 / 3.12 / 3.13。
+结构检查验证声明的场景对象，不能证明没有漏识别元素，也不代替 PowerPoint 渲染。
+交付前逐页检查中文换行、字体、图表标签、图片边缘和移动后的残影。
+示例已由 PowerPoint 导出预览；自动测试不依赖 PowerPoint。
 
-```json
-{
-  "pages": [
-    {
-      "background": "bg/01.png",
-      "output": "slides/01.png",
-      "texts": [
-        {
-          "text": "核心结论：增长 32%",
-          "x": 0.08, "y": 0.10, "w": 0.84, "h": 0.16,
-          "font_size": 72, "color": "#10233A",
-          "align": "center", "valign": "center", "bold": true
-        }
-      ]
-    }
-  ]
-}
-```
+## 历史视觉示例
 
-支持多行（`\n`）、自动换行（中文逐字换行、英文按空格换行）、左/中/右对齐、上/中/下垂直对齐、行距与加粗。`font_size` 为像素字号（以 1920×1080 页面为基准）。背景也可以用 `"background": "#FFFFFF"` 加 `width`/`height` 直接生成纯色页。完整示例见 `examples/overlay-spec.example.json`。
+以下图片保留自旧版，展示生图视觉方向，不代表逐元素还原结果。
 
-## 项目结构
+| 项目周报 | 中老年情感方案 |
+|---|---|
+| ![周报](examples/wanqing-weekly-c-p1.jpg) | ![情感方案](examples/silver-emotion-p1.jpg) |
 
-```text
-image-ppt/
-├── SKILL.md
-├── README.md
-├── README.en.md
-├── CHANGELOG.md
-├── LICENSE
-├── manifest.yaml
-├── requirements.txt
-├── requirements-dev.txt
-├── .gitignore
-├── .github/
-│   └── workflows/
-│       └── ci.yml
-├── agents/
-│   └── openai.yaml
-├── references/
-│   ├── prompts.md
-│   └── deck-spec-template.md
-├── scripts/
-│   ├── build_image_ppt.py
-│   └── overlay_text.py
-├── tests/
-│   ├── conftest.py
-│   ├── test_build_image_ppt.py
-│   └── test_overlay_text.py
-├── examples/
-│   ├── gengyun-cover.jpg          ← 耕云参赛PPT（水墨风）
-│   ├── wanqing-weekly-b-cover.jpg ← 晚晴心语周报B套（商务风）
-│   ├── wanqing-weekly-c-p1.jpg    ← 晚晴心语周报C套（新中式风）
-│   ├── wanqing-weekly-c-p2.jpg
-│   ├── wanqing-weekly-c-p4.jpg
-│   ├── silver-emotion-p1.jpg      ← 中老年情感方案（复古风）
-│   ├── silver-emotion-p2.jpg
-│   └── overlay-spec.example.json  ← 文字叠加示例规格
-├── social-preview.jpg
-└── social-preview.png
-```
+## 来源与取舍
 
-## 平台与工具
+本次重点参考 [Hugo He 的 PPT Master](https://github.com/hugohe3/ppt-master) 的原生导出与图片分层思路，
+并调研 [banana-slides](https://github.com/Anionex/banana-slides) 和 [PPTAgent](https://github.com/icip-cas/PPTAgent)。
+本版独立实现 JSON 场景编译器，没有复制这些项目的源码或捆绑其依赖。
+完整来源和能力边界见 [调研记录](references/research.md)。
 
-技能本身不绑定具体图像模型。推荐在具备以下能力的 Agent 环境中使用：
+早期工作流参考小黑盒作者“玩家22186848”的教程《青年大学习AI版：零基础用GPT5.6做精美可编辑PPT》，
+以及 B 站 UP 主“一往无前河井”的学术 PPT 制作思路。感谢原作者与社区。
 
-- 读取 PDF、Markdown 和长文本
-- 调用图像生成模型
-- 运行本地脚本并输出文件
-- 检查生成图片和 PPTX
+## 隐私与许可
 
-Codex 可以负责材料读取、流程编排和 PPTX 拼装。图像页面可由 GPT Image、Agnes、Midjourney 或其他可用模型生成。若外部工具不支持图生图，应把选定缩略图提炼为稳定的文字视觉规范，再逐页复用。
+本地脚本不发起网络请求，不需要 API Key。实际生图/视觉分析由宿主服务执行，可能上传对应材料。
+公开产物前排除私人材料与凭证，保留需要分发的 scene 和素材。
 
-## 限制
-
-- 图像模型可能生成错字、错误数字或不一致的跨页样式，必须逐页验收
-- 图片版 PPT 的页面内容不可直接编辑
-- 可编辑还原采用“复杂视觉保真 + 主要信息可编辑”的混合策略，不能保证所有元素完全原生化
-- 高密度表格和需要精确计算的图表更适合程序化制作，不适合完全依赖生图
-- 不同 Agent 和图像服务的文件能力、尺寸限制、费用和内容政策不同
-
-## 安全与隐私
-
-- 仓库不包含 API Key 或账号凭证
-- `build_image_ppt.py` 只读取本地图片并写入本地 PPTX，不发起网络请求
-- 实际使用的外部图像或文档服务可能上传提示词、材料或页面内容，请遵守对应服务的隐私政策
-- 不要把含密钥的 `config.json`、环境变量文件或私有材料提交到仓库
-
-## 参与贡献
-
-欢迎提交 Issue 和 Pull Request。建议在提交前：
-
-1. 保持 `SKILL.md` 简洁，并把长提示词或模板放入 `references/`
-2. 不在仓库中加入 API Key、生成缓存或用户材料
-3. 运行 `python -m py_compile scripts/build_image_ppt.py`
-4. 使用至少一组真实材料检查需求门禁、四套缩略图选型和 PPTX 合并流程
-5. 同步更新中文与英文 README
-
-## 来源与致谢
-
-本技能的早期工作流参考了：
-
-- 小黑盒社区教程《青年大学习AI版：零基础用GPT5.6做精美可编辑PPT》，作者“玩家22186848”
-- B 站 UP 主“一往无前河井”的学术 PPT 制作思路
-
-感谢原作者和社区贡献者分享方法与实践经验。
-
-## 版本历史
-
-见 [CHANGELOG.md](./CHANGELOG.md)。
-
-## 许可证
-
-[MIT License](./LICENSE) © 2026 风清云影（helloo1568）
+[MIT License](LICENSE) © 2026 风清云影（helloo1568）
