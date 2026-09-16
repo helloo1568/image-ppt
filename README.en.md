@@ -1,14 +1,20 @@
-# image-ppt 2.0
+# image-ppt 2.0.1
 
-**AI-generated visuals with editable PowerPoint text, shapes, tables, charts, and separate image assets.**
+**Turn books, PDFs, reports, and text into polished presentations through one strict workflow: content design → image deck → editable PPTX reconstruction.**
+
+> **Recommended setup: Codex + GPT Image 2.5.** When Codex exposes model selection, use GPT Image 2.5 Flare for fast style exploration and GPT Image 2.5 Sunburst for final assets and precise reference editing. The skill also works in other agent environments by calling that agent's own image generation/editing capability.
 
 [中文](README.md) · [Skill](SKILL.md) · [Changelog](CHANGELOG.md) · [Research](references/research.md)
 
-An open-source skill for agent environments such as Codex. The host agent reads documents, interprets images and generates visual assets. Local Python scripts compile and inspect the result.
+An open-source skill for agent environments such as Codex. The host agent reads documents, interprets images, and invokes its own image generation capability. Local Python scripts only assemble image decks, compile Scene v1, crop known assets, and inspect outputs; they do not bundle an image model or automatically call a paid API.
 
-## What's new
+OpenAI describes Sunburst as its most capable GPT Image 2.5 model for generation and editing, while Flare is optimized for fast, high-quality everyday generation. “Recommended” is this project's workflow recommendation, not a cross-platform benchmark. If an agent does not expose model selection, use the image capability it actually provides and do not claim a specific backend. See the [OpenAI model catalog](https://developers.openai.com/api/docs/models) and [GPT Image 2.5 Flare](https://developers.openai.com/api/docs/models/gpt-image-2.5-flare).
 
-- Editable-first authoring: plan native information layers before generating visual assets.
+## Workflow contract in 2.0.1
+
+- One main path: new source material must become an image deck before editable reconstruction. Do not replace the workflow with editable-first authoring.
+- Hard gates: do not read source content before requirements are complete; do not generate the full deck before the four slide-sorter options are selected; do not reconstruct without explicit authorization.
+- Explicit fast-forwarding: only clear instructions such as “skip previews,” “choose for me,” or “decide missing details” waive the corresponding gate.
 - Image reconstruction: preserve visible content and layout while separating semantic elements.
 - A versioned JSON scene with stable IDs, geometry, stacking, groups and provenance.
 - Native text, shapes, arrows, nested groups, tables and charts with embedded workbooks.
@@ -52,31 +58,45 @@ The three-slide demo tests compilation of an authored scene, not automatic recon
 ![Native data slide](examples/editable-preview-02.png)
 
 Install the complete repository as image-ppt in your host's skill directory, or provide SKILL.md to an agent supporting this format.
-Keep task materials and outputs in a separate working directory.
+In Codex, let Codex invoke its image-generation capability. In another agent, use that agent's native or connected image-generation/editing capability. Keep task materials and outputs in a separate working directory.
+
+## Runtime environments
+
+| Environment | Image backend | Notes |
+|---|---|---|
+| Codex (recommended) | Codex image generation; prefer GPT Image 2.5 when selectable | Flare for exploration, Sunburst for final and precision editing |
+| Other agents | That agent's own native or connected image generation/editing capability | Keep the same state machine, prompts, and acceptance checks |
+| Python only | No end-to-end image generation | Local scripts only assemble, overlay text, compile scenes, crop assets, and audit |
+
+The skill does not install an image plugin for another agent, search for API keys, or silently switch to an external service. Stop and report the missing capability when the current agent cannot generate images.
 
 ## Example requests
 
 ```text
-Use $image-ppt to turn this report into a 10-slide editable deck.
-Use native text, diagrams, tables, and charts with verifiable data.
-Generate independent visual assets with GPT Image 2.5 where available.
-Choose an appropriate style, validate a representative slide, then finish the deck.
+Use $image-ppt to turn this report into a 10-slide editable deck for a project pitch.
+I have no style reference. Show four slide-sorter design directions first and wait for my choice; then build the image deck and reconstruct the editable version.
 ```
 
 ```text
-Use $image-ppt to reconstruct these slide images into editable PPTX.
+Use $image-ppt starting at Step 3 to reconstruct these existing slide images into editable PPTX.
 Preserve wording, layout and page order. Separate every element I need to edit.
 Remove duplicated content from the background and include the scene and assets.
 ```
 
-## Workflows
+## The one three-stage workflow
 
-- **Editable-first:** content → layout → separate visual assets → scene → native PPTX → review.
-- **Image-first:** content → slide images → image-only PPTX.
-- **Reconstruction:** normalized source pages → agent recognition → layer preparation → scene → native PPTX → comparison.
+```text
+Confirm source, style reference, audience/use case, page count, and delivery scope
+  ↓
+Step 1  Content design + four separate slide-sorter overviews
+  ↓ wait for selection (unless explicitly delegated or skipped)
+Step 2  Generate and validate every slide image → image-only PPTX
+  ↓ only when editable reconstruction was explicitly requested
+Step 3  Recognize and separate elements → scene.json → native editable PPTX → structural and visual review
+```
 
-Read available material before asking unnecessary questions. Infer ordinary style/page-count preferences when reasonable.
-If the user requests four design options, generate four comparable contact sheets and wait for selection.
+Ordinary requests do not waive gates. Explicit authorization is interpreted narrowly.
+Existing slide images or scanned PDF pages can enter Step 3 directly when reconstruction is the stated goal. Ordinary edits to an already-editable PPTX are outside this workflow.
 
 ## Commands and contract
 

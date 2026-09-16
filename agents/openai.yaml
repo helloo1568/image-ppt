@@ -1,7 +1,7 @@
 interface:
   display_name: "图片 PPT"
-  short_description: "用 AI 图片制作 PPT，拆分文字、图形与素材，保留原生编辑能力"
-  default_prompt: "使用 $image-ppt 将材料或幻灯片图片制作成可编辑 PPTX，保留准确文字与数据，分别拆出原生元素和独立图片素材。"
+  short_description: "用 Codex + GPT Image 2.5 按严格三步流程制作图片与可编辑 PPT"
+  default_prompt: "使用 $image-ppt 按固定三阶段流程制作 PPT，并调用当前 Agent 的生图能力：先确认需求并给出四套幻灯片浏览视图，等我选型后生成图片版；仅在我明确要求时继续还原可编辑 PPTX。"
 
 policy:
   allow_implicit_invocation: true

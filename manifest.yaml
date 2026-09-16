@@ -1,10 +1,12 @@
 name: image-ppt
 display_name: 图片 PPT
-version: 2.0.0
+version: 2.0.1
 description: >-
-  将材料制作成图片版或可编辑 PPTX，或将幻灯片图片重建为原生文字、形状、
-  组合、表格、图表与独立图片素材。推荐 GPT Image 2.5。
-  Agent 负责识别与生图，本地脚本负责 Scene v1 编译、素材裁剪和对象审查。
+  按固定三阶段流程将材料制作成图片版 PPT，并在明确授权后还原为可编辑 PPTX：
+  需求确认与四套幻灯片浏览视图选型 → 逐页图片生成 → Scene v1 可编辑重建。
+  默认不得自行推断缺失需求、跳过选型或改走编辑优先路线。最佳推荐 Codex + GPT Image 2.5；
+  也可在其他 Agent 中调用该 Agent 自身的生图能力。宿主 Agent 负责内容、识别与生图，
+  本地脚本负责图片合并、Scene 编译、素材裁剪和对象审查。
 author: 风清云影 (helloo1568)
 license: MIT
 category: content
@@ -18,8 +20,8 @@ triggers:
   - doc-to-editable-ppt
 requires_api_keys: false
 platforms:
-  - Codex / ChatGPT with image generation and local file tools
-  - Other agents with document reading, vision, image generation and Python
+  - Codex with image generation and local file tools (recommended with GPT Image 2.5)
+  - Other agents with document reading, vision, native or connected image generation, and Python
 security_notes: >-
   Local scripts do not make network requests or handle API keys.
   Host vision/image services may upload supplied content and require separate credentials.
