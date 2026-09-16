@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="520" viewBox="0 0 1280 520" fill="none" role="img" aria-labelledby="title desc">
+  <title id="title">image-ppt — From source to slides. From pixels to possibilities.</title>
+  <desc id="desc">A midnight-blue banner with a layered presentation illustration. Content, image deck, and editable PPTX are the three stages of the workflow.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1280" y2="520" gradientUnits="userSpaceOnUse"><stop stop-color="#101B32"/><stop offset=".55" stop-color="#0A1326"/><stop offset="1" stop-color="#133B4A"/></linearGradient>
+    <linearGradient id="accent" x1="760" y1="160" x2="1120" y2="380" gradientUnits="userSpaceOnUse"><stop stop-color="#74F0D2"/><stop offset="1" stop-color="#62A9F9"/></linearGradient>
+    <linearGradient id="card" x1="790" y1="110" x2="1140" y2="380" gradientUnits="userSpaceOnUse"><stop stop-color="#263F57"/><stop offset="1" stop-color="#14243C"/></linearGradient>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M40 0H0V40" stroke="#9DDAD8" stroke-opacity=".035"/></pattern>
+  </defs>
+  <rect width="1280" height="520" rx="24" fill="url(#bg)"/>
+  <rect width="1280" height="520" rx="24" fill="url(#grid)"/>
+  <circle cx="1090" cy="245" r="212" stroke="#69D7CF" stroke-opacity=".09"/>
+  <circle cx="1090" cy="245" r="260" stroke="#69D7CF" stroke-opacity=".05"/>
+  <g font-family="Segoe UI, Inter, Arial, sans-serif">
+    <rect x="64" y="52" width="32" height="32" rx="9" fill="#79E9D1"/>
+    <path d="M72 62H86V74H72Z M76 58H90V70" stroke="#102437" stroke-width="2" stroke-linejoin="round"/>
+    <text x="111" y="74" fill="#C4D1E3" font-size="15" font-weight="600" letter-spacing="2.2">OPEN SOURCE · PRESENTATION SKILL</text>
+    <text x="60" y="186" fill="#F5F8FF" font-size="88" font-weight="700" letter-spacing="-4">image<tspan fill="#79E9D1">-ppt</tspan></text>
+    <text x="65" y="245" fill="#F0F5FF" font-size="29" font-weight="600">From source to slides.</text>
+    <text x="65" y="289" fill="#A8BAD1" font-size="29">From pixels to possibilities.</text>
+    <rect x="65" y="327" width="147" height="34" rx="17" fill="#79E9D1" fill-opacity=".1" stroke="#79E9D1" stroke-opacity=".28"/>
+    <text x="85" y="350" fill="#A1F3DF" font-size="14">4 style directions</text>
+    <rect x="224" y="327" width="162" height="34" rx="17" fill="#82B5FF" fill-opacity=".1" stroke="#82B5FF" stroke-opacity=".28"/>
+    <text x="243" y="350" fill="#C0D8FF" font-size="14">Native PPTX objects</text>
+    <path d="M65 402H1215" stroke="#D2E2F6" stroke-opacity=".13"/>
+    <text x="65" y="453" fill="#79E9D1" font-size="16" font-weight="700">01</text><text x="100" y="453" fill="#D3DFEF" font-size="18">Content design</text>
+    <path d="M345 447H394M388 441L394 447L388 453" stroke="#708BA6" stroke-width="1.5"/>
+    <text x="449" y="453" fill="#79E9D1" font-size="16" font-weight="700">02</text><text x="484" y="453" fill="#D3DFEF" font-size="18">Image deck</text>
+    <path d="M717 447H766M760 441L766 447L760 453" stroke="#708BA6" stroke-width="1.5"/>
+    <text x="819" y="453" fill="#79E9D1" font-size="16" font-weight="700">03</text><text x="854" y="453" fill="#D3DFEF" font-size="18">Editable PPTX</text>
+    <text x="1111" y="453" fill="#86A2BC" font-size="13">ON REQUEST</text>
+    <g transform="rotate(-8 988 220)"><rect x="791" y="79" width="378" height="230" rx="14" fill="#132C41" stroke="#4B8191" stroke-opacity=".65"/></g>
+    <g transform="rotate(5 979 231)"><rect x="786" y="108" width="378" height="230" rx="14" fill="#19263F" stroke="#5874A2" stroke-opacity=".8"/></g>
+    <rect x="752" y="132" width="398" height="234" rx="14" fill="url(#card)" stroke="#8CD7DD" stroke-opacity=".7"/>
+    <circle cx="775" cy="152" r="3" fill="#79E9D1"/><circle cx="787" cy="152" r="3" fill="#6C839C"/><circle cx="799" cy="152" r="3" fill="#6C839C"/>
+    <text x="1029" y="157" fill="#9FB5CC" font-size="10" letter-spacing="1.5">SLIDE / 01</text>
+    <path d="M753 170H1149" stroke="#A5CAE4" stroke-opacity=".15"/>
+    <text x="779" y="201" fill="#79E9D1" font-size="10" letter-spacing="2">MAKE YOUR IDEAS VISIBLE</text>
+    <text x="779" y="235" fill="#F5F8FF" font-size="25" font-weight="600">A story, beautifully told.</text>
+    <rect x="773" y="210" width="305" height="34" stroke="#79E9D1" stroke-dasharray="4 4" stroke-opacity=".55"/>
+    <g fill="#79E9D1"><rect x="770" y="207" width="6" height="6"/><rect x="1075" y="207" width="6" height="6"/><rect x="770" y="241" width="6" height="6"/><rect x="1075" y="241" width="6" height="6"/></g>
+    <rect x="779" y="264" width="121" height="5" rx="2.5" fill="#9DAFC5"/><rect x="779" y="277" width="104" height="5" rx="2.5" fill="#7189A4"/><rect x="779" y="290" width="114" height="5" rx="2.5" fill="#7189A4"/>
+    <rect x="779" y="315" width="76" height="22" rx="6" fill="#79E9D1" fill-opacity=".12"/><text x="791" y="330" fill="#A1F3DF" font-size="10">PAGE SPEC</text>
+    <path d="M936 329H1117" stroke="#758FA9" stroke-opacity=".6"/>
+    <rect x="950" y="293" width="27" height="35" rx="4" fill="#5A8EB6"/><rect x="991" y="278" width="27" height="50" rx="4" fill="#64B5CD"/><rect x="1032" y="256" width="27" height="72" rx="4" fill="url(#accent)"/><rect x="1073" y="271" width="27" height="57" rx="4" fill="#79E9D1"/>
+    <rect x="1086" y="344" width="106" height="30" rx="8" fill="#79E9D1"/><text x="1105" y="364" fill="#102A38" font-size="12" font-weight="700">EDITABLE</text>
+  </g>
+</svg>

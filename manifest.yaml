@@ -2,6 +2,7 @@ name: image-ppt
 display_name: 图片 PPT
 version: 2.1.0
 description: >-
+  适用于竞赛 PPT、电影质感 PPT、比赛答辩、创新创业路演、学术汇报、论文答辩和图片转可编辑 PPT。
   按固定三阶段流程将材料制作成图片版 PPT，并在明确授权后还原为可编辑 PPTX：
   需求确认与内容大纲确认 → 四套幻灯片浏览视图选型 → Page Spec 驱动的逐页图片生成 →
   Scene v1 可编辑重建。
@@ -17,6 +18,35 @@ triggers:
   - 图片转PPT
   - PPT元素拆分
   - 读书分享PPT
+  - 竞赛PPT
+  - 比赛答辩PPT
+  - 国赛PPT
+  - 电影质感PPT
+  - 电影感PPT
+  - 海报风PPT
+  - 创新创业PPT
+  - 挑战杯PPT
+  - 大挑PPT
+  - 小挑PPT
+  - 中国国际大学生创新大赛PPT
+  - 大学生创新大赛PPT
+  - 互联网+PPT
+  - 三创赛PPT
+  - 正大杯PPT
+  - 市调大赛PPT
+  - 大创PPT
+  - 学术汇报PPT
+  - 论文答辩PPT
+  - 组会PPT
+  - 商业路演PPT
+  - 项目汇报PPT
+  - AI生成PPT
+  - PDF转PPT
+  - 图片转可编辑PPT
+  - cinematic-presentation
+  - competition-presentation
+  - pitch-deck
+  - image-to-pptx
   - image-ppt
   - doc-to-editable-ppt
 requires_api_keys: false
@@ -32,6 +62,10 @@ files:
   - SKILL.md
   - README.md
   - README.en.md
+  - CONTRIBUTING.md
+  - docs/guide.md
+  - docs/guide.en.md
+  - docs/assets/hero.svg
   - CHANGELOG.md
   - LICENSE
   - requirements.txt

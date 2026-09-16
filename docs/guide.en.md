@@ -1,0 +1,129 @@
+# Usage & technical guide
+
+[← Back to home](../README.en.md) · [中文指南](guide.md)
+
+## Workflow contract in 2.1.0
+
+- One main path: new source material must become an image deck before editable reconstruction. Do not replace the workflow with editable-first authoring.
+- Two approval gates: present the content outline and wait for confirmation before generating the four slide-sorter options; do not create the full deck before style selection.
+- Deterministic style exemptions: only an explicit locked reference, preview skip, or delegated choice can change the four-option flow.
+- Page Spec bridge: preserve approved text, data, sources, stable IDs, and semantic intent while generating images so reconstruction does not repeat OCR or guess known content.
+- Explicit fast-forwarding: only clear instructions such as “skip previews,” “choose for me,” or “decide missing details” waive the corresponding gate.
+- Image reconstruction: preserve visible content and layout while separating semantic elements.
+- A versioned JSON scene with stable IDs, geometry, stacking, groups and provenance.
+- Native text, shapes, arrows, nested groups, tables and charts with embedded workbooks.
+- Deterministic asset extraction from supplied bounding boxes and optional masks.
+- An editability audit that checks exported objects against the scene.
+- GPT Image 2.5 guidance for Flare exploration and Sunburst reference editing.
+- Existing image-only export and raster text overlay commands remain available.
+
+See the [official image guide](https://developers.openai.com/api/docs/guides/image-generation).
+The host may not expose an image model selector. These recommendations are not a measured model benchmark.
+
+## Editability contract
+
+| Content | Export | Editing |
+|---|---|---|
+| Headings, body copy, labels | Native text boxes | Text, font, position, color |
+| Geometry and diagrams | Native shapes, lines, groups | Geometry and style; ungroup to edit children |
+| Tables | Native tables | Cells and formatting |
+| Bar, column, line, pie, doughnut | Native charts with workbooks | Data and chart formatting |
+| Photos and complex illustrations | Separate image objects | Move, crop, resize, replace |
+
+Raster artwork does not become editable vector paths. Missing or occluded details cannot be recovered with guaranteed accuracy.
+**The local scripts do not perform OCR, automatic segmentation or image understanding.** Those steps belong to the host agent and its available vision/image tools.
+
+## Quick start
+
+Python 3.10+. Run the commands in this guide from the repository root:
+
+```sh
+git clone https://github.com/helloo1568/image-ppt.git
+cd image-ppt
+python -m pip install -r requirements.txt
+python scripts/validate_page_spec.py examples/page-spec.example.json --strict
+```
+
+Install the complete repository as image-ppt in your host's skill directory, or provide SKILL.md to an agent supporting this format.
+In Codex, let Codex invoke its image-generation capability. In another agent, use that agent's native or connected image-generation/editing capability. Keep task materials and outputs in a separate working directory.
+
+## Runtime environments
+
+| Environment | Image backend | Notes |
+|---|---|---|
+| Codex (recommended) | Codex image generation; prefer GPT Image 2.5 when selectable | Flare for exploration, Sunburst for final and precision editing |
+| Other agents | That agent's own native or connected image generation/editing capability | Keep the same state machine, prompts, and acceptance checks |
+| Python only | No end-to-end image generation | Local scripts only assemble, overlay text, compile scenes, crop assets, and audit |
+
+The skill does not install an image plugin for another agent, search for API keys, or silently switch to an external service. Stop and report the missing capability when the current agent cannot generate images.
+
+## Example requests
+
+```text
+Use $image-ppt to turn this report into a 10-slide editable deck for a project pitch.
+I have no style reference. Show the content outline and wait for approval, then show four slide-sorter directions. After selection, build the image deck and page-spec.json, then reconstruct the editable version.
+```
+
+```text
+Use $image-ppt starting at Step 3 to reconstruct these existing slide images into editable PPTX.
+Preserve wording, layout and page order. Separate every element I need to edit.
+Remove duplicated content from the background and include the scene and assets.
+```
+
+## The one three-stage workflow
+
+```text
+Confirm source, style reference, audience/use case, page count, and delivery scope
+  ↓
+Step 1A Content outline → wait for approval
+  ↓
+Step 1B Four slide-sorter overviews → wait for selection
+  ↓ explicit locked-reference/skip/delegation rules only
+Step 2  page-spec.json → generate and validate every slide image → image-only PPTX
+  ↓ only when editable reconstruction was explicitly requested
+Step 3  Page Spec + slide images → scene.json → native editable PPTX → structural and visual review
+```
+
+Ordinary requests do not waive gates. Explicit authorization is interpreted narrowly.
+Existing slide images or scanned PDF pages can enter Step 3 directly when reconstruction is the stated goal. Ordinary edits to an already-editable PPTX are outside this workflow.
+
+## Commands and contract
+
+- validate_page_spec.py: validate content approval, ordered pages, stable IDs, geometry hints, unresolved items, and approved image delivery.
+- build_editable_ppt.py: validate a scene and compile native objects.
+- audit_editability.py: inspect PPTX and optionally compare it with a scene; --strict fails on warnings.
+- extract_assets.py: crop known regions, apply supplied masks, record coordinates and hashes.
+- build_image_ppt.py: existing image-only assembler with natural sorting and fit controls.
+- overlay_text.py: existing deterministic raster text overlay.
+
+[Page Spec](../references/page-spec.md) · [Scene format](../references/scene-format.md) · [Layer reconstruction](../references/reconstruction.md) · [Models](../references/models.md)
+
+Scene coordinates are canvas pixels; fonts and strokes are points. Asset paths are relative to and confined to the scene directory.
+Group children use full-slide coordinates. Array order determines stacking.
+This version does not implement a generic SVG importer, merged table cells, automatic connector attachment, or inline rich text.
+
+## Validation
+
+```sh
+python -m pip install -r requirements-dev.txt
+python -m ruff check .
+python -m pytest tests/ -q
+```
+
+CI covers Windows/Linux and Python 3.10/3.12/3.13.
+Audit checks declared objects, not source-image completeness or visual similarity.
+Render and inspect every slide before delivery. Portfolio images retain the source page dimensions; automated tests do not require PowerPoint.
+
+## Credits
+
+Research includes [PPT Master by Hugo He](https://github.com/hugohe3/ppt-master),
+[banana-slides](https://github.com/Anionex/banana-slides) and [PPTAgent](https://github.com/icip-cas/PPTAgent).
+The scene compiler is independently implemented; their code and dependencies are not bundled.
+See [research notes](../references/research.md) for specific references and tradeoffs.
+
+Early workflow inspiration: Xiaoheihe author 玩家22186848 and Bilibili creator 一往无前河井.
+
+Local scripts perform no network requests and need no API key. Host AI services may receive supplied content.
+Exclude private source documents and credentials from shared outputs.
+
+[MIT](../LICENSE) © 2026 风清云影（helloo1568）

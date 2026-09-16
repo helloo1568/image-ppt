@@ -1,71 +1,120 @@
-# image-ppt 2.1.0
+<div align="center">
 
-**Turn books, PDFs, reports, and text into polished presentations through one strict workflow: content design → image deck → editable PPTX reconstruction.**
+<img src="docs/assets/hero.svg" alt="image-ppt: from source material to polished slides and editable PPTX" width="100%">
 
-> **Recommended setup: Codex + GPT Image 2.5.** When Codex exposes model selection, use GPT Image 2.5 Flare for fast style exploration and GPT Image 2.5 Sunburst for final assets and precise reference editing. The skill also works in other agent environments by calling that agent's own image generation/editing capability.
+# image-ppt · AI Competition & Cinematic Presentations
 
-[中文](README.md) · [Skill](SKILL.md) · [Changelog](CHANGELOG.md) · [Research](references/research.md)
+**Give good ideas a beautiful presentation—and room to keep editing.**
 
-## Portfolio
+Turn books, PDFs, papers, and reports into a visually consistent image deck.<br>
+Create **competition presentations, cinematic slides, startup pitch decks, research talks, and thesis defenses**.<br>
+Reconstruct slide images as native editable PowerPoint (PPTX) when needed.
 
-These slides come from projects produced with this workflow. The images live in the repository so the visual output is immediately visible on the GitHub project page.
+[![CI](https://github.com/helloo1568/image-ppt/actions/workflows/ci.yml/badge.svg)](https://github.com/helloo1568/image-ppt/actions/workflows/ci.yml)
+[![Version](https://img.shields.io/badge/version-2.1.0-79e9d1?labelColor=14243c)](CHANGELOG.md)
+[![Python](https://img.shields.io/badge/Python-3.10%2B-82b5ff?labelColor=14243c)](requirements.txt)
+[![License: MIT](https://img.shields.io/badge/License-MIT-f2c98a?labelColor=14243c)](LICENSE)
 
-### Snowline Watch · Intelligent glacier inspection and ecological early warning
+[简体中文](README.md) · **English**
 
-| Cover | Problem |
-|---|---|
-| ![Snowline Watch cover](showcase/snowline-watch-01.png) | ![Snowline Watch problem](showcase/snowline-watch-02.png) |
+[Showcase](#showcase) · [Why image-ppt](#features) · [Quick start](#quick-start) · [Guide](docs/guide.en.md) · [Contributing](CONTRIBUTING.md)
 
-| Solution | Technology comparison |
-|---|---|
-| ![Snowline Watch solution](showcase/snowline-watch-03.png) | ![Snowline Watch technology comparison](showcase/snowline-watch-04.png) |
+</div>
 
-### Glaze Reborn · Red-and-gold competition style
+---
 
-| Problem | Solution |
-|---|---|
-| ![Glaze Reborn problem](showcase/red-gold-competition-02.png) | ![Glaze Reborn solution](showcase/red-gold-competition-03.png) |
+<a id="showcase"></a>
 
-![Glaze Reborn process technology](showcase/red-gold-competition-04.png)
+## See the results
 
-An open-source skill for agent environments such as Codex. The host agent reads documents, interprets images, and invokes its own image generation capability. Local Python scripts only assemble image decks, compile Scene v1, crop known assets, and inspect outputs; they do not bundle an image model or automatically call a paid API.
+One workflow, two visual directions. These are actual pages produced with this project's workflow. Click an image to view the original.
 
-OpenAI describes Sunburst as its most capable GPT Image 2.5 model for generation and editing, while Flare is optimized for fast, high-quality everyday generation. “Recommended” is this project's workflow recommendation, not a cross-platform benchmark. If an agent does not expose model selection, use the image capability it actually provides and do not claim a specific backend. See the [OpenAI model catalog](https://developers.openai.com/api/docs/models) and [GPT Image 2.5 Flare](https://developers.openai.com/api/docs/models/gpt-image-2.5-flare).
+### Snowline Watch · Glacier blue & silver
 
-## Workflow contract in 2.1.0
+An intelligent glacier inspection and ecological early-warning concept, with a consistent visual language across the story, scenarios, and technology comparison.
 
-- One main path: new source material must become an image deck before editable reconstruction. Do not replace the workflow with editable-first authoring.
-- Two approval gates: present the content outline and wait for confirmation before generating the four slide-sorter options; do not create the full deck before style selection.
-- Deterministic style exemptions: only an explicit locked reference, preview skip, or delegated choice can change the four-option flow.
-- Page Spec bridge: preserve approved text, data, sources, stable IDs, and semantic intent while generating images so reconstruction does not repeat OCR or guess known content.
-- Explicit fast-forwarding: only clear instructions such as “skip previews,” “choose for me,” or “decide missing details” waive the corresponding gate.
-- Image reconstruction: preserve visible content and layout while separating semantic elements.
-- A versioned JSON scene with stable IDs, geometry, stacking, groups and provenance.
-- Native text, shapes, arrows, nested groups, tables and charts with embedded workbooks.
-- Deterministic asset extraction from supplied bounding boxes and optional masks.
-- An editability audit that checks exported objects against the scene.
-- GPT Image 2.5 guidance for Flare exploration and Sunburst reference editing.
-- Existing image-only export and raster text overlay commands remain available.
+| 01 / Cover | 02 / Problem |
+| :---: | :---: |
+| [![Snowline Watch: glacier inspection cover](showcase/snowline-watch-01.png)](showcase/snowline-watch-01.png) | [![Snowline Watch: problem statement](showcase/snowline-watch-02.png)](showcase/snowline-watch-02.png) |
+| **03 / Solution** | **04 / Technology** |
+| [![Snowline Watch: solution](showcase/snowline-watch-03.png)](showcase/snowline-watch-03.png) | [![Snowline Watch: technology comparison](showcase/snowline-watch-04.png)](showcase/snowline-watch-04.png) |
 
-See the [official image guide](https://developers.openai.com/api/docs/guides/image-generation).
-The host may not expose an image model selector. These recommendations are not a measured model benchmark.
+### Glaze Reborn · Red & gold
 
-## Editability contract
+A competition presentation that connects the problem, solution, and craft technology through a shared red-and-gold palette.
 
-| Content | Export | Editing |
-|---|---|---|
-| Headings, body copy, labels | Native text boxes | Text, font, position, color |
-| Geometry and diagrams | Native shapes, lines, groups | Geometry and style; ungroup to edit children |
-| Tables | Native tables | Cells and formatting |
-| Bar, column, line, pie, doughnut | Native charts with workbooks | Data and chart formatting |
-| Photos and complex illustrations | Separate image objects | Move, crop, resize, replace |
+| 02 / Problem | 03 / Solution |
+| :---: | :---: |
+| [![Glaze Reborn: problem statement](showcase/red-gold-competition-02.png)](showcase/red-gold-competition-02.png) | [![Glaze Reborn: solution](showcase/red-gold-competition-03.png)](showcase/red-gold-competition-03.png) |
 
-Raster artwork does not become editable vector paths. Missing or occluded details cannot be recovered with guaranteed accuracy.
-**The local scripts do not perform OCR, automatic segmentation or image understanding.** Those steps belong to the host agent and its available vision/image tools.
+<details>
+<summary>View more: Glaze Reborn · Process technology</summary>
+
+[![Glaze Reborn: process technology](showcase/red-gold-competition-04.png)](showcase/red-gold-competition-04.png)
+
+</details>
+
+<sub>Images demonstrate visual output. Editability is assessed through the delivered PPTX objects and audit report. Business and technology figures in these examples are presentation content, not benchmarks for this skill.</sub>
+
+<a id="features"></a>
+
+## Why image-ppt
+
+| | What you get |
+| :--- | :--- |
+| **🎨 Choose a direction first** | Approve the content outline, then compare **4 slide-sorter overviews** using the same content before full production. |
+| **🧩 Designed to keep editing** | Optional reconstruction into native text, shapes, tables, and **5 chart types**. Photos and complex artwork become separate, replaceable images. |
+| **📝 Preserve approved content** | **Page Spec** records exact text, numbers, sources, and stable element IDs. Reconstruction reuses known content instead of recognizing it again. |
+| **🔁 Resume and revise** | `deck-spec.md` tracks production state; `scene.json` stores layout. Update affected elements and assets, then export again. |
+| **🔍 Inspect the deliverable** | Audit objects, text, table and chart data, stacking, and full-page background remnants; follow with rendered visual review. |
+| **🔓 Open and adaptable** | **MIT licensed**, with support for agents that provide the required capabilities. Local Python tools make no network requests and need no API key. |
+
+> **How it runs:** image-ppt is an agent skill. The host reads materials, interprets images, and generates artwork; local scripts assemble, crop, compile, and audit. End-to-end production requires those host capabilities. See [runtime and model notes](references/models.md).
+
+## What can you make?
+
+| Use case or style | How image-ppt helps |
+| :--- | :--- |
+| **Competition PPT / competition presentations** | Connect the problem, solution, technical advantages, and applications in a consistent visual story. |
+| **Innovation competitions / startup pitch decks** | Turn project proposals, research material, or business plans into slides tailored to the competition brief. |
+| **Cinematic PPT / cinematic slides / poster-style presentations** | Explore cinematic lighting, scene composition, and poster-style covers through four visual directions. |
+| **Academic presentations / thesis defense / research slides** | Extract questions, methods, results, and conclusions from papers and PDFs while preserving data and sources. |
+| **Business presentations / project updates / book presentations** | Adapt long source materials to the audience, slide count, and speaking context. |
+| **AI presentation generation / PDF to PPT / image to editable PPTX** | Generate an image deck from source material, or reconstruct existing slide images and scanned PDF pages as editable objects. |
+
+Cinematic, technology, and red-and-gold styles are visual directions you can request. Results depend on source material, the host's image capabilities, and slide-by-slide review.
+
+### Specific competition presentation scenarios
+
+Use project proposals, research papers, survey reports, and the current competition brief as source material. The examples below suggest ways to organize a presentation; confirm the outline against the requirements of your track.
+
+| Competition | Search terms | Presentation focus |
+| :--- | :--- | :--- |
+| [中国国际大学生创新大赛](https://hudong.moe.gov.cn/srcsite/A08/s5672/202607/t20260731_1445670.html) | **大学生创新大赛 PPT / 互联网+ PPT / innovation pitch deck** | Problem, innovation, validation, team, and development plan. |
+| [“挑战杯”全国大学生课外学术科技作品竞赛](https://www.tiaozhanbei.net/focus) | **挑战杯 PPT / 大挑 PPT / Challenge Cup research presentation** | Research question, methods, novelty, results, and applications. |
+| [“挑战杯”中国大学生创业计划竞赛](https://www.tiaozhanbei.net/focus) | **小挑 PPT / Challenge Cup business plan presentation** | Customer needs, product, market, business model, and execution. |
+| [全国大学生电子商务“创新、创意及创业”挑战赛](https://www.3chuang.net/) | **三创赛 PPT / e-commerce competition presentation** | E-commerce context, ideas, operations, project results, and value. |
+| [“正大杯”全国大学生市场调查与分析大赛](https://www.china-cssc.org/show-568-1912-1.html) | **正大杯 PPT / 市调大赛 PPT / market research presentation** | Research questions, survey design, data analysis, findings, and recommendations. |
+
+Also useful for **大创 (undergraduate innovation and entrepreneurship training projects)**: proposal defenses, progress reports, and final presentations. These are project reporting scenarios, listed separately from competitions.
+
+## Three stages, from source to delivery
+
+| 01 · Content & style | 02 · Image deck | 03 · Editable reconstruction (optional) |
+| :--- | :--- | :--- |
+| Extract content and approve the outline | Save Page Spec and generate each slide | Reconstruct layers from the spec and images |
+| Compare four overviews and choose a style | Review text and visuals; assemble the PPTX | Compile native objects, audit, and render |
+| **Approved production plan** | **Slide images + image-only PPTX** | **Editable PPTX + Scene + assets** |
+
+Content approval precedes style selection by default. Stage 3 requires an explicit editable-deck request. Existing slide images or scanned PDFs can enter reconstruction directly. Preview skips and delegated choices follow the [full workflow rules](docs/guide.en.md).
+
+<a id="quick-start"></a>
 
 ## Quick start
 
-Python 3.10+:
+### 1. Get the skill and dependencies
+
+Requires **Python 3.10+** and an agent with skill-file support, document reading, image generation, and local file tools.
 
 ```sh
 git clone https://github.com/helloo1568/image-ppt.git
@@ -74,86 +123,76 @@ python -m pip install -r requirements.txt
 python scripts/validate_page_spec.py examples/page-spec.example.json --strict
 ```
 
-Install the complete repository as image-ppt in your host's skill directory, or provide SKILL.md to an agent supporting this format.
-In Codex, let Codex invoke its image-generation capability. In another agent, use that agent's native or connected image-generation/editing capability. Keep task materials and outputs in a separate working directory.
+### 2. Connect it to your agent
 
-## Runtime environments
+Install the **complete repository** in your host's skill directory, or ask an agent supporting this format to read [SKILL.md](SKILL.md) and use its repository resources. Keep source materials and deliverables in a separate working directory.
 
-| Environment | Image backend | Notes |
-|---|---|---|
-| Codex (recommended) | Codex image generation; prefer GPT Image 2.5 when selectable | Flare for exploration, Sunburst for final and precision editing |
-| Other agents | That agent's own native or connected image generation/editing capability | Keep the same state machine, prompts, and acceptance checks |
-| Python only | No end-to-end image generation | Local scripts only assemble, overlay text, compile scenes, crop assets, and audit |
-
-The skill does not install an image plugin for another agent, search for API keys, or silently switch to an external service. Stop and report the missing capability when the current agent cannot generate images.
-
-## Example requests
+### 3. Attach your material and ask
 
 ```text
-Use $image-ppt to turn this report into a 10-slide editable deck for a project pitch.
-I have no style reference. Show the content outline and wait for approval, then show four slide-sorter directions. After selection, build the image deck and page-spec.json, then reconstruct the editable version.
+Use $image-ppt to turn the attached report into a 10-slide project pitch.
+The audience is competition judges. I have no style reference.
+Show the content outline for approval, then four slide-sorter overviews for selection.
+After I choose a style, create the image deck, then reconstruct an editable PPTX.
+Include page-spec.json, scene.json, assets, and the editability report.
 ```
+
+<details>
+<summary>More examples: image-only decks / existing slide reconstruction</summary>
+
+**Image-only classroom presentation:**
 
 ```text
-Use $image-ppt starting at Step 3 to reconstruct these existing slide images into editable PPTX.
-Preserve wording, layout and page order. Separate every element I need to edit.
-Remove duplicated content from the background and include the scene and assets.
+Use $image-ppt to make a 12-slide classroom presentation from the attached material.
+The audience is my classmates. No style reference; deliver only an image deck.
+Confirm the outline first, then show four slide-sorter options for me to choose from.
 ```
 
-## The one three-stage workflow
+**Make existing slide images editable:**
 
 ```text
-Confirm source, style reference, audience/use case, page count, and delivery scope
-  ↓
-Step 1A Content outline → wait for approval
-  ↓
-Step 1B Four slide-sorter overviews → wait for selection
-  ↓ explicit locked-reference/skip/delegation rules only
-Step 2  page-spec.json → generate and validate every slide image → image-only PPTX
-  ↓ only when editable reconstruction was explicitly requested
-Step 3  Page Spec + slide images → scene.json → native editable PPTX → structural and visual review
+Use $image-ppt starting at Step 3 to reconstruct all attached slide images as editable PPTX.
+Preserve wording, aspect ratio, layout, and page order. Separate text, charts, and subjects.
+Keep complex artwork as independent images, remove background remnants,
+and deliver the Scene, assets, and editability report.
 ```
 
-Ordinary requests do not waive gates. Explicit authorization is interpreted narrowly.
-Existing slide images or scanned PDF pages can enter Step 3 directly when reconstruction is the stated goal. Ordinary edits to an already-editable PPTX are outside this workflow.
+</details>
 
-## Commands and contract
+## What can you edit?
 
-- validate_page_spec.py: validate content approval, ordered pages, stable IDs, geometry hints, unresolved items, and approved image delivery.
-- build_editable_ppt.py: validate a scene and compile native objects.
-- audit_editability.py: inspect PPTX and optionally compare it with a scene; --strict fails on warnings.
-- extract_assets.py: crop known regions, apply supplied masks, record coordinates and hashes.
-- build_image_ppt.py: existing image-only assembler with natural sorting and fit controls.
-- overlay_text.py: existing deterministic raster text overlay.
+| Slide content | Reconstructed object | Editable properties |
+| :--- | :--- | :--- |
+| Headings, body text, labels, page numbers | Native text boxes | Text, font, color, position |
+| Geometry, arrows, flow nodes | Native shapes, lines, groups | Size and style; ungroup to edit children |
+| Tables | Native tables | Cell content and formatting |
+| Column, bar, line, pie, doughnut charts | Native charts + embedded workbooks | Data and chart styling |
+| Photos, people, complex illustrations | Separate image objects | Position, size, crop, replacement |
 
-[Page Spec](references/page-spec.md) · [Scene format](references/scene-format.md) · [Layer reconstruction](references/reconstruction.md) · [Models](references/models.md)
+Complex artwork remains raster within each image. Recognition, segmentation, and background repair depend on host tools; the local scripts include no automatic OCR or segmentation model. Structural audits do not replace visual review or guarantee recovery of occluded information. See [capabilities and validation](docs/guide.en.md).
 
-Scene coordinates are canvas pixels; fonts and strokes are points. Asset paths are relative to and confined to the scene directory.
-Group children use full-slide coordinates. Array order determines stacking.
-This version does not implement a generic SVG importer, merged table cells, automatic connector attachment, or inline rich text.
+## Documentation & community
 
-## Validation
+| Your next step | Resource |
+| :--- | :--- |
+| Installation, workflow, commands, and validation | [Usage & technical guide](docs/guide.en.md) |
+| Agent instructions | [SKILL.md](SKILL.md) |
+| Content contracts and editable objects | [Page Spec](references/page-spec.md) · [Scene v1](references/scene-format.md) · [Reconstruction](references/reconstruction.md) |
+| Versions and design references | [Changelog](CHANGELOG.md) · [Research](references/research.md) |
+| Bug reports, suggestions, and code contributions | [Issues](https://github.com/helloo1568/image-ppt/issues) · [Contributing](CONTRIBUTING.md) |
 
-```sh
-python -m pip install -r requirements-dev.txt
-python -m ruff check .
-python -m pytest tests/ -q
-```
+### Credits & license
 
-CI covers Windows/Linux and Python 3.10/3.12/3.13.
-Audit checks declared objects, not source-image completeness or visual similarity.
-Render and inspect every slide before delivery. Portfolio images retain the source page dimensions; automated tests do not require PowerPoint.
+Thanks to [PPT Master by Hugo He](https://github.com/hugohe3/ppt-master), [banana-slides](https://github.com/Anionex/banana-slides), and [PPTAgent](https://github.com/icip-cas/PPTAgent) for methodological inspiration, and to Xiaoheihe author 玩家22186848 and Bilibili creator 一往无前河井 for their tutorials. The scene compiler is independently implemented; see [research notes](references/research.md) for attribution and tradeoffs.
 
-## Credits
+Local scripts need no API key. Host image and vision services may receive supplied materials; their own pricing and privacy terms apply.
 
-Research includes [PPT Master by Hugo He](https://github.com/hugohe3/ppt-master),
-[banana-slides](https://github.com/Anionex/banana-slides) and [PPTAgent](https://github.com/icip-cas/PPTAgent).
-The scene compiler is independently implemented; their code and dependencies are not bundled.
-See [research notes](references/research.md) for specific references and tradeoffs.
+<div align="center">
 
-Early workflow inspiration: Xiaoheihe author 玩家22186848 and Bilibili creator 一往无前河井.
+**Start your next presentation with a good idea.**
 
-Local scripts perform no network requests and need no API key. Host AI services may receive supplied content.
-Exclude private source documents and credentials from shared outputs.
+If image-ppt helps you, give it a Star or share your work and improvements.
 
-[MIT](LICENSE) © 2026 风清云影（helloo1568）
+[MIT License](LICENSE) © 2026 风清云影（[helloo1568](https://github.com/helloo1568)）
+
+</div>
