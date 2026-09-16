@@ -26,7 +26,3 @@ jobs:
         run: python -m pytest tests/ -v
       - name: Validate Page Spec example
         run: python scripts/validate_page_spec.py examples/page-spec.example.json --strict
-      - name: Build editable example
-        run: python scripts/build_editable_ppt.py examples/editable-scene.example.json output/editable-demo.pptx
-      - name: Audit editable example
-        run: python scripts/audit_editability.py output/editable-demo.pptx --scene examples/editable-scene.example.json --strict

@@ -1,6 +1,6 @@
 # Scene v1：可编辑场景协议
 
-[机器 schema](scene.schema.json) · [可运行示例](../examples/editable-scene.example.json)
+[机器 schema](scene.schema.json)
 
 ## 单一来源
 

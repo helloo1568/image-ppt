@@ -28,8 +28,6 @@
 
 ![釉光新生工艺技术](showcase/red-gold-competition-04.png)
 
-> 隐私说明：该案例第 1 页含有私人信息，未收入仓库，也未用于任何 GitHub 预览图。
-
 image-ppt 是运行在 Codex 等 Agent 环境中的开源技能。宿主 Agent 负责读取材料、视觉识别和调用自身生图能力；本地脚本只负责确定性合并、Scene v1 编译、素材裁剪和结果审查，不内置生图模型或自动调用收费 API。
 
 GPT Image 2.5 的官方定位中，Sunburst 面向高精度生成与编辑，Flare 面向快速、高质量的日常生成。这里的“最佳推荐”是本项目针对该工作流的组合建议，不是跨平台基准结论；如果 Codex 或其他 Agent 不暴露具体型号，应使用它实际提供的生图能力并如实记录后端。参见 [OpenAI 图像模型](https://developers.openai.com/api/docs/models) 和 [GPT Image 2.5 Flare](https://developers.openai.com/api/docs/models/gpt-image-2.5-flare)。
@@ -88,20 +86,6 @@ python scripts/validate_page_spec.py examples/page-spec.example.json --strict
 | 仅 Python 环境 | 不支持端到端生图 | 只能运行图片合并、文字叠加、Scene 编译、素材裁剪和审查脚本 |
 
 本技能不会替其他 Agent 安装生图插件、寻找 API Key 或静默切换外部服务。若当前 Agent 没有生图能力，应明确停在对应阶段。
-
-### 零 API 的功能示例
-
-```sh
-python scripts/build_editable_ppt.py examples/editable-scene.example.json output/editable-demo.pptx
-python scripts/audit_editability.py output/editable-demo.pptx --scene examples/editable-scene.example.json --output output/editability.json --strict
-```
-
-[下载三页可编辑示例](examples/editable-demo.pptx) · [查看场景 JSON](examples/editable-scene.example.json)
-
-示例使用明确编写的场景与历史图片素材，测试导出能力，不是图片自动识别准确率展示。
-数据页的数字全部为演示数据。
-
-![原生数据页](examples/editable-preview-02.png)
 
 ### 对 Agent 说
 
@@ -171,15 +155,7 @@ python -m pytest tests/ -q
 CI 覆盖 Windows / Linux、Python 3.10 / 3.12 / 3.13。
 结构检查验证声明的场景对象，不能证明没有漏识别元素，也不代替 PowerPoint 渲染。
 交付前逐页检查中文换行、字体、图表标签、图片边缘和移动后的残影。
-示例已由 PowerPoint 导出预览；自动测试不依赖 PowerPoint。
-
-## 历史视觉示例
-
-以下图片保留自旧版，展示生图视觉方向，不代表逐元素还原结果。
-
-| 项目周报 | 中老年情感方案 |
-|---|---|
-| ![周报](examples/wanqing-weekly-c-p1.jpg) | ![情感方案](examples/silver-emotion-p1.jpg) |
+作品集图片保持源页面像素尺寸；自动测试不依赖 PowerPoint。
 
 ## 来源与取舍
 

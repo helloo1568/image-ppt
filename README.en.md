@@ -28,8 +28,6 @@ These slides come from projects produced with this workflow. The images live in 
 
 ![Glaze Reborn process technology](showcase/red-gold-competition-04.png)
 
-> Privacy note: slide 1 of this case contains private information. It is not included in the repository and is not used in any GitHub preview.
-
 An open-source skill for agent environments such as Codex. The host agent reads documents, interprets images, and invokes its own image generation capability. Local Python scripts only assemble image decks, compile Scene v1, crop known assets, and inspect outputs; they do not bundle an image model or automatically call a paid API.
 
 OpenAI describes Sunburst as its most capable GPT Image 2.5 model for generation and editing, while Flare is optimized for fast, high-quality everyday generation. “Recommended” is this project's workflow recommendation, not a cross-platform benchmark. If an agent does not expose model selection, use the image capability it actually provides and do not claim a specific backend. See the [OpenAI model catalog](https://developers.openai.com/api/docs/models) and [GPT Image 2.5 Flare](https://developers.openai.com/api/docs/models/gpt-image-2.5-flare).
@@ -74,15 +72,7 @@ git clone https://github.com/helloo1568/image-ppt.git
 cd image-ppt
 python -m pip install -r requirements.txt
 python scripts/validate_page_spec.py examples/page-spec.example.json --strict
-python scripts/build_editable_ppt.py examples/editable-scene.example.json output/editable-demo.pptx
-python scripts/audit_editability.py output/editable-demo.pptx --scene examples/editable-scene.example.json --output output/editability.json --strict
 ```
-
-[Download editable demo](examples/editable-demo.pptx) · [Scene source](examples/editable-scene.example.json)
-
-The three-slide demo tests compilation of an authored scene, not automatic reconstruction accuracy. All chart values are illustrative.
-
-![Native data slide](examples/editable-preview-02.png)
 
 Install the complete repository as image-ppt in your host's skill directory, or provide SKILL.md to an agent supporting this format.
 In Codex, let Codex invoke its image-generation capability. In another agent, use that agent's native or connected image-generation/editing capability. Keep task materials and outputs in a separate working directory.
@@ -152,7 +142,7 @@ python -m pytest tests/ -q
 
 CI covers Windows/Linux and Python 3.10/3.12/3.13.
 Audit checks declared objects, not source-image completeness or visual similarity.
-Render and inspect every slide before delivery. The checked-in previews were exported with PowerPoint; automated tests do not require it.
+Render and inspect every slide before delivery. Portfolio images retain the source page dimensions; automated tests do not require PowerPoint.
 
 ## Credits
 
@@ -162,7 +152,6 @@ The scene compiler is independently implemented; their code and dependencies are
 See [research notes](references/research.md) for specific references and tradeoffs.
 
 Early workflow inspiration: Xiaoheihe author 玩家22186848 and Bilibili creator 一往无前河井.
-Historical visual samples remain under examples/ and do not demonstrate element-level reconstruction.
 
 Local scripts perform no network requests and need no API key. Host AI services may receive supplied content.
 Exclude private source documents and credentials from shared outputs.
