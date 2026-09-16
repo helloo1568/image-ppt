@@ -32,26 +32,37 @@
 
 高原冰川智能巡检与生态预警系统：以冷色科技视觉串联项目叙事、场景与技术对比，展示科技风竞赛 PPT 与电影质感 PPT 的视觉方向。
 
-| 01 / 项目封面 | 02 / 项目痛点 |
-| :---: | :---: |
-| [![雪线守望：冰川、巡检人员与无人机组成的项目封面](showcase/snowline-watch-01.png)](showcase/snowline-watch-01.png) | [![雪线守望：项目痛点页](showcase/snowline-watch-02.png)](showcase/snowline-watch-02.png) |
-| **03 / 解决方案** | **04 / 技术对比** |
-| [![雪线守望：解决方案页](showcase/snowline-watch-03.png)](showcase/snowline-watch-03.png) | [![雪线守望：技术对比页](showcase/snowline-watch-04.png)](showcase/snowline-watch-04.png) |
+#### 01 / 项目封面
+
+<a href="showcase/snowline-watch-01.png"><img src="showcase/snowline-watch-01.png" alt="雪线守望：冰川、巡检人员与无人机组成的项目封面" width="100%"></a>
+
+#### 02 / 项目痛点
+
+<a href="showcase/snowline-watch-02.png"><img src="showcase/snowline-watch-02.png" alt="雪线守望：项目痛点页" width="100%"></a>
+
+#### 03 / 解决方案
+
+<a href="showcase/snowline-watch-03.png"><img src="showcase/snowline-watch-03.png" alt="雪线守望：解决方案页" width="100%"></a>
+
+#### 04 / 技术对比
+
+<a href="showcase/snowline-watch-04.png"><img src="showcase/snowline-watch-04.png" alt="雪线守望：技术对比页" width="100%"></a>
 
 ### 釉光新生 · 红金竞赛风格
 
 用红金配色呈现工艺主题，让痛点、方案和技术信息保持一致的视觉语言，为国赛 PPT、比赛答辩 PPT 和创新创业路演提供风格参考。
 
-| 02 / 项目痛点 | 03 / 解决方案 |
-| :---: | :---: |
-| [![釉光新生：红金风格的项目痛点页](showcase/red-gold-competition-02.png)](showcase/red-gold-competition-02.png) | [![釉光新生：红金风格的解决方案页](showcase/red-gold-competition-03.png)](showcase/red-gold-competition-03.png) |
+#### 02 / 项目痛点
 
-<details>
-<summary>展开查看：釉光新生 · 工艺技术页</summary>
+<a href="showcase/red-gold-competition-02.png"><img src="showcase/red-gold-competition-02.png" alt="釉光新生：红金风格的项目痛点页" width="100%"></a>
 
-[![釉光新生：工艺技术页](showcase/red-gold-competition-04.png)](showcase/red-gold-competition-04.png)
+#### 03 / 解决方案
 
-</details>
+<a href="showcase/red-gold-competition-03.png"><img src="showcase/red-gold-competition-03.png" alt="釉光新生：红金风格的解决方案页" width="100%"></a>
+
+#### 04 / 工艺技术
+
+<a href="showcase/red-gold-competition-04.png"><img src="showcase/red-gold-competition-04.png" alt="釉光新生：工艺技术页" width="100%"></a>
 
 <sub>作品图用于展示视觉效果；可编辑性以实际 PPTX 对象与审查报告为准。案例中的业务与技术数据属于演示内容，不代表本技能的性能指标。</sub>
 
