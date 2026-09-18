@@ -71,6 +71,21 @@ def test_requires_approval_and_existing_images(page_spec):
     assert result["slides"] == 1
 
 
+@pytest.mark.parametrize("rotated", [False, True])
+def test_approved_image_ratio_allows_pixel_rounding_and_exif(page_spec, rotated):
+    spec, _ = load_page_spec(page_spec)
+    slide = spec["slides"][0]
+    slide.update(image_status="approved", image_file="slides/01.jpg")
+    target = page_spec.parent / slide["image_file"]
+    target.parent.mkdir()
+    exif = Image.Exif()
+    if rotated:
+        exif[0x0112] = 6
+    size = (941, 1672) if rotated else (1672, 941)
+    Image.new("RGB", size, "white").save(target, exif=exif)
+    assert validate_page_spec(spec, page_spec.parent, require_images=True, strict=True)["slides"] == 1
+
+
 @pytest.mark.parametrize("mutation", ["approval", "duplicate", "outside", "traversal"])
 def test_invalid_page_spec_rejected(page_spec, mutation):
     spec, _ = load_page_spec(page_spec)

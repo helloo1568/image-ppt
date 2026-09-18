@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
-"""Build a PowerPoint deck from naturally sorted slide images."""
+"""Build an image deck from an approved Page Spec or a legacy image directory."""
 from __future__ import annotations
 
 import argparse
 import json
+import math
+import os
 import re
 import tempfile
 from contextlib import nullcontext
@@ -13,6 +15,7 @@ from PIL import Image, ImageOps
 from pptx import Presentation
 from pptx.dml.color import RGBColor
 from pptx.util import Inches
+from validate_page_spec import load_page_spec
 
 DEFAULT_EXTENSIONS = (".png", ".jpg", ".jpeg")
 def natural_key(path: Path) -> list[object]:
@@ -112,15 +115,33 @@ def add_fitted_picture(
 def build_deck(args: argparse.Namespace) -> dict[str, object]:
     input_dir = args.input_dir.resolve()
     output = args.output.resolve()
-    if not input_dir.is_dir():
-        raise FileNotFoundError(f"Input directory does not exist: {input_dir}")
-    images = collect_images(input_dir, tuple(args.extensions))
+    spec = None
+    if input_dir.is_file():
+        spec, _ = load_page_spec(input_dir, require_images=True, strict=True)
+        images = [(input_dir.parent / slide["image_file"]).resolve() for slide in spec["slides"]]
+    elif input_dir.is_dir():
+        images = collect_images(input_dir, tuple(args.extensions))
+    else:
+        raise FileNotFoundError(f"Input directory or Page Spec does not exist: {input_dir}")
     if not images:
         raise FileNotFoundError(f"No supported images found in: {input_dir}")
+    width, height = args.width, args.height
+    if spec:
+        ratio = spec["canvas"]["width"] / spec["canvas"]["height"]
+        if width is not None and height is not None and not math.isclose(width / height, ratio, rel_tol=1e-6):
+            raise ValueError("Slide dimensions must preserve the Page Spec aspect ratio")
+        if width is None:
+            width = height * ratio if height is not None else 13.333333
+        height = width / ratio
+    else:
+        width = width if width is not None else 13.333333
+        height = height if height is not None else 7.5
+    if not all(math.isfinite(value) and 1 <= value <= 56 for value in (width, height)):
+        raise ValueError("Slide dimensions must be finite and between 1 and 56 inches")
     presentation = Presentation()
-    presentation.slide_width = Inches(args.width)
-    presentation.slide_height = Inches(args.height)
-    presentation.core_properties.title = args.title or output.stem
+    presentation.slide_width = Inches(width)
+    presentation.slide_height = Inches(height)
+    presentation.core_properties.title = args.title or (spec["title"] if spec else output.stem)
     slide_width = presentation.slide_width
     slide_height = presentation.slide_height
     blank_layout = presentation.slide_layouts[6]
@@ -140,26 +161,34 @@ def build_deck(args: argparse.Namespace) -> dict[str, object]:
                 slide, embed_path, slide_width, slide_height, args.fit, name=image_path.stem
             )
         output.parent.mkdir(parents=True, exist_ok=True)
-        presentation.save(output)
-    verification = Presentation(output)
-    if len(verification.slides) != len(images):
-        raise RuntimeError("Saved deck slide count does not match source image count")
+        fd, temp_output = tempfile.mkstemp(suffix=".pptx", dir=output.parent)
+        os.close(fd)
+        try:
+            presentation.save(temp_output)
+            verification = Presentation(temp_output)
+            if len(verification.slides) != len(images):
+                raise RuntimeError("Saved deck slide count does not match approved image count")
+            os.replace(temp_output, output)
+        finally:
+            Path(temp_output).unlink(missing_ok=True)
     return {
         "output": str(output),
         "slides": len(images),
-        "slide_size_inches": [args.width, args.height],
+        "slide_size_inches": [width, height],
         "fit": args.fit,
         "max_width": args.max_width,
         "jpeg_quality": args.jpeg_quality,
         "images": [path.name for path in images],
+        "page_spec": str(input_dir) if spec else None,
+        "content_version": spec["content_version"] if spec else None,
     }
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("input_dir", type=Path, help="Directory containing ordered slide images")
+    parser.add_argument("input_dir", type=Path, help="Approved Page Spec JSON, or a legacy directory of ordered images")
     parser.add_argument("output", type=Path, help="Output .pptx path")
     parser.add_argument("--fit", choices=("cover", "contain", "stretch"), default="cover")
-    parser.add_argument("--width", type=float, default=13.333333, help="Slide width in inches")
-    parser.add_argument("--height", type=float, default=7.5, help="Slide height in inches")
+    parser.add_argument("--width", type=float, help="Slide width in inches (default: 13.333333)")
+    parser.add_argument("--height", type=float, help="Slide height (default: Page Spec ratio, or 7.5 for a directory)")
     parser.add_argument("--background", default="FFFFFF", help="Six-digit RGB background color")
     parser.add_argument("--title", default="", help="PowerPoint document title")
     parser.add_argument("--extensions", nargs="+", default=list(DEFAULT_EXTENSIONS))
@@ -178,8 +207,8 @@ def parse_args() -> argparse.Namespace:
     args = parser.parse_args()
     if args.output.suffix.lower() != ".pptx":
         parser.error("output must use the .pptx extension")
-    if args.width <= 0 or args.height <= 0:
-        parser.error("slide width and height must be positive")
+    if any(value is not None and (not math.isfinite(value) or value <= 0) for value in (args.width, args.height)):
+        parser.error("slide width and height must be finite and positive")
     if not re.fullmatch(r"[0-9A-Fa-f]{6}", args.background):
         parser.error("background must be a six-digit RGB value such as FFFFFF")
     args.background = args.background.upper()
@@ -189,7 +218,11 @@ def parse_args() -> argparse.Namespace:
         parser.error("jpeg-quality must be between 1 and 95 (0 disables re-encoding)")
     return args
 def main() -> None:
-    result = build_deck(parse_args())
+    args = parse_args()
+    try:
+        result = build_deck(args)
+    except (ValueError, OSError) as error:
+        raise SystemExit(f"build_image_ppt: {error}") from error
     print(json.dumps(result, ensure_ascii=True, indent=2))
 if __name__ == "__main__":
     main()

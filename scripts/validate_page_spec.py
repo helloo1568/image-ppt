@@ -9,7 +9,7 @@ import math
 from pathlib import Path
 
 from jsonschema import Draft202012Validator
-from PIL import Image
+from PIL import Image, ImageOps
 
 SCHEMA = Path(__file__).resolve().parents[1] / "references" / "page-spec.schema.json"
 
@@ -47,6 +47,7 @@ def validate_page_spec(
 
     width, height = spec["canvas"]["width"], spec["canvas"]["height"]
     slide_ids, page_numbers, element_count, unresolved = set(), set(), 0, 0
+    image_paths = set()
     for expected_page, slide in enumerate(spec["slides"], start=1):
         if slide["id"] in slide_ids:
             raise ValueError(f"Duplicate slide id: {slide['id']}")
@@ -62,6 +63,9 @@ def validate_page_spec(
             )
 
         image_path = _relative_path(base, slide["image_file"])
+        if image_path in image_paths:
+            raise ValueError(f"Duplicate image path: {slide['image_file']}")
+        image_paths.add(image_path)
         if require_images:
             if slide["image_status"] != "approved":
                 raise ValueError(f"Slide not approved: {slide['id']}")
@@ -73,6 +77,12 @@ def validate_page_spec(
                         f"Approved slide image must be PNG or JPEG: {slide['image_file']}"
                     )
                 image.verify()
+            with Image.open(image_path) as image:
+                image_width, image_height = ImageOps.exif_transpose(image).size
+                # Allow one pixel of rounding in either dimension, not a crop.
+                ratio = width / height
+                if abs(image_width - image_height * ratio) > max(1.0, ratio) + 1e-6:
+                    raise ValueError(f"Image aspect ratio differs from canvas: {slide['image_file']}")
 
         element_ids = set()
         for element in slide["elements"]:

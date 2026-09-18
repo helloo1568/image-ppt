@@ -160,6 +160,7 @@ def test_image_fit_preserves_alpha(scene_file, fit):
     output = scene_file.with_suffix(".pptx")
     build_deck(scene_file, output)
     picture = Presentation(output).slides[0].shapes[1]
+    assert audit(output, scene_file)["errors"] == []
     import io
 
     with Image.open(io.BytesIO(picture.image.blob)) as image:
@@ -168,6 +169,73 @@ def test_image_fit_preserves_alpha(scene_file, fit):
         assert picture.crop_left > 0
     elif fit == "contain":
         assert picture.width / picture.height == pytest.approx(2)
+
+
+@pytest.mark.parametrize("fit", ["contain", "cover", "stretch"])
+@pytest.mark.parametrize("attribute", ["left", "top", "width", "height", "crop_left", "crop_top", "crop_right", "crop_bottom"])
+def test_audit_rejects_changed_picture_geometry_and_crop(scene_file, fit, attribute):
+    scene, _ = load_scene(scene_file)
+    scene["slides"][0]["elements"][1]["fit"] = fit
+    scene_file.write_text(json.dumps(scene), encoding="utf-8")
+    output = scene_file.with_suffix(".pptx")
+    build_deck(scene_file, output)
+    prs = Presentation(output)
+    picture = prs.slides[0].shapes[1]
+    delta = 0.1 if attribute.startswith("crop_") else Inches(0.4)
+    setattr(picture, attribute, getattr(picture, attribute) + delta)
+    prs.save(output)
+    error = "crop differs" if attribute.startswith("crop_") else "geometry differs"
+    assert any(error in e for e in audit(output, scene_file)["errors"])
+
+
+@pytest.mark.parametrize("nested", [False, True])
+@pytest.mark.parametrize("mutation", ["move", "resize", "rotate", "child_offset", "child_extent", "flip"])
+def test_audit_rejects_group_transform_edits(scene_file, nested, mutation):
+    output = scene_file.with_suffix(".pptx")
+    build_deck(scene_file, output)
+    prs = Presentation(output)
+    group = prs.slides[0].shapes[2]
+    if nested:
+        group = group.shapes[1]
+    transform = group._element.grpSpPr.xfrm
+    if mutation == "move":
+        group.left += Inches(1)
+    elif mutation == "resize":
+        group.width += Inches(1)
+    elif mutation == "rotate":
+        group.rotation = 90
+    elif mutation == "child_offset":
+        transform.chOff.x += Inches(1)
+    elif mutation == "child_extent":
+        transform.chExt.cy += Inches(1)
+    elif mutation == "flip":
+        transform.flipH = True
+    prs.save(output)
+    error = "rotation differs" if mutation == "rotate" else "group transform differs"
+    assert any(error in e for e in audit(output, scene_file)["errors"])
+
+
+@pytest.mark.parametrize("fit", ["contain", "cover", "stretch"])
+def test_audit_accepts_image_inside_nested_group(scene_file, fit):
+    scene, _ = load_scene(scene_file)
+    elements = scene["slides"][0]["elements"]
+    photo = elements.pop(1)
+    photo["fit"] = fit
+    elements[1]["children"][1]["children"].append(photo)
+    scene_file.write_text(json.dumps(scene), encoding="utf-8")
+    output = scene_file.with_suffix(".pptx")
+    build_deck(scene_file, output)
+    assert audit(output, scene_file)["errors"] == []
+
+
+@pytest.mark.parametrize("axis", ["flipH", "flipV"])
+def test_audit_rejects_picture_flip(scene_file, axis):
+    output = scene_file.with_suffix(".pptx")
+    build_deck(scene_file, output)
+    prs = Presentation(output)
+    setattr(prs.slides[0].shapes[1]._element.spPr.xfrm, axis, True)
+    prs.save(output)
+    assert any("image flip differs" in e for e in audit(output, scene_file)["errors"])
 
 
 @pytest.mark.parametrize(

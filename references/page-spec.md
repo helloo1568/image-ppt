@@ -8,11 +8,11 @@
 
 ## 生命周期
 
-1. Step 1 内容确认后，把页序、标题、核心结论、准确文字/数据和来源写入 Page Spec。
-2. 风格选定、锁定参考或明确跳过预览后，补齐 `style`，再运行验证器。
+1. Step 1 内容确认后，把页序、标题、核心结论、准确文字/数据和来源写入 `deck-spec.md`。
+2. 风格锁定后进入 S5，将已确认内容与 `style` 一起写入 Page Spec，再运行验证器；不得提前写入虚假的风格授权。
 3. Step 2 每完成一页，记录最终 `image_file`、`image_status`、实际提示词和更新后的布局提示。
 4. 交付图片版前使用 `--require-images` 再验证一次，确保所有页面图片存在且状态为 `approved`。
-5. Step 3 以 Page Spec 为语义事实源、页面图片为视觉事实源。两者冲突时先记录并向用户确认，不得静默用 OCR 覆盖已确认内容。
+5. Step 3 以 Page Spec 为语义事实源、页面图片为视觉事实源。按[变更与恢复规则](workflow-updates.md)区分已授权修改与未知冲突；仅对未知冲突请求确认，不得静默用 OCR 覆盖已确认内容。
 
 直接还原现有页面时，将 `style.decision` 设为 `locked-reference`，`visual_spec` 写明保持原页，`authorization` 记录用户要求还原原图的指令；低置信度内容按元素标记为 `unresolved`。
 
@@ -38,6 +38,9 @@ python "<skill-dir>/scripts/validate_page_spec.py" "<work>/page-spec.json" --str
 
 ```sh
 python "<skill-dir>/scripts/validate_page_spec.py" "<work>/page-spec.json" --require-images --strict
+python "<skill-dir>/scripts/build_image_ppt.py" "<work>/page-spec.json" "<work>/output/image-deck.pptx"
 ```
 
-验证器检查 Schema、有限数值、连续页码、唯一 ID、画布边界、相对图片路径，以及已批准图片是否存在并可作为 PNG/JPEG 读取。`--strict` 还会拒绝未解决元素；直接还原任务可先不加 `--strict` 以保留低置信度项，但交付前必须逐项说明。验证器不检查图片中的文字是否正确，也不替代逐页视觉验收。
+验证器检查 Schema、有限数值、连续页码、唯一 ID、画布边界和不重复的相对图片路径。`--require-images` 还检查批准状态、文件存在性、PNG/JPEG 可读性和 EXIF 校正后的画幅比例（允许单像素取整误差）。`--strict` 拒绝未解决元素；直接还原任务可先不加 `--strict` 以保留低置信度项，但交付前必须逐项说明。验证器不检查图片中的文字是否正确，也不替代逐页视觉验收。
+
+图片构建器以 Page Spec 为输入时会自动执行上述两项严格检查，只导出 `slides` 中声明的图片，并继承列表顺序与 `canvas` 比例。可指定 `--width` 或 `--height` 改变物理尺寸；同时指定两者时必须保持该比例。直接传图片目录仍使用旧版自然排序模式，仅适用于没有 Page Spec 的独立合并任务。

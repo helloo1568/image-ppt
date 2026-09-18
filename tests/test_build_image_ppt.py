@@ -1,3 +1,4 @@
+import copy
 import json
 import subprocess
 import sys
@@ -40,6 +41,74 @@ def run_build(slides_dir: Path, output: Path, *extra: str) -> dict:
     )
     assert proc.returncode == 0, proc.stderr
     return json.loads(proc.stdout)
+
+
+@pytest.fixture
+def approved_spec(tmp_path):
+    spec = json.loads((REPO_ROOT / "examples/page-spec.example.json").read_text(encoding="utf-8"))
+    spec["canvas"] = {"width": 400, "height": 300}
+    original = spec["slides"][0]
+    for element in original["elements"]:
+        element.pop("bbox_hint", None)
+    spec["slides"] = []
+    slides = tmp_path / "slides"
+    slides.mkdir()
+    # Deliberately oppose natural filename order and leave a superseded draft.
+    for page, (name, color) in enumerate((("z-first.png", "red"), ("a-second.png", "blue")), 1):
+        slide = copy.deepcopy(original)
+        slide.update(id=f"s{page}", page_number=page, image_file=f"slides/{name}", image_status="approved")
+        spec["slides"].append(slide)
+        Image.new("RGB", (400, 300), color).save(slides / name)
+    Image.new("RGB", (400, 300), "green").save(slides / "00-old-draft.png")
+    path = tmp_path / "page-spec.json"
+    path.write_text(json.dumps(spec), encoding="utf-8")
+    return path
+
+
+@pytest.mark.parametrize("dimensions", [(), ("--height", "6")])
+def test_page_spec_controls_order_membership_and_aspect_ratio(approved_spec, dimensions):
+    output = approved_spec.with_suffix(".pptx")
+    result = run_build(approved_spec, output, *dimensions)
+    assert result["slides"] == 2
+    assert result["images"] == ["z-first.png", "a-second.png"]
+    assert result["page_spec"] == str(approved_spec.resolve())
+    prs = Presentation(output)
+    assert prs.slide_width / prs.slide_height == pytest.approx(4 / 3)
+    if dimensions:
+        assert result["slide_size_inches"] == [8, 6]
+    colors = []
+    for slide in prs.slides:
+        image = Image.open(BytesIO(pictures(slide)[0].image.blob)).convert("RGB")
+        colors.append(image.getpixel((0, 0)))
+    assert colors == [(255, 0, 0), (0, 0, 255)]
+
+
+@pytest.mark.parametrize("mutation", ["unapproved", "missing", "duplicate_image", "wrong_ratio", "unresolved", "dimensions"])
+def test_page_spec_build_rejects_invalid_delivery_and_keeps_output(approved_spec, mutation):
+    spec = json.loads(approved_spec.read_text(encoding="utf-8"))
+    slide = spec["slides"][0]
+    extra = []
+    if mutation == "unapproved":
+        slide["image_status"] = "revision"
+    elif mutation == "missing":
+        slide["image_file"] = "slides/missing.png"
+    elif mutation == "duplicate_image":
+        spec["slides"][1]["image_file"] = slide["image_file"]
+    elif mutation == "wrong_ratio":
+        Image.new("RGB", (300, 400), "red").save(approved_spec.parent / slide["image_file"])
+    elif mutation == "unresolved":
+        slide["elements"][0].update(confirmation_status="unresolved", confidence=0.5)
+    elif mutation == "dimensions":
+        extra = ["--width", "16", "--height", "9"]
+    approved_spec.write_text(json.dumps(spec), encoding="utf-8")
+    output = approved_spec.with_suffix(".pptx")
+    output.write_bytes(b"previous approved deck")
+    result = subprocess.run(
+        [sys.executable, str(SCRIPT), str(approved_spec), str(output), *extra],
+        cwd=approved_spec.parent, capture_output=True, text=True, check=False,
+    )
+    assert result.returncode != 0
+    assert output.read_bytes() == b"previous approved deck"
 
 
 def pictures(slide) -> list:

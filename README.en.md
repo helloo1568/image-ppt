@@ -11,7 +11,7 @@ Create **competition presentations, cinematic slides, startup pitch decks, resea
 Reconstruct slide images as native editable PowerPoint (PPTX) when needed.
 
 [![CI](https://github.com/helloo1568/image-ppt/actions/workflows/ci.yml/badge.svg)](https://github.com/helloo1568/image-ppt/actions/workflows/ci.yml)
-[![Version](https://img.shields.io/badge/version-2.1.0-79e9d1?labelColor=14243c)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-2.1.1-79e9d1?labelColor=14243c)](CHANGELOG.md)
 [![Python](https://img.shields.io/badge/Python-3.10%2B-82b5ff?labelColor=14243c)](requirements.txt)
 [![License: MIT](https://img.shields.io/badge/License-MIT-f2c98a?labelColor=14243c)](LICENSE)
 

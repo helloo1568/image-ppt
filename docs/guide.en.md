@@ -5,7 +5,7 @@
 ## Workflow contract in 2.1.0
 
 - One main path: new source material must become an image deck before editable reconstruction. Do not replace the workflow with editable-first authoring.
-- Two approval gates: present the content outline and wait for confirmation before generating the four slide-sorter options; do not create the full deck before style selection.
+- Two approval gates: present the content outline separately, then wait only if confirmation or explicit authority to decide it is missing; do not create the full deck before style selection.
 - Deterministic style exemptions: only an explicit locked reference, preview skip, or delegated choice can change the four-option flow.
 - Page Spec bridge: preserve approved text, data, sources, stable IDs, and semantic intent while generating images so reconstruction does not repeat OCR or guess known content.
 - Explicit fast-forwarding: only clear instructions such as “skip previews,” “choose for me,” or “decide missing details” waive the corresponding gate.
@@ -13,7 +13,7 @@
 - A versioned JSON scene with stable IDs, geometry, stacking, groups and provenance.
 - Native text, shapes, arrows, nested groups, tables and charts with embedded workbooks.
 - Deterministic asset extraction from supplied bounding boxes and optional masks.
-- An editability audit that checks exported objects against the scene.
+- An editability audit that checks exported objects, image geometry/crops, and nested group transforms against the scene.
 - GPT Image 2.5 guidance for Flare exploration and Sunburst reference editing.
 - Existing image-only export and raster text overlay commands remain available.
 
@@ -75,7 +75,7 @@ Remove duplicated content from the background and include the scene and assets.
 ```text
 Confirm source, style reference, audience/use case, page count, and delivery scope
   ↓
-Step 1A Content outline → wait for approval
+Step 1A Present content outline → wait if approval or delegated authority is missing
   ↓
 Step 1B Four slide-sorter overviews → wait for selection
   ↓ explicit locked-reference/skip/delegation rules only
@@ -85,16 +85,26 @@ Step 3  Page Spec + slide images → scene.json → native editable PPTX → str
 ```
 
 Ordinary requests do not waive gates. Explicit authorization is interpreted narrowly.
+Use the task's slide aspect ratio in all four overviews. Show every slide for decks of up to eight pages; otherwise select the same six to eight representative pages. A one-slide deck has one page per option; never invent extra pages.
+Each overview is a landscape thumbnail grid, not a vertical strip of full pages. For three pages, use a 2-by-2 grid with one empty position. `style-options.json` lists only the four current candidates; retries replace their original option number. Run `validate_style_options.py` before selection, then visually inspect the actual thumbnail grid and content. See [overview validation](../references/style-options.md).
+If text is still incorrect after two attempts, generate a text-free page retaining all subjects and graphics, then overlay accurate text. Subject removal belongs to Step 3.
 Existing slide images or scanned PDF pages can enter Step 3 directly when reconstruction is the stated goal. Ordinary edits to an already-editable PPTX are outside this workflow.
+Follow-up edits to this skill's existing Scene continue in S6. Save the baseline version and authorized differences, invalidate affected images, and use the [change and recovery rules](../references/workflow-updates.md) to avoid repeatedly asking about known differences from historical images.
 
 ## Commands and contract
 
-- validate_page_spec.py: validate content approval, ordered pages, stable IDs, geometry hints, unresolved items, and approved image delivery.
+- validate_page_spec.py: validate content approval, ordered pages, stable IDs, geometry hints, unresolved items, unique image paths, and approved image delivery/aspect ratios.
 - build_editable_ppt.py: validate a scene and compile native objects.
 - audit_editability.py: inspect PPTX and optionally compare it with a scene; --strict fails on warnings.
 - extract_assets.py: crop known regions, apply supplied masks, record coordinates and hashes.
-- build_image_ppt.py: existing image-only assembler with natural sorting and fit controls.
+- build_image_ppt.py: assemble only the approved images listed in Page Spec, preserving its page order and aspect ratio; legacy directory sorting remains supported.
 - overlay_text.py: existing deterministic raster text overlay.
+
+```sh
+python scripts/build_image_ppt.py work/page-spec.json output/image-deck.pptx
+```
+
+Page Spec export runs strict image validation automatically. Extra drafts in the directory are ignored; duplicate paths, missing or unapproved images, and mismatched aspect ratios stop export without replacing an existing output. `--width` or `--height` adjusts physical size; if both are supplied, they must preserve the canvas ratio. For standalone merging without a Page Spec, the legacy command remains `python scripts/build_image_ppt.py work/slides output/image-deck.pptx`.
 
 [Page Spec](../references/page-spec.md) · [Scene format](../references/scene-format.md) · [Layer reconstruction](../references/reconstruction.md) · [Models](../references/models.md)
 
@@ -115,6 +125,8 @@ Audit checks declared objects, not source-image completeness or visual similarit
 Render and inspect every slide before delivery. Portfolio images retain the source page dimensions; automated tests do not require PowerPoint.
 
 ## Credits
+
+See the [three-slide acceptance record](acceptance-2026-09-18.md) for real rendering, data edits, object movement, and known limitations.
 
 Research includes [PPT Master by Hugo He](https://github.com/hugohe3/ppt-master),
 [banana-slides](https://github.com/Anionex/banana-slides) and [PPTAgent](https://github.com/icip-cas/PPTAgent).

@@ -5,7 +5,7 @@
 ## 2.1.0 的流程契约
 
 - **唯一主流程**：新材料必须先形成内容方案和图片版，再按明确授权进入可编辑还原；不另起“编辑优先”捷径。
-- **双确认门禁**：先单独确认内容大纲，再进入四套幻灯片浏览视图选型；内容未确认不得消耗生图资源。
+- **双确认门禁**：先单独展示内容大纲，获得确认或明确代定授权后进入四套幻灯片浏览视图选型；缺少对应授权时停止等待。
 - **确定的风格豁免**：只有明确要求严格沿用指定模板、跳过预览或授权代选时按规则快进，不能由 Agent 自行判断。
 - **Page Spec 中间层**：图片生成时同步保存准确文字、数据、来源、稳定 ID 与结构意图，避免可编辑还原时重新 OCR 和猜测。
 - **显式快进**：只有“跳过预览”“你代选”“缺失项由你决定”等明确指令可跳过对应门禁，普通的“帮我做 PPT”不算授权。
@@ -13,7 +13,7 @@
 - **原生导出**：文本、形状、箭头、嵌套组合、表格和五类图表；图表带内嵌数据工作簿。
 - **分层素材**：按指定坐标/遮罩输出 PNG，保留来源和哈希；照片、人物和插画可单独移动或替换。
 - **可复现修改**：scene.json 保存布局与内容，修改指定元素后直接重新导出。
-- **验收工具**：检查导出对象、文字、表格数据、图表数据、层级和原始整页底图残留。
+- **验收工具**：检查导出对象、文字、表格数据、图表数据、图片几何/裁切、组合变换、层级和原始整页底图残留。
 - **GPT Image 2.5 指南**：Flare 用于快速探索，Sunburst 用于精确参考编辑；依照宿主实际能力选择。
 - **恢复与局部修改**：`deck-spec.md` 保存状态与授权，`scene.json` 保存可编辑页面；新指令只使受影响的选择和产物失效。
 
@@ -80,7 +80,7 @@ python scripts/validate_page_spec.py examples/page-spec.example.json --strict
 ```text
 确认源材料、参考风格、场景/受众、页数、交付范围
   ↓
-Step 1A 内容提炼 → 等待用户确认大纲
+Step 1A 展示内容大纲 → 缺少确认或代定授权时等待
   ↓
 Step 1B 四套幻灯片浏览视图 → 等待用户选择
   ↓（严格沿用参考/跳过预览/代选按明确授权处理）
@@ -90,28 +90,34 @@ Step 3  Page Spec + 页面图片 → scene.json → 原生可编辑 PPTX → 结
 ```
 
 普通任务表达不能跳过门禁。用户可以明确授权代定缺失项、代选风格或跳过四套预览；授权按最小范围解释。
+四套风格总览使用相同内容和任务指定画幅：不超过 8 页时展示全部，超过 8 页时选 6–8 个代表页。单页任务每套只展示该页，不补造页面。
+每套总览使用横向画布与等大缩略页网格，3 页采用 2×2 网格留空一格，不制作竖向长图。`style-options.json` 只保留四个方案的当前版本，重试稿替换原编号，不能变成额外方案。选择前运行 `validate_style_options.py`，再人工核对缩略网格和内容，详见[总览验收](../references/style-options.md)。
+文字连续两次不准确时，生成保留全部人物、产品和图形的无字页面，再叠加准确文字；主体拆分留到 Step 3。
 如果输入本身就是页面图片或扫描版 PDF，且目标是还原可编辑 PPTX，可以直接从 Step 3 开始。已有可编辑 PPTX 的普通修改不使用本技能重做。
+本技能已交付 Scene 的后续修改按[变更与恢复规则](../references/workflow-updates.md)继续 S6：保存基准版本、记录已授权差异，使受影响图片失效，避免旧基准触发重复确认。
 
 ## 工具
 
 | 脚本 | 作用 |
 |---|---|
-| scripts/validate_page_spec.py | 验证内容确认、连续页序、稳定 ID、位置提示和页面图片交付状态 |
+| scripts/validate_page_spec.py | 验证内容确认、连续页序、稳定 ID、位置提示、图片路径唯一性及交付状态/画幅 |
+| scripts/validate_style_options.py | 验证四套当前风格候选、代表页序、图片唯一性与横向画幅；缩略网格仍需视觉检查 |
 | scripts/build_editable_ppt.py | 从 scene.json 构建原生对象并原子替换输出 |
 | scripts/audit_editability.py | 复查导出的 PPTX，可选与 scene 比较，导出报告 |
 | scripts/extract_assets.py | 根据已知 bbox 和可选灰度遮罩裁剪素材 |
-| scripts/build_image_ppt.py | 兼容旧版：自然排序图片、拼装图片版 PPTX |
+| scripts/build_image_ppt.py | 按 Page Spec 的批准图片清单、页序与比例导出；兼容目录自然排序模式 |
 | scripts/overlay_text.py | 兼容旧版：将准确文字栅格叠加到背景 |
 
 ```sh
 python scripts/validate_page_spec.py work/page-spec.json --require-images --strict
 python scripts/extract_assets.py work/extract.json work/assets/slide-01
-python scripts/build_image_ppt.py work/slides output/image-deck.pptx --fit contain
+python scripts/build_image_ppt.py work/page-spec.json output/image-deck.pptx
 python scripts/overlay_text.py work/overlay.json
 ```
 
 图片生成与可编辑还原之间的语义契约见 [Page Spec](../references/page-spec.md)，最终坐标、路径、支持字段与局部修改见 [场景协议](../references/scene-format.md)；
 overlay.json 可参考 examples/overlay-spec.example.json，先填入实际背景路径；该旧版规格是模板，背景图未随仓库提供。
+Page Spec 导出自动严格验证，只使用清单中的已批准图片，目录中额外的旧稿不参与导出。默认沿用画布比例；`--width` / `--height` 可调整物理尺寸，同时指定时须保持该比例。重复图片路径、缺图、未批准图片或错误画幅会阻止导出，并保留既有输出。没有 Page Spec 的独立合并仍可使用 `python scripts/build_image_ppt.py work/slides output/image-deck.pptx`。
 遮挡、透明度、背景清理见 [重建指南](../references/reconstruction.md)。
 本版不提供通用 SVG 导入、合并表格单元格、自动吸附连线或富文本段内样式。
 
@@ -129,6 +135,8 @@ CI 覆盖 Windows / Linux、Python 3.10 / 3.12 / 3.13。
 作品集图片保持源页面像素尺寸；自动测试不依赖 PowerPoint。
 
 ## 来源与取舍
+
+最近一次验证见[三页实战验收记录](acceptance-2026-09-18.md)，包含真实渲染、数据修改、对象移动和已知限制。
 
 本次重点参考 [Hugo He 的 PPT Master](https://github.com/hugohe3/ppt-master) 的原生导出与图片分层思路，
 并调研 [banana-slides](https://github.com/Anionex/banana-slides) 和 [PPTAgent](https://github.com/icip-cas/PPTAgent)。

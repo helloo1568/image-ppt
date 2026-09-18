@@ -7,7 +7,7 @@
 scene.json 保存可编辑内容和版面；assets/ 保存视觉素材。重新生成 PPTX 时不再调用生图。
 原始图片只供核对，用 slide.source_image 记录；编译器不会自动把它放进幻灯片。
 
-Step 2 的 `page-spec.json` 是上游语义契约，保存已确认文字、数据、来源和稳定 ID；Scene 必须沿用这些 ID 和内容，再补齐精确坐标、原生样式与实际素材路径。Page Spec 与页面图片冲突时先记录和确认，不得以图片 OCR 静默覆盖 Page Spec。
+Step 2 的 `page-spec.json` 是上游语义契约，保存已确认文字、数据、来源和稳定 ID；Scene 必须沿用这些 ID 和内容，再补齐精确坐标、原生样式与实际素材路径。按[变更记录](workflow-updates.md)区分已授权修改和未知图文冲突；只对未知冲突请求确认，不得以图片 OCR 静默覆盖 Page Spec。
 
 ```json
 {
@@ -63,9 +63,12 @@ series 为 [{name, values, color?}]，数值数量匹配 categories。
 pie/doughnut 只接受单组非负且总和大于 0 的数据。原生图表包含可编辑工作簿。
 不支持的统计图不可谎称已实现，可用独立图片保真并说明数据不可编辑。
 
+Scene v1 未表达的图表外观（如轴范围、网格线和标签颜色）若用后处理调整，必须随交付保存可复现脚本，并说明单独编译 Scene 无法完全还原这些设置。后处理完成后重新执行对象审查和实际渲染；不要将未支持的属性写入 Scene。
+
 ## 检查和局部修改
 
-修改 ID 对应的文字、数据、几何或 path，重新运行 build_editable_ppt.py。
+按[变更与恢复规则](workflow-updates.md)记录基准版本、修改授权与失效图片，再同步 Page Spec，修改 ID 对应的文字、数据、几何或 path，重新运行 build_editable_ppt.py。
 导出失败不会替换既有 PPTX。先执行完整 schema 和素材检查，再写文件。
 audit 的 --strict 将所有警告视为失败，适合无复杂栅格/低置信度项的用例。
 使用背景图片的合法案例仍可能产生警告；记录人工判断，不要改小 bbox 来规避检查。
+审查包括图片的 contain/cover/stretch 实际位置、尺寸、裁切与翻转，以及嵌套组合的父子坐标变换和旋转。它仍只对照 Scene 声明的对象，不能证明 Page Spec 到 Scene 无遗漏或视觉完全一致。

@@ -1,6 +1,6 @@
 name: image-ppt
 display_name: 图片 PPT
-version: 2.1.0
+version: 2.1.1
 description: >-
   适用于竞赛 PPT、电影质感 PPT、比赛答辩、创新创业路演、学术汇报、论文答辩和图片转可编辑 PPT。
   按固定三阶段流程将材料制作成图片版 PPT，并在明确授权后还原为可编辑 PPTX：
@@ -65,22 +65,27 @@ files:
   - CONTRIBUTING.md
   - docs/guide.md
   - docs/guide.en.md
+  - docs/acceptance-2026-09-18.md
   - docs/assets/hero.svg
   - CHANGELOG.md
   - LICENSE
   - requirements.txt
   - agents/openai.yaml
   - references/prompts.md
+  - references/style-options.md
   - references/deck-spec-template.md
   - references/models.md
   - references/page-spec.md
   - references/page-spec.schema.json
+  - references/workflow-updates.md
   - references/reconstruction.md
   - references/scene-format.md
   - references/scene.schema.json
   - references/research.md
   - scripts/scene.py
   - scripts/validate_page_spec.py
+  - scripts/validate_style_options.py
+  - scripts/build_style_overview.py
   - scripts/build_editable_ppt.py
   - scripts/audit_editability.py
   - scripts/extract_assets.py

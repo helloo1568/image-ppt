@@ -46,6 +46,59 @@ def pixel_hash(source):
         return hashlib.sha256(str(im.size).encode() + im.tobytes()).hexdigest()
 
 
+def expected_geometry(element, base, sx, sy):
+    """Return the unrotated OOXML box and image crop from Scene coordinates."""
+    kind = element["type"]
+    crop = (0, 0, 0, 0)  # left, top, right, bottom
+    if kind == "group":
+        boxes = [expected_geometry(child, base, sx, sy)[0] for child in element["children"]]
+        left, top = min(b[0] for b in boxes), min(b[1] for b in boxes)
+        right, bottom = max(b[0] + b[2] for b in boxes), max(b[1] + b[3] for b in boxes)
+        return (left, top, right - left, bottom - top), crop
+    if kind == "line":
+        x1, y1, x2, y2 = (
+            round(element[key] * scale)
+            for key, scale in zip(("x1", "y1", "x2", "y2"), (sx, sy, sx, sy))
+        )
+        return (min(x1, x2), min(y1, y2), abs(x2 - x1), abs(y2 - y1)), crop
+    x, y, w, h = (
+        round(element[key] * scale)
+        for key, scale in zip(("x", "y", "w", "h"), (sx, sy, sx, sy))
+    )
+    if kind == "image":
+        with Image.open(asset_path(base, element["path"])) as image:
+            iw, ih = ImageOps.exif_transpose(image).size
+        fit = element.get("fit", "contain")
+        if fit == "contain":
+            scale = min(w / iw, h / ih)
+            fitted_w, fitted_h = round(iw * scale), round(ih * scale)
+            x, y = x + (w - fitted_w) // 2, y + (h - fitted_h) // 2
+            w, h = fitted_w, fitted_h
+        elif fit == "cover":
+            if iw / ih > w / h:
+                margin = (1 - (w / h) / (iw / ih)) / 2
+                crop = (margin, 0, margin, 0)
+            else:
+                margin = (1 - (iw / ih) / (w / h)) / 2
+                crop = (0, margin, 0, margin)
+    return (x, y, w, h), crop
+
+
+def group_transform_matches(shape, box):
+    # Scene groups use absolute child coordinates and have no extra transform.
+    # Inspect both coordinate spaces; checking child boxes alone misses a moved group.
+    transform = shape._element.grpSpPr.xfrm
+    if transform is None:
+        return False
+    for offset, extent in ((transform.off, transform.ext), (transform.chOff, transform.chExt)):
+        if offset is None or extent is None:
+            return False
+        actual = (offset.x, offset.y, extent.cx, extent.cy)
+        if any(abs(a - b) > 4 for a, b in zip(actual, box)):
+            return False
+    return not (transform.flipH or transform.flipV)
+
+
 def audit(pptx: Path, scene_path: Path | None = None) -> dict:
     prs = Presentation(pptx)
     scene, warnings = load_scene(scene_path) if scene_path else (None, [])
@@ -99,11 +152,8 @@ def audit(pptx: Path, scene_path: Path | None = None) -> dict:
                 if kind(shape) != e["type"]:
                     errors.append(f"{label}: expected {e['type']}, got {kind(shape)}")
                     continue
-                if e["type"] not in ("image", "group", "line"):
-                    wanted_box = [
-                        round(e[k] * scale)
-                        for k, scale in zip(("x", "y", "w", "h"), (sx, sy, sx, sy))
-                    ]
+                wanted_box, wanted_crop = expected_geometry(e, scene_path.resolve().parent, sx, sy)
+                if e["type"] not in ("group", "line"):
                     actual_box = [shape.left, shape.top, shape.width, shape.height]
                     if any(abs(a - b) > 4 for a, b in zip(wanted_box, actual_box)):
                         errors.append(f"{label}: geometry differs from scene")
@@ -121,7 +171,7 @@ def audit(pptx: Path, scene_path: Path | None = None) -> dict:
                     ):
                         errors.append(f"{label}: line endpoints differ")
                 if (
-                    e["type"] not in ("group", "line")
+                    e["type"] != "line"
                     and abs(shape.rotation - e.get("rotation", 0) % 360) > 0.001
                 ):
                     errors.append(f"{label}: rotation differs from scene")
@@ -129,9 +179,18 @@ def audit(pptx: Path, scene_path: Path | None = None) -> dict:
                     original = asset_path(scene_path.resolve().parent, e["path"])
                     if pixel_hash(original) != pixel_hash(io.BytesIO(shape.image.blob)):
                         errors.append(f"{label}: image pixels differ from asset")
+                    actual_crop = (shape.crop_left, shape.crop_top, shape.crop_right, shape.crop_bottom)
+                    # OOXML stores crops at 1/100000 resolution.
+                    if any(abs(a - b) > 1.1e-5 for a, b in zip(actual_crop, wanted_crop)):
+                        errors.append(f"{label}: image crop differs from scene")
+                    transform = shape._element.spPr.xfrm
+                    if transform is not None and (transform.flipH or transform.flipV):
+                        errors.append(f"{label}: image flip differs from scene")
                 if e["type"] == "text" and shape.text != e["text"]:
                     errors.append(f"{label}: text differs from scene")
                 if e["type"] == "group":
+                    if not group_transform_matches(shape, wanted_box):
+                        errors.append(f"{label}: group transform differs from scene")
                     child_ids = [s.name.split(" | ", 1)[0] for s in shape.shapes]
                     if child_ids != [child["id"] for child in e["children"]]:
                         errors.append(f"{label}: group membership/order differs")
