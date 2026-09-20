@@ -7,7 +7,7 @@ TEXT_SUFFIXES = {".md", ".txt", ".yaml", ".yml", ".py", ".json", ".svg"}
 
 
 def test_no_legacy_repository_url_remains() -> None:
-    legacy = "github.com/helloo1568/image-ppt"
+    legacy = "github.com/helloo1568/" + "image-ppt"
     hits: list[str] = []
 
     for path in ROOT.rglob("*"):
