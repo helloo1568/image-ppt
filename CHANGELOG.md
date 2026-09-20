@@ -8,7 +8,7 @@
 
 ### Changed
 
-- 项目品牌由 image-ppt 升级为 **SlideMuse**；仓库地址暂时保持 `helloo1568/image-ppt`，避免旧链接失效。
+- 项目品牌由 image-ppt 升级为 **SlideMuse**；GitHub 仓库同步更名为 `helloo1568/slidemuse`，旧地址由 GitHub 重定向兼容。
 - Skill 正式调用名改为 `$slidemuse`，并同步 README、OpenAI Agent 元数据、使用指南与发布包命名。
 - README 首屏增加 30 秒安装入口，优先引导用户让 Agent 自动执行安装器。
 

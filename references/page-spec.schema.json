@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/helloo1568/image-ppt/references/page-spec.schema.json",
-  "title": "image-ppt Page Spec v1",
+  "$id": "https://github.com/helloo1568/slidemuse/references/page-spec.schema.json",
+  "title": "SlideMuse Page Spec v1",
   "type": "object",
   "additionalProperties": false,
   "required": [

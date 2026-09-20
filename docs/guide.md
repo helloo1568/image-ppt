@@ -40,7 +40,7 @@
 把下面这句话发给 Codex、Claude Code 或 OpenCode：
 
 ```text
-安装 SlideMuse，仓库是 https://github.com/helloo1568/image-ppt 。
+安装 SlideMuse，仓库是 https://github.com/helloo1568/slidemuse 。
 请运行仓库自带的 install.py，自动注册 Skill、安装隔离依赖并完成自检。
 ```
 
@@ -49,7 +49,7 @@
 需要 Python 3.10+。不需要手动创建虚拟环境，也不需要全局安装依赖：
 
 ```sh
-git clone https://github.com/helloo1568/image-ppt.git slidemuse
+git clone https://github.com/helloo1568/slidemuse.git slidemuse
 python slidemuse/install.py
 ```
 

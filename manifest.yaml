@@ -15,7 +15,6 @@ category: content
 triggers:
   - SlideMuse
   - slidemuse
-  - image-ppt
   - 图片PPT
   - 可编辑PPT
   - 图片转PPT
@@ -50,7 +49,6 @@ triggers:
   - competition-presentation
   - pitch-deck
   - image-to-pptx
-  - image-ppt
   - doc-to-editable-ppt
 requires_api_keys: false
 platforms:

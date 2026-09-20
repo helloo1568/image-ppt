@@ -10,7 +10,7 @@ Turn books, PDFs, papers, and reports into a visually consistent image deck.<br>
 Create **competition presentations, cinematic slides, startup pitch decks, research talks, and thesis defenses**.<br>
 Reconstruct slide images as native editable PowerPoint (PPTX) when needed.
 
-[![CI](https://github.com/helloo1568/image-ppt/actions/workflows/ci.yml/badge.svg)](https://github.com/helloo1568/image-ppt/actions/workflows/ci.yml)
+[![CI](https://github.com/helloo1568/slidemuse/actions/workflows/ci.yml/badge.svg)](https://github.com/helloo1568/slidemuse/actions/workflows/ci.yml)
 [![Version](https://img.shields.io/badge/version-2.2.0-79e9d1?labelColor=14243c)](CHANGELOG.md)
 [![Python](https://img.shields.io/badge/Python-3.10%2B-82b5ff?labelColor=14243c)](requirements.txt)
 [![License: MIT](https://img.shields.io/badge/License-MIT-f2c98a?labelColor=14243c)](LICENSE)
@@ -26,7 +26,7 @@ Reconstruct slide images as native editable PowerPoint (PPTX) when needed.
 **Recommended: send this one message to Codex, Claude Code, or OpenCode:**
 
 ```text
-Install SlideMuse from https://github.com/helloo1568/image-ppt .
+Install SlideMuse from https://github.com/helloo1568/slidemuse .
 Run the repository's install.py to register the skill, install isolated dependencies, and verify the setup.
 ```
 
@@ -35,7 +35,7 @@ Then say: `Use $slidemuse to turn this PDF into a 10-slide competition presentat
 Manual install is also just:
 
 ```sh
-git clone https://github.com/helloo1568/image-ppt.git slidemuse
+git clone https://github.com/helloo1568/slidemuse.git slidemuse
 python slidemuse/install.py
 ```
 
@@ -148,14 +148,14 @@ Requires **Python 3.10+** and an agent with skill-file support, document reading
 Send this to Codex, Claude Code, or another skill-capable agent:
 
 ```text
-Install the SlideMuse skill from https://github.com/helloo1568/image-ppt .
+Install the SlideMuse skill from https://github.com/helloo1568/slidemuse .
 Use the repository's install.py to register the skill, install dependencies, and verify the setup.
 ```
 
 ### 2. Manual install: clone, then run one command
 
 ```sh
-git clone https://github.com/helloo1568/image-ppt.git slidemuse
+git clone https://github.com/helloo1568/slidemuse.git slidemuse
 python slidemuse/install.py
 ```
 
@@ -221,7 +221,7 @@ Complex artwork remains raster within each image. Recognition, segmentation, and
 | Agent instructions | [SKILL.md](SKILL.md) |
 | Content contracts and editable objects | [Page Spec](references/page-spec.md) · [Scene v1](references/scene-format.md) · [Reconstruction](references/reconstruction.md) |
 | Versions and design references | [Changelog](CHANGELOG.md) · [Research](references/research.md) |
-| Bug reports, suggestions, and code contributions | [Issues](https://github.com/helloo1568/image-ppt/issues) · [Contributing](CONTRIBUTING.md) |
+| Bug reports, suggestions, and code contributions | [Issues](https://github.com/helloo1568/slidemuse/issues) · [Contributing](CONTRIBUTING.md) |
 
 ### Credits & license
 
