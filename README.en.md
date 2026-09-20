@@ -122,6 +122,7 @@ Use project proposals, research papers, survey reports, and the current competit
 | [中国国际大学生创新大赛](https://hudong.moe.gov.cn/srcsite/A08/s5672/202607/t20260731_1445670.html) | **大学生创新大赛 PPT / 互联网+ PPT / innovation pitch deck** | Problem, innovation, validation, team, and development plan. |
 | [“挑战杯”全国大学生课外学术科技作品竞赛](https://www.tiaozhanbei.net/focus) | **挑战杯 PPT / 大挑 PPT / Challenge Cup research presentation** | Research question, methods, novelty, results, and applications. |
 | [“挑战杯”中国大学生创业计划竞赛](https://www.tiaozhanbei.net/focus) | **小挑 PPT / Challenge Cup business plan presentation** | Customer needs, product, market, business model, and execution. |
+| [全国大学生交通运输科技大赛（交科赛）](http://www.nactrans.net/) | **交科赛 PPT / transportation science & technology competition** | Transportation problem, solution design, technical route, validation, and innovation value. |
 | [全国大学生电子商务“创新、创意及创业”挑战赛](https://www.3chuang.net/) | **三创赛 PPT / e-commerce competition presentation** | E-commerce context, ideas, operations, project results, and value. |
 | [“正大杯”全国大学生市场调查与分析大赛](https://www.china-cssc.org/show-568-1912-1.html) | **正大杯 PPT / 市调大赛 PPT / market research presentation** | Research questions, survey design, data analysis, findings, and recommendations. |
 
