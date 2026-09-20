@@ -30,3 +30,21 @@ def test_slidemuse_identity_is_consistent() -> None:
     assert "display_name: SlideMuse" in manifest
     assert "github.com/helloo1568/slidemuse" in readme
     assert "$slidemuse" in readme
+
+
+def test_legacy_project_name_only_exists_in_compatibility_history() -> None:
+    legacy_name = "image" + "-ppt"
+    allowed = {"CHANGELOG.md", "install.py", "tests/test_branding.py"}
+    hits: list[str] = []
+
+    for path in ROOT.rglob("*"):
+        if not path.is_file() or ".git" in path.parts or path.suffix.lower() not in TEXT_SUFFIXES:
+            continue
+        rel = str(path.relative_to(ROOT))
+        if rel in allowed:
+            continue
+        text = path.read_text(encoding="utf-8")
+        if legacy_name in text:
+            hits.append(rel)
+
+    assert not hits, f"Legacy project name remains outside compatibility/history: {hits}"
