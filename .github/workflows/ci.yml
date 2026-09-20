@@ -26,3 +26,7 @@ jobs:
         run: python -m pytest tests/ -v
       - name: Validate Page Spec example
         run: python scripts/validate_page_spec.py examples/page-spec.example.json --strict
+      - name: Validate installer registration
+        run: |
+          python install.py --client codex --home "${{ runner.temp }}/skill-home" --skip-deps
+          python -c "import os; from pathlib import Path; p = Path(os.environ['RUNNER_TEMP']) / 'skill-home' / '.agents' / 'skills' / 'image-ppt' / 'SKILL.md'; assert p.is_file(), p"
