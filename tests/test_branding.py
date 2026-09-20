@@ -40,7 +40,7 @@ def test_legacy_project_name_only_exists_in_compatibility_history() -> None:
     for path in ROOT.rglob("*"):
         if not path.is_file() or ".git" in path.parts or path.suffix.lower() not in TEXT_SUFFIXES:
             continue
-        rel = str(path.relative_to(ROOT))
+        rel = path.relative_to(ROOT).as_posix()
         if rel in allowed:
             continue
         text = path.read_text(encoding="utf-8")
