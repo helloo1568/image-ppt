@@ -34,19 +34,19 @@
 
 #### 01 / 项目封面
 
-<a href="showcase/snowline-watch-01.png"><img src="showcase/snowline-watch-01.png" alt="雪线守望：冰川、巡检人员与无人机组成的项目封面" width="100%"></a>
+<a href="showcase/snowline-watch-01.png"><img src="showcase/preview/snowline-watch-01.webp" alt="雪线守望：冰川、巡检人员与无人机组成的项目封面" width="100%"></a>
 
 #### 02 / 项目痛点
 
-<a href="showcase/snowline-watch-02.png"><img src="showcase/snowline-watch-02.png" alt="雪线守望：项目痛点页" width="100%"></a>
+<a href="showcase/snowline-watch-02.png"><img src="showcase/preview/snowline-watch-02.webp" alt="雪线守望：项目痛点页" width="100%"></a>
 
 #### 03 / 解决方案
 
-<a href="showcase/snowline-watch-03.png"><img src="showcase/snowline-watch-03.png" alt="雪线守望：解决方案页" width="100%"></a>
+<a href="showcase/snowline-watch-03.png"><img src="showcase/preview/snowline-watch-03.webp" alt="雪线守望：解决方案页" width="100%"></a>
 
 #### 04 / 技术对比
 
-<a href="showcase/snowline-watch-04.png"><img src="showcase/snowline-watch-04.png" alt="雪线守望：技术对比页" width="100%"></a>
+<a href="showcase/snowline-watch-04.png"><img src="showcase/preview/snowline-watch-04.webp" alt="雪线守望：技术对比页" width="100%"></a>
 
 ### 釉光新生 · 红金竞赛风格
 
@@ -54,15 +54,15 @@
 
 #### 02 / 项目痛点
 
-<a href="showcase/red-gold-competition-02.png"><img src="showcase/red-gold-competition-02.png" alt="釉光新生：红金风格的项目痛点页" width="100%"></a>
+<a href="showcase/red-gold-competition-02.png"><img src="showcase/preview/red-gold-competition-02.webp" alt="釉光新生：红金风格的项目痛点页" width="100%"></a>
 
 #### 03 / 解决方案
 
-<a href="showcase/red-gold-competition-03.png"><img src="showcase/red-gold-competition-03.png" alt="釉光新生：红金风格的解决方案页" width="100%"></a>
+<a href="showcase/red-gold-competition-03.png"><img src="showcase/preview/red-gold-competition-03.webp" alt="釉光新生：红金风格的解决方案页" width="100%"></a>
 
 #### 04 / 工艺技术
 
-<a href="showcase/red-gold-competition-04.png"><img src="showcase/red-gold-competition-04.png" alt="釉光新生：工艺技术页" width="100%"></a>
+<a href="showcase/red-gold-competition-04.png"><img src="showcase/preview/red-gold-competition-04.webp" alt="釉光新生：工艺技术页" width="100%"></a>
 
 <sub>作品图用于展示视觉效果；可编辑性以实际 PPTX 对象与审查报告为准。案例中的业务与技术数据属于演示内容，不代表本技能的性能指标。</sub>
 

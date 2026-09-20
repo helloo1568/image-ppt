@@ -35,19 +35,19 @@ An intelligent glacier inspection and ecological early-warning concept, with a c
 
 #### 01 / Cover
 
-<a href="showcase/snowline-watch-01.png"><img src="showcase/snowline-watch-01.png" alt="Snowline Watch: glacier inspection cover" width="100%"></a>
+<a href="showcase/snowline-watch-01.png"><img src="showcase/preview/snowline-watch-01.webp" alt="Snowline Watch: glacier inspection cover" width="100%"></a>
 
 #### 02 / Problem
 
-<a href="showcase/snowline-watch-02.png"><img src="showcase/snowline-watch-02.png" alt="Snowline Watch: problem statement" width="100%"></a>
+<a href="showcase/snowline-watch-02.png"><img src="showcase/preview/snowline-watch-02.webp" alt="Snowline Watch: problem statement" width="100%"></a>
 
 #### 03 / Solution
 
-<a href="showcase/snowline-watch-03.png"><img src="showcase/snowline-watch-03.png" alt="Snowline Watch: solution" width="100%"></a>
+<a href="showcase/snowline-watch-03.png"><img src="showcase/preview/snowline-watch-03.webp" alt="Snowline Watch: solution" width="100%"></a>
 
 #### 04 / Technology
 
-<a href="showcase/snowline-watch-04.png"><img src="showcase/snowline-watch-04.png" alt="Snowline Watch: technology comparison" width="100%"></a>
+<a href="showcase/snowline-watch-04.png"><img src="showcase/preview/snowline-watch-04.webp" alt="Snowline Watch: technology comparison" width="100%"></a>
 
 ### Glaze Reborn · Red & gold
 
@@ -55,15 +55,15 @@ A competition presentation that connects the problem, solution, and craft techno
 
 #### 02 / Problem
 
-<a href="showcase/red-gold-competition-02.png"><img src="showcase/red-gold-competition-02.png" alt="Glaze Reborn: problem statement" width="100%"></a>
+<a href="showcase/red-gold-competition-02.png"><img src="showcase/preview/red-gold-competition-02.webp" alt="Glaze Reborn: problem statement" width="100%"></a>
 
 #### 03 / Solution
 
-<a href="showcase/red-gold-competition-03.png"><img src="showcase/red-gold-competition-03.png" alt="Glaze Reborn: solution" width="100%"></a>
+<a href="showcase/red-gold-competition-03.png"><img src="showcase/preview/red-gold-competition-03.webp" alt="Glaze Reborn: solution" width="100%"></a>
 
 #### 04 / Process technology
 
-<a href="showcase/red-gold-competition-04.png"><img src="showcase/red-gold-competition-04.png" alt="Glaze Reborn: process technology" width="100%"></a>
+<a href="showcase/red-gold-competition-04.png"><img src="showcase/preview/red-gold-competition-04.webp" alt="Glaze Reborn: process technology" width="100%"></a>
 
 <sub>Images demonstrate visual output. Editability is assessed through the delivered PPTX objects and audit report. Business and technology figures in these examples are presentation content, not benchmarks for this skill.</sub>
 
