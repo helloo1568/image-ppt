@@ -40,7 +40,7 @@ Raster artwork does not become editable vector paths. Missing or occluded detail
 Send this to Codex, Claude Code, or OpenCode:
 
 ```text
-Install SlideMuse from https://github.com/helloo1568/image-ppt .
+Install SlideMuse from https://github.com/helloo1568/slidemuse .
 Run the repository's install.py to register the skill, install isolated dependencies, and verify the setup.
 ```
 
@@ -49,7 +49,7 @@ Run the repository's install.py to register the skill, install isolated dependen
 Requires Python 3.10+. You do not need to create a virtual environment or install dependencies globally:
 
 ```sh
-git clone https://github.com/helloo1568/image-ppt.git slidemuse
+git clone https://github.com/helloo1568/slidemuse.git slidemuse
 python slidemuse/install.py
 ```
 
