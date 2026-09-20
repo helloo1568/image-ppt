@@ -9,7 +9,7 @@
 将书籍、PDF、论文与报告变成风格统一的图片 PPT，按需继续还原为原生可编辑 PPTX。<br>
 适用于**竞赛 PPT、电影质感 PPT、创新创业路演、学术汇报与论文答辩**，支持图片转可编辑 PPT。
 
-[![CI](https://github.com/helloo1568/image-ppt/actions/workflows/ci.yml/badge.svg)](https://github.com/helloo1568/image-ppt/actions/workflows/ci.yml)
+[![CI](https://github.com/helloo1568/slidemuse/actions/workflows/ci.yml/badge.svg)](https://github.com/helloo1568/slidemuse/actions/workflows/ci.yml)
 [![Version](https://img.shields.io/badge/version-2.2.0-79e9d1?labelColor=14243c)](CHANGELOG.md)
 [![Python](https://img.shields.io/badge/Python-3.10%2B-82b5ff?labelColor=14243c)](requirements.txt)
 [![License: MIT](https://img.shields.io/badge/License-MIT-f2c98a?labelColor=14243c)](LICENSE)
@@ -25,7 +25,7 @@
 **推荐：直接把这一句话发给 Codex / Claude Code / OpenCode：**
 
 ```text
-安装 SlideMuse，仓库是 https://github.com/helloo1568/image-ppt 。
+安装 SlideMuse，仓库是 https://github.com/helloo1568/slidemuse 。
 请运行仓库自带的 install.py，自动注册 Skill、安装隔离依赖并完成自检。
 ```
 
@@ -34,7 +34,7 @@
 手动安装也只需：
 
 ```sh
-git clone https://github.com/helloo1568/image-ppt.git slidemuse
+git clone https://github.com/helloo1568/slidemuse.git slidemuse
 python slidemuse/install.py
 ```
 
@@ -147,14 +147,14 @@ python slidemuse/install.py
 把下面这句话发给你的 Codex、Claude Code 或其他支持技能的 Agent：
 
 ```text
-安装 SlideMuse 这个 skill，地址是 https://github.com/helloo1568/image-ppt 。
+安装 SlideMuse 这个 skill，地址是 https://github.com/helloo1568/slidemuse 。
 请使用仓库自带的 install.py 完成注册、依赖安装和自检。
 ```
 
 ### 2. 手动安装：clone 后只运行一条命令
 
 ```sh
-git clone https://github.com/helloo1568/image-ppt.git slidemuse
+git clone https://github.com/helloo1568/slidemuse.git slidemuse
 python slidemuse/install.py
 ```
 
@@ -218,7 +218,7 @@ python slidemuse/install.py --client opencode
 | 让 Agent 执行技能 | [SKILL.md](SKILL.md) |
 | 扩展内容规格与可编辑对象 | [Page Spec](references/page-spec.md) · [Scene v1](references/scene-format.md) · [重建指南](references/reconstruction.md) |
 | 查看版本变化与设计来源 | [Changelog](CHANGELOG.md) · [调研记录](references/research.md) |
-| 反馈问题、提建议或贡献代码 | [Issues](https://github.com/helloo1568/image-ppt/issues) · [贡献指南](CONTRIBUTING.md) |
+| 反馈问题、提建议或贡献代码 | [Issues](https://github.com/helloo1568/slidemuse/issues) · [贡献指南](CONTRIBUTING.md) |
 
 ### 致谢与许可
 
