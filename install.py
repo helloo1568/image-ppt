@@ -155,9 +155,6 @@ def emit(result: dict[str, object], as_json: bool) -> None:
 
 
 def main() -> None:
-    if sys.version_info < (3, 10):
-        raise SystemExit("SlideMuse requires Python 3.10 or newer.")
-
     parser = argparse.ArgumentParser(
         description="Install SlideMuse and its isolated Python runtime."
     )
