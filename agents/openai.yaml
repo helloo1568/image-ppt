@@ -1,6 +1,6 @@
 interface:
   display_name: "SlideMuse"
-  short_description: "视觉优先制作竞赛、电影质感与学术 PPT，按需还原可编辑 PPTX"
+  short_description: "视觉优先制作挑战杯、创新大赛、交科赛等竞赛 PPT，也适合答辩、路演与学术汇报，按需还原可编辑 PPTX"
   default_prompt: "使用 $slidemuse 按固定三阶段流程制作 PPT：先让我确认内容大纲，再进行风格选型并生成图片版和 Page Spec；仅在我明确要求时继续还原可编辑 PPTX。"
 
 policy:

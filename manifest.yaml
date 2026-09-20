@@ -1,8 +1,8 @@
 name: slidemuse
 display_name: SlideMuse
-version: 2.2.0
+version: 2.2.1
 description: >-
-  SlideMuse 是视觉优先的 AI PPT Skill，适用于竞赛 PPT、电影质感 PPT、比赛答辩、创新创业路演、学术汇报、论文答辩和图片转可编辑 PPT。
+  SlideMuse 是视觉优先的 AI PPT Skill，重点适用于挑战杯（大挑/小挑）、中国国际大学生创新大赛、全国大学生交通运输科技大赛（交科赛）、三创赛、正大杯、大创等竞赛 PPT，同时适用于电影质感 PPT、比赛答辩、创新创业路演、学术汇报、论文答辩、项目汇报、课程展示和图片转可编辑 PPT。
   按固定三阶段流程将材料制作成图片版 PPT，并在明确授权后还原为可编辑 PPTX：
   需求确认与内容大纲确认 → 四套幻灯片浏览视图选型 → Page Spec 驱动的逐页图片生成 →
   Scene v1 可编辑重建。
@@ -33,6 +33,9 @@ triggers:
   - 中国国际大学生创新大赛PPT
   - 大学生创新大赛PPT
   - 互联网+PPT
+  - 全国大学生交通运输科技大赛PPT
+  - 交科赛PPT
+  - 交通运输科技大赛PPT
   - 三创赛PPT
   - 正大杯PPT
   - 市调大赛PPT
@@ -42,6 +45,7 @@ triggers:
   - 组会PPT
   - 商业路演PPT
   - 项目汇报PPT
+  - 课程展示PPT
   - AI生成PPT
   - PDF转PPT
   - 图片转可编辑PPT

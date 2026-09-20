@@ -7,11 +7,11 @@
 **Beautiful first. Editable when you need it.**
 
 Turn books, PDFs, papers, and reports into a visually consistent image deck.<br>
-Create **competition presentations, cinematic slides, startup pitch decks, research talks, and thesis defenses**.<br>
+Especially strong for **university competition presentations**—including Challenge Cup, the China International College Students' Innovation Competition, the National College Student Transportation Science and Technology Competition (交科赛), 3-Chuang, CP Cup, and innovation-training defenses—while also supporting **academic talks, thesis defenses, project pitches, course presentations, and cinematic slides**.<br>
 Reconstruct slide images as native editable PowerPoint (PPTX) when needed.
 
 [![CI](https://github.com/helloo1568/slidemuse/actions/workflows/ci.yml/badge.svg)](https://github.com/helloo1568/slidemuse/actions/workflows/ci.yml)
-[![Version](https://img.shields.io/badge/version-2.2.0-79e9d1?labelColor=14243c)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-2.2.1-79e9d1?labelColor=14243c)](CHANGELOG.md)
 [![Python](https://img.shields.io/badge/Python-3.10%2B-82b5ff?labelColor=14243c)](requirements.txt)
 [![License: MIT](https://img.shields.io/badge/License-MIT-f2c98a?labelColor=14243c)](LICENSE)
 
@@ -105,10 +105,10 @@ A competition presentation that connects the problem, solution, and craft techno
 | Use case or style | How SlideMuse helps |
 | :--- | :--- |
 | **Competition PPT / competition presentations** | Connect the problem, solution, technical advantages, and applications in a consistent visual story. |
-| **Innovation competitions / startup pitch decks** | Turn project proposals, research material, or business plans into slides tailored to the competition brief. |
+| **Challenge Cup / innovation competition / transportation competition / 3-Chuang / CP Cup** | Turn proposals, papers, research reports, business plans, and competition briefs into judge-oriented presentation narratives with a consistent visual system. |
 | **Cinematic PPT / cinematic slides / poster-style presentations** | Explore cinematic lighting, scene composition, and poster-style covers through four visual directions. |
 | **Academic presentations / thesis defense / research slides** | Extract questions, methods, results, and conclusions from papers and PDFs while preserving data and sources. |
-| **Business presentations / project updates / book presentations** | Adapt long source materials to the audience, slide count, and speaking context. |
+| **Business presentations / project updates / course presentations / book presentations** | Adapt long source materials to the audience, slide count, and speaking context. |
 | **AI presentation generation / PDF to PPT / image to editable PPTX** | Generate an image deck from source material, or reconstruct existing slide images and scanned PDF pages as editable objects. |
 
 Cinematic, technology, and red-and-gold styles are visual directions you can request. Results depend on source material, the host's image capabilities, and slide-by-slide review.
@@ -122,6 +122,7 @@ Use project proposals, research papers, survey reports, and the current competit
 | [中国国际大学生创新大赛](https://hudong.moe.gov.cn/srcsite/A08/s5672/202607/t20260731_1445670.html) | **大学生创新大赛 PPT / 互联网+ PPT / innovation pitch deck** | Problem, innovation, validation, team, and development plan. |
 | [“挑战杯”全国大学生课外学术科技作品竞赛](https://www.tiaozhanbei.net/focus) | **挑战杯 PPT / 大挑 PPT / Challenge Cup research presentation** | Research question, methods, novelty, results, and applications. |
 | [“挑战杯”中国大学生创业计划竞赛](https://www.tiaozhanbei.net/focus) | **小挑 PPT / Challenge Cup business plan presentation** | Customer needs, product, market, business model, and execution. |
+| [全国大学生交通运输科技大赛（交科赛）](http://www.nactrans.net/) | **交科赛 PPT / transportation science & technology competition** | Transportation problem, solution design, technical route, validation, and innovation value. |
 | [全国大学生电子商务“创新、创意及创业”挑战赛](https://www.3chuang.net/) | **三创赛 PPT / e-commerce competition presentation** | E-commerce context, ideas, operations, project results, and value. |
 | [“正大杯”全国大学生市场调查与分析大赛](https://www.china-cssc.org/show-568-1912-1.html) | **正大杯 PPT / 市调大赛 PPT / market research presentation** | Research questions, survey design, data analysis, findings, and recommendations. |
 
