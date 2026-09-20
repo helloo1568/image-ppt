@@ -122,20 +122,33 @@
 
 ## 快速开始
 
-### 1. 获取技能与依赖
+### 1. 推荐：直接让 Agent 安装
 
 需要 **Python 3.10+**，以及支持技能文件、材料读取、图像生成和本地文件操作的 Agent。
 
-```sh
-git clone https://github.com/helloo1568/image-ppt.git
-cd image-ppt
-python -m pip install -r requirements.txt
-python scripts/validate_page_spec.py examples/page-spec.example.json --strict
+把下面这句话发给你的 Codex、Claude Code 或其他支持技能的 Agent：
+
+```text
+安装 image-ppt 这个 skill，地址是 https://github.com/helloo1568/image-ppt 。
+请使用仓库自带的 install.py 完成注册、依赖安装和自检。
 ```
 
-### 2. 交给你的 Agent
+### 2. 手动安装：clone 后只运行一条命令
 
-将**完整仓库目录**安装到宿主的技能目录，或让支持该格式的 Agent 读取 [SKILL.md](SKILL.md) 并使用仓库资源。制作时将材料与产物保存在独立工作目录。
+```sh
+git clone https://github.com/helloo1568/image-ppt.git
+python image-ppt/install.py
+```
+
+安装器会自动识别 Codex / Claude Code / OpenCode，复制最小运行文件、创建隔离的 Python 环境、安装依赖，并运行 Page Spec 自检。需要指定客户端时：
+
+```sh
+python image-ppt/install.py --client codex
+python image-ppt/install.py --client claude
+python image-ppt/install.py --client opencode
+```
+
+安装完成后，材料与产物仍应保存在独立工作目录，不要放进技能安装目录。
 
 ### 3. 附上材料，复制这段话
 
