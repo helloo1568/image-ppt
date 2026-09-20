@@ -60,6 +60,7 @@ security_notes: >-
   Exported PPTX embeds referenced assets.
 files:
   - SKILL.md
+  - install.py
   - README.md
   - README.en.md
   - CONTRIBUTING.md
