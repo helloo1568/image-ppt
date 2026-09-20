@@ -33,7 +33,7 @@ RUNTIME_PATHS = (
 def read_skill_name(root: Path) -> str:
     text = (root / "SKILL.md").read_text(encoding="utf-8")
     match = re.search(
-        r"^---\\s*$.*?^name:\\s*([A-Za-z0-9._-]+)\\s*$",
+        r"^---\s*$.*?^name:\s*([A-Za-z0-9._-]+)\s*$",
         text,
         re.MULTILINE | re.DOTALL,
     )
@@ -108,7 +108,7 @@ def install_dependencies(target: Path) -> Path:
         check=True,
     )
     (target / ".skill-python").write_text(
-        str(python.resolve()) + "\\n",
+        str(python.resolve()) + "\n",
         encoding="utf-8",
     )
     return python
@@ -229,14 +229,14 @@ def main() -> None:
             "source": str(root),
         }
         (target / ".skill-install.json").write_text(
-            json.dumps(marker, ensure_ascii=False, indent=2) + "\\n",
+            json.dumps(marker, ensure_ascii=False, indent=2) + "\n",
             encoding="utf-8",
         )
 
         if not args.skip_deps:
             validate_install(target, python)
     except (OSError, RuntimeError, subprocess.CalledProcessError) as exc:
-        parser.exit(2, f"install: error: {exc}\\n")
+        parser.exit(2, f"install: error: {exc}\n")
 
     result["python"] = str(python)
     result["verified"] = not args.skip_deps
