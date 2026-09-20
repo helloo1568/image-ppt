@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1280" height="520" viewBox="0 0 1280 520" fill="none" role="img" aria-labelledby="title desc">
-  <title id="title">image-ppt — From source to slides. From pixels to possibilities.</title>
+  <title id="title">SlideMuse — Visual-first AI Presentation Skill</title>
   <desc id="desc">A midnight-blue banner with a layered presentation illustration. Content, image deck, and editable PPTX are the three stages of the workflow.</desc>
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="1280" y2="520" gradientUnits="userSpaceOnUse"><stop stop-color="#101B32"/><stop offset=".55" stop-color="#0A1326"/><stop offset="1" stop-color="#133B4A"/></linearGradient>
@@ -15,7 +15,7 @@
     <rect x="64" y="52" width="32" height="32" rx="9" fill="#79E9D1"/>
     <path d="M72 62H86V74H72Z M76 58H90V70" stroke="#102437" stroke-width="2" stroke-linejoin="round"/>
     <text x="111" y="74" fill="#C4D1E3" font-size="15" font-weight="600" letter-spacing="2.2">OPEN SOURCE · PRESENTATION SKILL</text>
-    <text x="60" y="186" fill="#F5F8FF" font-size="88" font-weight="700" letter-spacing="-4">image<tspan fill="#79E9D1">-ppt</tspan></text>
+    <text x="60" y="186" fill="#F5F8FF" font-size="88" font-weight="700" letter-spacing="-4">Slide<tspan fill="#79E9D1">Muse</tspan></text>
     <text x="65" y="245" fill="#F0F5FF" font-size="29" font-weight="600">From source to slides.</text>
     <text x="65" y="289" fill="#A8BAD1" font-size="29">From pixels to possibilities.</text>
     <rect x="65" y="327" width="147" height="34" rx="17" fill="#79E9D1" fill-opacity=".1" stroke="#79E9D1" stroke-opacity=".28"/>

@@ -1,7 +1,7 @@
 interface:
-  display_name: "图片 PPT"
-  short_description: "制作竞赛 PPT、电影质感 PPT、学术汇报与路演，按需还原可编辑 PPTX"
-  default_prompt: "使用 $image-ppt 按固定三阶段流程制作 PPT：先让我确认内容大纲，再进行风格选型并生成图片版和 Page Spec；仅在我明确要求时继续还原可编辑 PPTX。"
+  display_name: "SlideMuse"
+  short_description: "视觉优先制作竞赛、电影质感与学术 PPT，按需还原可编辑 PPTX"
+  default_prompt: "使用 $slidemuse 按固定三阶段流程制作 PPT：先让我确认内容大纲，再进行风格选型并生成图片版和 Page Spec；仅在我明确要求时继续还原可编辑 PPTX。"
 
 policy:
   allow_implicit_invocation: true

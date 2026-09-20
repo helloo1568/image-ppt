@@ -4,6 +4,19 @@
 
 ## [Unreleased]
 
+## [2.2.0] - 2026-09-20
+
+### Changed
+
+- 项目品牌由 image-ppt 升级为 **SlideMuse**；仓库地址暂时保持 `helloo1568/image-ppt`，避免旧链接失效。
+- Skill 正式调用名改为 `$slidemuse`，并同步 README、OpenAI Agent 元数据、使用指南与发布包命名。
+- README 首屏增加 30 秒安装入口，优先引导用户让 Agent 自动执行安装器。
+
+### Added
+
+- 强化 `install.py`：自动识别 Codex / Claude Code / OpenCode，创建隔离虚拟环境、安装依赖、运行自检，并安全提示旧 `image-ppt` 安装目录。
+- 增加安装器 dry-run 测试，确保 Codex 默认安装路径与新 Skill 名保持一致。
+
 ## [2.1.1] - 2026-09-18
 
 ### Fixed

@@ -35,17 +35,33 @@ Raster artwork does not become editable vector paths. Missing or occluded detail
 
 ## Quick start
 
-Python 3.10+. Run the commands in this guide from the repository root:
+### Recommended: let your agent install it
 
-```sh
-git clone https://github.com/helloo1568/image-ppt.git
-cd image-ppt
-python -m pip install -r requirements.txt
-python scripts/validate_page_spec.py examples/page-spec.example.json --strict
+Send this to Codex, Claude Code, or OpenCode:
+
+```text
+Install SlideMuse from https://github.com/helloo1568/image-ppt .
+Run the repository's install.py to register the skill, install isolated dependencies, and verify the setup.
 ```
 
-Install the complete repository as image-ppt in your host's skill directory, or provide SKILL.md to an agent supporting this format.
-In Codex, let Codex invoke its image-generation capability. In another agent, use that agent's native or connected image-generation/editing capability. Keep task materials and outputs in a separate working directory.
+### Manual install
+
+Requires Python 3.10+. You do not need to create a virtual environment or install dependencies globally:
+
+```sh
+git clone https://github.com/helloo1568/image-ppt.git slidemuse
+python slidemuse/install.py
+```
+
+The installer detects Codex / Claude Code / OpenCode, installs into the corresponding user-level skill directory, creates an isolated `.venv`, installs dependencies, and runs the strict Page Spec self-check. To choose explicitly:
+
+```sh
+python slidemuse/install.py --client codex
+python slidemuse/install.py --client claude
+python slidemuse/install.py --client opencode
+```
+
+Invoke it as `$slidemuse` after installation. Keep task materials and outputs in a separate working directory.
 
 ## Runtime environments
 
@@ -60,12 +76,12 @@ The skill does not install an image plugin for another agent, search for API key
 ## Example requests
 
 ```text
-Use $image-ppt to turn this report into a 10-slide editable deck for a project pitch.
+Use $slidemuse to turn this report into a 10-slide editable deck for a project pitch.
 I have no style reference. Show the content outline and wait for approval, then show four slide-sorter directions. After selection, build the image deck and page-spec.json, then reconstruct the editable version.
 ```
 
 ```text
-Use $image-ppt starting at Step 3 to reconstruct these existing slide images into editable PPTX.
+Use $slidemuse starting at Step 3 to reconstruct these existing slide images into editable PPTX.
 Preserve wording, layout and page order. Separate every element I need to edit.
 Remove duplicated content from the background and include the scene and assets.
 ```

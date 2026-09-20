@@ -10,6 +10,9 @@ import sys
 import venv
 from pathlib import Path
 
+BRAND_NAME = "SlideMuse"
+LEGACY_SKILL_NAME = "image-ppt"
+
 CLIENT_DIRS = {
     "codex": Path(".agents") / "skills",
     "claude": Path(".claude") / "skills",
@@ -18,6 +21,7 @@ CLIENT_DIRS = {
 
 RUNTIME_PATHS = (
     "SKILL.md",
+    "manifest.yaml",
     "requirements.txt",
     "scripts",
     "references",
@@ -28,7 +32,11 @@ RUNTIME_PATHS = (
 
 def read_skill_name(root: Path) -> str:
     text = (root / "SKILL.md").read_text(encoding="utf-8")
-    match = re.search(r"^---\s*$.*?^name:\s*([A-Za-z0-9._-]+)\s*$", text, re.MULTILINE | re.DOTALL)
+    match = re.search(
+        r"^---\\s*$.*?^name:\\s*([A-Za-z0-9._-]+)\\s*$",
+        text,
+        re.MULTILINE | re.DOTALL,
+    )
     if not match:
         raise RuntimeError("Could not read skill name from SKILL.md frontmatter.")
     return match.group(1)
@@ -99,7 +107,10 @@ def install_dependencies(target: Path) -> Path:
         ],
         check=True,
     )
-    (target / ".skill-python").write_text(str(python.resolve()) + "\n", encoding="utf-8")
+    (target / ".skill-python").write_text(
+        str(python.resolve()) + "\\n",
+        encoding="utf-8",
+    )
     return python
 
 
@@ -115,9 +126,40 @@ def validate_install(target: Path, python: Path) -> None:
     )
 
 
+def legacy_install(home: Path, client: str, skill_name: str) -> Path | None:
+    legacy = home / CLIENT_DIRS[client] / LEGACY_SKILL_NAME
+    if skill_name == LEGACY_SKILL_NAME or not legacy.exists():
+        return None
+    return legacy
+
+
+def emit(result: dict[str, object], as_json: bool) -> None:
+    if as_json:
+        print(json.dumps(result, ensure_ascii=False))
+        return
+
+    if result.get("dry_run"):
+        print(f"{BRAND_NAME} installer dry run")
+    else:
+        print(f"✓ {BRAND_NAME} installed successfully")
+    print(f"  Client: {result['client']}")
+    print(f"  Skill:  ${result['skill']}")
+    print(f"  Path:   {result['target']}")
+    if result.get("python"):
+        print(f"  Python: {result['python']}")
+    if result.get("legacy_target"):
+        print(
+            f"  Note: legacy install found at {result['legacy_target']}. "
+            "You can remove it after confirming $slidemuse works."
+        )
+
+
 def main() -> None:
+    if sys.version_info < (3, 10):
+        raise SystemExit("SlideMuse requires Python 3.10 or newer.")
+
     parser = argparse.ArgumentParser(
-        description="Install this Agent Skill and its Python runtime."
+        description="Install SlideMuse and its isolated Python runtime."
     )
     parser.add_argument(
         "--client",
@@ -146,26 +188,31 @@ def main() -> None:
         action="store_true",
         help="Show the selected client and target path without changing files.",
     )
+    parser.add_argument(
+        "--json",
+        action="store_true",
+        help="Emit machine-readable JSON output.",
+    )
     args = parser.parse_args()
 
     root = Path(__file__).resolve().parent
     skill_name = read_skill_name(root)
     client = detect_client(args.home) if args.client == "auto" else args.client
     target = args.home / CLIENT_DIRS[client] / skill_name
+    legacy = legacy_install(args.home, client, skill_name)
+
+    result: dict[str, object] = {
+        "ok": True,
+        "client": client,
+        "skill": skill_name,
+        "target": str(target),
+    }
+    if legacy is not None:
+        result["legacy_target"] = str(legacy)
 
     if args.dry_run:
-        print(
-            json.dumps(
-                {
-                    "ok": True,
-                    "dry_run": True,
-                    "client": client,
-                    "skill": skill_name,
-                    "target": str(target),
-                },
-                ensure_ascii=False,
-            )
-        )
+        result["dry_run"] = True
+        emit(result, args.json)
         return
 
     try:
@@ -175,34 +222,25 @@ def main() -> None:
             python = install_dependencies(target)
 
         marker = {
-            "installer": "image-ppt",
+            "installer": "slidemuse",
+            "brand": BRAND_NAME,
             "skill": skill_name,
             "client": client,
             "source": str(root),
         }
         (target / ".skill-install.json").write_text(
-            json.dumps(marker, ensure_ascii=False, indent=2) + "\n",
+            json.dumps(marker, ensure_ascii=False, indent=2) + "\\n",
             encoding="utf-8",
         )
 
         if not args.skip_deps:
             validate_install(target, python)
     except (OSError, RuntimeError, subprocess.CalledProcessError) as exc:
-        parser.exit(2, f"install: error: {exc}\n")
+        parser.exit(2, f"install: error: {exc}\\n")
 
-    print(
-        json.dumps(
-            {
-                "ok": True,
-                "client": client,
-                "skill": skill_name,
-                "target": str(target),
-                "python": str(python),
-                "verified": not args.skip_deps,
-            },
-            ensure_ascii=False,
-        )
-    )
+    result["python"] = str(python)
+    result["verified"] = not args.skip_deps
+    emit(result, args.json)
 
 
 if __name__ == "__main__":

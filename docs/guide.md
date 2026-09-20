@@ -35,17 +35,33 @@
 
 ## 快速开始
 
-Python 3.10+。本指南中的命令均从仓库根目录执行。克隆或下载项目：
+### 推荐：让 Agent 自动安装
 
-```sh
-git clone https://github.com/helloo1568/image-ppt.git
-cd image-ppt
-python -m pip install -r requirements.txt
-python scripts/validate_page_spec.py examples/page-spec.example.json --strict
+把下面这句话发给 Codex、Claude Code 或 OpenCode：
+
+```text
+安装 SlideMuse，仓库是 https://github.com/helloo1568/image-ppt 。
+请运行仓库自带的 install.py，自动注册 Skill、安装隔离依赖并完成自检。
 ```
 
-把这个项目目录作为 image-ppt 技能交给支持 SKILL.md 的 Agent，或把完整目录安装到该宿主的技能目录。
-在 Codex 中由 Codex 调用其图像生成能力；在其他 Agent 中由对应 Agent 调用其原生/已连接的生图能力。技能执行时把用户材料和产物放在独立工作目录。
+### 手动安装
+
+需要 Python 3.10+。不需要手动创建虚拟环境，也不需要全局安装依赖：
+
+```sh
+git clone https://github.com/helloo1568/image-ppt.git slidemuse
+python slidemuse/install.py
+```
+
+安装器会自动识别 Codex / Claude Code / OpenCode，安装到对应用户级 Skill 目录，创建独立 `.venv`，安装依赖并运行严格 Page Spec 自检。指定客户端时：
+
+```sh
+python slidemuse/install.py --client codex
+python slidemuse/install.py --client claude
+python slidemuse/install.py --client opencode
+```
+
+安装完成后使用 `$slidemuse` 调用。任务材料和产物继续放在独立工作目录，不要写入 Skill 安装目录。
 
 ## 运行环境
 
@@ -60,18 +76,18 @@ python scripts/validate_page_spec.py examples/page-spec.example.json --strict
 ### 对 Agent 说
 
 ```text
-使用 $image-ppt 把这份报告做成 10 页可编辑 PPT。
+使用 $slidemuse 把这份报告做成 10 页可编辑 PPT。
 用于项目路演，没有指定参考风格。先展示内容大纲等我确认，再给我四套幻灯片浏览视图；选定后生成图片版和 page-spec.json，再继续还原可编辑版。
 ```
 
 ```text
-使用 $image-ppt 从现有图片开始执行 Step 3，将这些幻灯片还原成可编辑 PPTX。
+使用 $slidemuse 从现有图片开始执行 Step 3，将这些幻灯片还原成可编辑 PPTX。
 保持原始文字、布局与页序，把所有需要修改的元素独立拆出。
 复杂插画保留为单独图片，清理背景残影，并交付 scene.json 和素材。
 ```
 
 ```text
-使用 $image-ppt，把附件材料做成 12 页课堂汇报 PPT，受众是同学。
+使用 $slidemuse，把附件材料做成 12 页课堂汇报 PPT，受众是同学。
 只做图片版，没有参考风格。先展示内容大纲等我确认，再展示四套使用同一组内容的幻灯片浏览视图，等我选择。
 ```
 

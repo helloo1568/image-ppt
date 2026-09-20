@@ -1,16 +1,16 @@
 <div align="center">
 
-<img src="docs/assets/hero.svg" alt="image-ppt：从材料到精美幻灯片，再到可编辑 PPTX" width="100%">
+<img src="docs/assets/hero.svg" alt="SlideMuse：从材料到精美幻灯片，再到可编辑 PPTX" width="100%">
 
-# image-ppt · AI 竞赛 PPT 与电影质感 PPT
+# SlideMuse · 视觉优先的 AI PPT 技能
 
-**让好内容，有好看的表达，也有继续修改的自由。**
+**先把 PPT 做得值得展示，再让它可编辑。**
 
 将书籍、PDF、论文与报告变成风格统一的图片 PPT，按需继续还原为原生可编辑 PPTX。<br>
 适用于**竞赛 PPT、电影质感 PPT、创新创业路演、学术汇报与论文答辩**，支持图片转可编辑 PPT。
 
 [![CI](https://github.com/helloo1568/image-ppt/actions/workflows/ci.yml/badge.svg)](https://github.com/helloo1568/image-ppt/actions/workflows/ci.yml)
-[![Version](https://img.shields.io/badge/version-2.1.1-79e9d1?labelColor=14243c)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-2.2.0-79e9d1?labelColor=14243c)](CHANGELOG.md)
 [![Python](https://img.shields.io/badge/Python-3.10%2B-82b5ff?labelColor=14243c)](requirements.txt)
 [![License: MIT](https://img.shields.io/badge/License-MIT-f2c98a?labelColor=14243c)](LICENSE)
 
@@ -19,6 +19,24 @@
 [作品展示](#showcase) · [核心优势](#features) · [快速开始](#quick-start) · [使用指南](docs/guide.md) · [参与贡献](CONTRIBUTING.md)
 
 </div>
+
+## 30 秒安装
+
+**推荐：直接把这一句话发给 Codex / Claude Code / OpenCode：**
+
+```text
+安装 SlideMuse，仓库是 https://github.com/helloo1568/image-ppt 。
+请运行仓库自带的 install.py，自动注册 Skill、安装隔离依赖并完成自检。
+```
+
+安装后直接说：`使用 $slidemuse，把这份 PDF 做成 10 页竞赛 PPT。`
+
+手动安装也只需：
+
+```sh
+git clone https://github.com/helloo1568/image-ppt.git slidemuse
+python slidemuse/install.py
+```
 
 ---
 
@@ -68,7 +86,7 @@
 
 <a id="features"></a>
 
-## 为什么选择 image-ppt
+## 为什么选择 SlideMuse
 
 | | 带给你的价值 |
 | :--- | :--- |
@@ -79,11 +97,11 @@
 | **🔍 交付有检查依据** | 脚本检查原生对象、文字、表格与图表数据、层级及整页底图残留，再配合逐页渲染核对。 |
 | **🔓 开放、可迁移、可扩展** | **MIT 开源**，兼容具备所需能力的 Agent；本地 Python 工具不发起网络请求，也不需要 API Key。 |
 
-> **运行方式：** image-ppt 是 Agent 技能。宿主负责读材料、视觉理解与生图；仓库脚本负责合并、裁剪、编译和审查。完整制作需要宿主具备相应能力。模型选择参见[运行环境与模型说明](references/models.md)。
+> **运行方式：** SlideMuse 是 Agent 技能。宿主负责读材料、视觉理解与生图；仓库脚本负责合并、裁剪、编译和审查。完整制作需要宿主具备相应能力。模型选择参见[运行环境与模型说明](references/models.md)。
 
 ## 适合制作哪些 PPT
 
-| 场景与风格 | 如何使用 image-ppt |
+| 场景与风格 | 如何使用 SlideMuse |
 | :--- | :--- |
 | **竞赛 PPT / 比赛答辩 PPT / 国赛 PPT** | 围绕项目痛点、解决方案、技术优势与应用价值组织叙事，统一整套竞赛演示的视觉风格。 |
 | **创新创业 PPT / 挑战杯 PPT / 大创 PPT** | 将项目书、研究材料或商业计划书转成路演页面，按实际比赛要求调整内容大纲。 |
@@ -96,7 +114,7 @@
 
 ### 具体赛事：挑战杯、大学生创新大赛、三创赛、正大杯
 
-准备以下赛事的路演或答辩时，可以把项目书、论文、调研报告和赛事要求一起交给 image-ppt。下表提供内容组织思路，制作大纲以当届通知和赛道要求为准。
+准备以下赛事的路演或答辩时，可以把项目书、论文、调研报告和赛事要求一起交给 SlideMuse。下表提供内容组织思路，制作大纲以当届通知和赛道要求为准。
 
 | 赛事名称 | 常见搜索词 | 可组织的汇报内容 |
 | :--- | :--- | :--- |
@@ -129,23 +147,23 @@
 把下面这句话发给你的 Codex、Claude Code 或其他支持技能的 Agent：
 
 ```text
-安装 image-ppt 这个 skill，地址是 https://github.com/helloo1568/image-ppt 。
+安装 SlideMuse 这个 skill，地址是 https://github.com/helloo1568/image-ppt 。
 请使用仓库自带的 install.py 完成注册、依赖安装和自检。
 ```
 
 ### 2. 手动安装：clone 后只运行一条命令
 
 ```sh
-git clone https://github.com/helloo1568/image-ppt.git
-python image-ppt/install.py
+git clone https://github.com/helloo1568/image-ppt.git slidemuse
+python slidemuse/install.py
 ```
 
 安装器会自动识别 Codex / Claude Code / OpenCode，复制最小运行文件、创建隔离的 Python 环境、安装依赖，并运行 Page Spec 自检。需要指定客户端时：
 
 ```sh
-python image-ppt/install.py --client codex
-python image-ppt/install.py --client claude
-python image-ppt/install.py --client opencode
+python slidemuse/install.py --client codex
+python slidemuse/install.py --client claude
+python slidemuse/install.py --client opencode
 ```
 
 安装完成后，材料与产物仍应保存在独立工作目录，不要放进技能安装目录。
@@ -153,7 +171,7 @@ python image-ppt/install.py --client opencode
 ### 3. 附上材料，复制这段话
 
 ```text
-使用 $image-ppt，把附件报告做成 10 页项目路演 PPT。
+使用 $slidemuse，把附件报告做成 10 页项目路演 PPT。
 受众是比赛评委，没有指定参考风格。
 先给我内容大纲，确认后再展示四套幻灯片浏览视图供我选择。
 选定风格后生成图片版，再继续还原为可编辑 PPTX。
@@ -166,14 +184,14 @@ python image-ppt/install.py --client opencode
 **课堂或读书分享，只需要图片版：**
 
 ```text
-使用 $image-ppt，把附件材料做成 12 页课堂汇报 PPT，受众是同学。
+使用 $slidemuse，把附件材料做成 12 页课堂汇报 PPT，受众是同学。
 没有参考风格，只需要图片版。先确认内容大纲，再给我四套总览选型。
 ```
 
 **已有图片，想继续修改：**
 
 ```text
-使用 $image-ppt，从 Step 3 开始，把附件的全部幻灯片图片还原为可编辑 PPTX。
+使用 $slidemuse，从 Step 3 开始，把附件的全部幻灯片图片还原为可编辑 PPTX。
 保持原始文字、比例、布局与页序，拆出文字、图表和需要修改的主体。
 复杂插画保留为独立图片，清理背景残影，并交付 Scene、素材和审查报告。
 ```

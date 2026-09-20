@@ -1,25 +1,43 @@
 <div align="center">
 
-<img src="docs/assets/hero.svg" alt="image-ppt: from source material to polished slides and editable PPTX" width="100%">
+<img src="docs/assets/hero.svg" alt="SlideMuse: from source material to polished slides and editable PPTX" width="100%">
 
-# image-ppt · AI Competition & Cinematic Presentations
+# SlideMuse · Visual-first AI Presentation Skill
 
-**Give good ideas a beautiful presentation—and room to keep editing.**
+**Beautiful first. Editable when you need it.**
 
 Turn books, PDFs, papers, and reports into a visually consistent image deck.<br>
 Create **competition presentations, cinematic slides, startup pitch decks, research talks, and thesis defenses**.<br>
 Reconstruct slide images as native editable PowerPoint (PPTX) when needed.
 
 [![CI](https://github.com/helloo1568/image-ppt/actions/workflows/ci.yml/badge.svg)](https://github.com/helloo1568/image-ppt/actions/workflows/ci.yml)
-[![Version](https://img.shields.io/badge/version-2.1.1-79e9d1?labelColor=14243c)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-2.2.0-79e9d1?labelColor=14243c)](CHANGELOG.md)
 [![Python](https://img.shields.io/badge/Python-3.10%2B-82b5ff?labelColor=14243c)](requirements.txt)
 [![License: MIT](https://img.shields.io/badge/License-MIT-f2c98a?labelColor=14243c)](LICENSE)
 
 [简体中文](README.md) · **English**
 
-[Showcase](#showcase) · [Why image-ppt](#features) · [Quick start](#quick-start) · [Guide](docs/guide.en.md) · [Contributing](CONTRIBUTING.md)
+[Showcase](#showcase) · [Why SlideMuse](#features) · [Quick start](#quick-start) · [Guide](docs/guide.en.md) · [Contributing](CONTRIBUTING.md)
 
 </div>
+
+## Install in 30 seconds
+
+**Recommended: send this one message to Codex, Claude Code, or OpenCode:**
+
+```text
+Install SlideMuse from https://github.com/helloo1568/image-ppt .
+Run the repository's install.py to register the skill, install isolated dependencies, and verify the setup.
+```
+
+Then say: `Use $slidemuse to turn this PDF into a 10-slide competition presentation.`
+
+Manual install is also just:
+
+```sh
+git clone https://github.com/helloo1568/image-ppt.git slidemuse
+python slidemuse/install.py
+```
 
 ---
 
@@ -69,7 +87,7 @@ A competition presentation that connects the problem, solution, and craft techno
 
 <a id="features"></a>
 
-## Why image-ppt
+## Why SlideMuse
 
 | | What you get |
 | :--- | :--- |
@@ -80,11 +98,11 @@ A competition presentation that connects the problem, solution, and craft techno
 | **🔍 Inspect the deliverable** | Audit objects, text, table and chart data, stacking, and full-page background remnants; follow with rendered visual review. |
 | **🔓 Open and adaptable** | **MIT licensed**, with support for agents that provide the required capabilities. Local Python tools make no network requests and need no API key. |
 
-> **How it runs:** image-ppt is an agent skill. The host reads materials, interprets images, and generates artwork; local scripts assemble, crop, compile, and audit. End-to-end production requires those host capabilities. See [runtime and model notes](references/models.md).
+> **How it runs:** SlideMuse is an agent skill. The host reads materials, interprets images, and generates artwork; local scripts assemble, crop, compile, and audit. End-to-end production requires those host capabilities. See [runtime and model notes](references/models.md).
 
 ## What can you make?
 
-| Use case or style | How image-ppt helps |
+| Use case or style | How SlideMuse helps |
 | :--- | :--- |
 | **Competition PPT / competition presentations** | Connect the problem, solution, technical advantages, and applications in a consistent visual story. |
 | **Innovation competitions / startup pitch decks** | Turn project proposals, research material, or business plans into slides tailored to the competition brief. |
@@ -130,23 +148,23 @@ Requires **Python 3.10+** and an agent with skill-file support, document reading
 Send this to Codex, Claude Code, or another skill-capable agent:
 
 ```text
-Install the image-ppt skill from https://github.com/helloo1568/image-ppt .
+Install the SlideMuse skill from https://github.com/helloo1568/image-ppt .
 Use the repository's install.py to register the skill, install dependencies, and verify the setup.
 ```
 
 ### 2. Manual install: clone, then run one command
 
 ```sh
-git clone https://github.com/helloo1568/image-ppt.git
-python image-ppt/install.py
+git clone https://github.com/helloo1568/image-ppt.git slidemuse
+python slidemuse/install.py
 ```
 
 The installer auto-detects Codex, Claude Code, or OpenCode, copies the minimal runtime files, creates an isolated Python environment, installs dependencies, and validates the Page Spec example. To select a client explicitly:
 
 ```sh
-python image-ppt/install.py --client codex
-python image-ppt/install.py --client claude
-python image-ppt/install.py --client opencode
+python slidemuse/install.py --client codex
+python slidemuse/install.py --client claude
+python slidemuse/install.py --client opencode
 ```
 
 Keep source materials and deliverables in a separate working directory, not inside the installed skill.
@@ -154,7 +172,7 @@ Keep source materials and deliverables in a separate working directory, not insi
 ### 3. Attach your material and ask
 
 ```text
-Use $image-ppt to turn the attached report into a 10-slide project pitch.
+Use $slidemuse to turn the attached report into a 10-slide project pitch.
 The audience is competition judges. I have no style reference.
 Show the content outline for approval, then four slide-sorter overviews for selection.
 After I choose a style, create the image deck, then reconstruct an editable PPTX.
@@ -167,7 +185,7 @@ Include page-spec.json, scene.json, assets, and the editability report.
 **Image-only classroom presentation:**
 
 ```text
-Use $image-ppt to make a 12-slide classroom presentation from the attached material.
+Use $slidemuse to make a 12-slide classroom presentation from the attached material.
 The audience is my classmates. No style reference; deliver only an image deck.
 Confirm the outline first, then show four slide-sorter options for me to choose from.
 ```
@@ -175,7 +193,7 @@ Confirm the outline first, then show four slide-sorter options for me to choose 
 **Make existing slide images editable:**
 
 ```text
-Use $image-ppt starting at Step 3 to reconstruct all attached slide images as editable PPTX.
+Use $slidemuse starting at Step 3 to reconstruct all attached slide images as editable PPTX.
 Preserve wording, aspect ratio, layout, and page order. Separate text, charts, and subjects.
 Keep complex artwork as independent images, remove background remnants,
 and deliver the Scene, assets, and editability report.
@@ -215,7 +233,7 @@ Local scripts need no API key. Host image and vision services may receive suppli
 
 **Start your next presentation with a good idea.**
 
-If image-ppt helps you, give it a Star or share your work and improvements.
+If SlideMuse helps you, give it a Star or share your work and improvements.
 
 [MIT License](LICENSE) © 2026 风清云影（[helloo1568](https://github.com/helloo1568)）
 
