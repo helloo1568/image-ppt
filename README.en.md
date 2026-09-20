@@ -123,20 +123,33 @@ Content approval precedes style selection by default. Stage 3 requires an explic
 
 ## Quick start
 
-### 1. Get the skill and dependencies
+### 1. Recommended: ask your agent to install it
 
 Requires **Python 3.10+** and an agent with skill-file support, document reading, image generation, and local file tools.
 
-```sh
-git clone https://github.com/helloo1568/image-ppt.git
-cd image-ppt
-python -m pip install -r requirements.txt
-python scripts/validate_page_spec.py examples/page-spec.example.json --strict
+Send this to Codex, Claude Code, or another skill-capable agent:
+
+```text
+Install the image-ppt skill from https://github.com/helloo1568/image-ppt .
+Use the repository's install.py to register the skill, install dependencies, and verify the setup.
 ```
 
-### 2. Connect it to your agent
+### 2. Manual install: clone, then run one command
 
-Install the **complete repository** in your host's skill directory, or ask an agent supporting this format to read [SKILL.md](SKILL.md) and use its repository resources. Keep source materials and deliverables in a separate working directory.
+```sh
+git clone https://github.com/helloo1568/image-ppt.git
+python image-ppt/install.py
+```
+
+The installer auto-detects Codex, Claude Code, or OpenCode, copies the minimal runtime files, creates an isolated Python environment, installs dependencies, and validates the Page Spec example. To select a client explicitly:
+
+```sh
+python image-ppt/install.py --client codex
+python image-ppt/install.py --client claude
+python image-ppt/install.py --client opencode
+```
+
+Keep source materials and deliverables in a separate working directory, not inside the installed skill.
 
 ### 3. Attach your material and ask
 
