@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 from __future__ import annotations
 
 import argparse
@@ -29,7 +28,7 @@ RUNTIME_PATHS = (
 
 def read_skill_name(root: Path) -> str:
     text = (root / "SKILL.md").read_text(encoding="utf-8")
-    match = re.search(r"^---\s*$.*?^name:\s*([A-Za-z0-9._-]+)\s*$", text, re.M | re.S)
+    match = re.search(r"^---\s*$.*?^name:\s*([A-Za-z0-9._-]+)\s*$", text, re.MULTILINE | re.DOTALL)
     if not match:
         raise RuntimeError("Could not read skill name from SKILL.md frontmatter.")
     return match.group(1)
@@ -148,9 +147,6 @@ def main() -> None:
         help="Show the selected client and target path without changing files.",
     )
     args = parser.parse_args()
-
-    if sys.version_info < (3, 10):
-        parser.exit(2, "install: Python 3.10+ is required.\n")
 
     root = Path(__file__).resolve().parent
     skill_name = read_skill_name(root)
