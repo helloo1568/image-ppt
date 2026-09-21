@@ -28,6 +28,7 @@ def test_installer_dry_run_targets_slidemuse(tmp_path: Path) -> None:
         check=True,
         capture_output=True,
         text=True,
+        check=False,
     )
     result = json.loads(completed.stdout)
     assert result["ok"] is True
