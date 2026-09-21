@@ -28,7 +28,6 @@ def test_installer_dry_run_targets_slidemuse(tmp_path: Path) -> None:
         check=True,
         capture_output=True,
         text=True,
-        check=False,
     )
     result = json.loads(completed.stdout)
     assert result["ok"] is True
@@ -50,6 +49,7 @@ def test_installer_auto_rejects_multiple_detected_clients(tmp_path: Path) -> Non
         ],
         capture_output=True,
         text=True,
+        check=False,
     )
 
     assert completed.returncode == 2
