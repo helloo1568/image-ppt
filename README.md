@@ -26,7 +26,7 @@
 
 ```text
 安装 SlideMuse，仓库是 https://github.com/helloo1568/slidemuse 。
-请运行仓库自带的 install.py，自动注册 Skill、安装隔离依赖并完成自检。
+请运行仓库自带的 install.py，注册 Skill、安装隔离依赖并完成自检；如果检测到多个客户端，请用 --client 指定当前客户端。
 ```
 
 安装后直接说：`使用 $slidemuse，把这份 PDF 做成 10 页竞赛 PPT。`
@@ -159,7 +159,7 @@ git clone https://github.com/helloo1568/slidemuse.git slidemuse
 python slidemuse/install.py
 ```
 
-安装器会自动识别 Codex / Claude Code / OpenCode，复制最小运行文件、创建隔离的 Python 环境、安装依赖，并运行 Page Spec 自检。需要指定客户端时：
+安装器会检测 Codex / Claude Code / OpenCode；只检测到一个客户端时会自动选择，同时检测到多个客户端时会停止并要求用 `--client` 明确指定，避免装到错误目录。随后会复制最小运行文件、创建隔离的 Python 环境、安装依赖，并运行 Page Spec 自检：
 
 ```sh
 python slidemuse/install.py --client codex
