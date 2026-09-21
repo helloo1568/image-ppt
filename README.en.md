@@ -27,7 +27,7 @@ Reconstruct slide images as native editable PowerPoint (PPTX) when needed.
 
 ```text
 Install SlideMuse from https://github.com/helloo1568/slidemuse .
-Run the repository's install.py to register the skill, install isolated dependencies, and verify the setup.
+Run the repository's install.py to register the skill, install isolated dependencies, and verify the setup. If multiple clients are detected, pass --client for the one you are using.
 ```
 
 Then say: `Use $slidemuse to turn this PDF into a 10-slide competition presentation.`
@@ -160,7 +160,7 @@ git clone https://github.com/helloo1568/slidemuse.git slidemuse
 python slidemuse/install.py
 ```
 
-The installer auto-detects Codex, Claude Code, or OpenCode, copies the minimal runtime files, creates an isolated Python environment, installs dependencies, and validates the Page Spec example. To select a client explicitly:
+The installer detects Codex, Claude Code, and OpenCode. It auto-selects only when exactly one client is detected; if multiple clients are present, it stops and asks you to pass `--client` so the skill is not installed into the wrong directory. It then copies the minimal runtime files, creates an isolated Python environment, installs dependencies, and validates the Page Spec example:
 
 ```sh
 python slidemuse/install.py --client codex
