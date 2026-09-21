@@ -53,9 +53,13 @@ def detect_client(home: Path) -> str:
 
     if not candidates:
         return "codex"
-    if "codex" in candidates:
-        return "codex"
-    return candidates[0]
+    if len(candidates) == 1:
+        return candidates[0]
+    detected = ", ".join(candidates)
+    raise RuntimeError(
+        f"Multiple supported clients detected: {detected}. "
+        "Re-run with --client codex, --client claude, or --client opencode."
+    )
 
 
 def venv_python(venv_dir: Path) -> Path:
@@ -194,7 +198,10 @@ def main() -> None:
 
     root = Path(__file__).resolve().parent
     skill_name = read_skill_name(root)
-    client = detect_client(args.home) if args.client == "auto" else args.client
+    try:
+        client = detect_client(args.home) if args.client == "auto" else args.client
+    except RuntimeError as exc:
+        parser.exit(2, f"install: error: {exc}\n")
     target = args.home / CLIENT_DIRS[client] / skill_name
     legacy = legacy_install(args.home, client, skill_name)
 
