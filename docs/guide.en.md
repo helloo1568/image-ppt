@@ -41,7 +41,7 @@ Send this to Codex, Claude Code, or OpenCode:
 
 ```text
 Install SlideMuse from https://github.com/helloo1568/slidemuse .
-Run the repository's install.py to register the skill, install isolated dependencies, and verify the setup.
+Run the repository's install.py to register the skill, install isolated dependencies, and verify the setup. If multiple clients are detected, pass --client for the one you are using.
 ```
 
 ### Manual install
@@ -53,7 +53,7 @@ git clone https://github.com/helloo1568/slidemuse.git slidemuse
 python slidemuse/install.py
 ```
 
-The installer detects Codex / Claude Code / OpenCode, installs into the corresponding user-level skill directory, creates an isolated `.venv`, installs dependencies, and runs the strict Page Spec self-check. To choose explicitly:
+The installer detects Codex / Claude Code / OpenCode. It auto-selects only when exactly one client is detected; if multiple clients are present, it stops and asks you to pass `--client` to avoid installing into the wrong user-level skill directory. It then creates an isolated `.venv`, installs dependencies, and runs the strict Page Spec self-check:
 
 ```sh
 python slidemuse/install.py --client codex
