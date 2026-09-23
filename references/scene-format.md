@@ -63,7 +63,7 @@ series 为 [{name, values, color?}]，数值数量匹配 categories。
 pie/doughnut 只接受单组非负且总和大于 0 的数据。原生图表包含可编辑工作簿。
 不支持的统计图不可谎称已实现，可用独立图片保真并说明数据不可编辑。
 
-Scene v1 未表达的图表外观（如轴范围、网格线和标签颜色）若用后处理调整，必须随交付保存可复现脚本，并说明单独编译 Scene 无法完全还原这些设置。后处理完成后重新执行对象审查和实际渲染；不要将未支持的属性写入 Scene。
+图表可设置 `value_axis_min`、`value_axis_max`、`major_gridlines`、`major_gridline_color`、`tick_label_color` 和 `data_label_color`，导出后由对象审查核对。前五项只适用于有坐标轴的图表；网格线颜色会自动启用主网格线，`data_label_color` 要求 `data_labels: true`。其他 Scene v1 未表达的图表外观若用后处理调整，必须随交付保存可复现脚本，并说明单独编译 Scene 无法完全还原这些设置。后处理完成后重新执行对象审查和实际渲染；不要将未支持的属性写入 Scene。
 
 ## 检查和局部修改
 

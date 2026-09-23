@@ -8,10 +8,20 @@ on:
       - manifest.yaml
       - .github/workflows/release.yml
       - scripts/**
+      - references/**
+      - examples/**
+      - docs/**
+      - showcase/**
       - install.py
       - SKILL.md
       - agents/**
       - requirements.txt
+      - requirements-dev.txt
+      - README.md
+      - README.en.md
+      - CONTRIBUTING.md
+      - CHANGELOG.md
+      - LICENSE
 
 permissions:
   contents: read
@@ -39,6 +49,8 @@ jobs:
       cancel-in-progress: false
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-python@v5
         with:
           python-version: "3.13"
@@ -78,7 +90,19 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           if gh release view "$RELEASE_TAG" >/dev/null 2>&1; then
-            echo "Release already exists; leaving it unchanged."
+            python - <<'PY'
+          import os, subprocess
+          from pathlib import Path
+          import yaml
+          files = yaml.safe_load(Path('manifest.yaml').read_text())['files']
+          result = subprocess.run(
+              ['git', 'diff', '--quiet', os.environ['RELEASE_TAG'], 'HEAD', '--', *files],
+              check=False,
+          )
+          if result.returncode:
+              raise SystemExit('Packaged files changed since existing release; bump manifest version')
+          PY
+            echo "Release already exists with identical packaged files."
             exit 0
           fi
           gh release create "$RELEASE_TAG" \

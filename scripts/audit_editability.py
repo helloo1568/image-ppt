@@ -40,6 +40,13 @@ def kind(shape):
     return "shape"
 
 
+def color_hex(color):
+    try:
+        return f"#{color.rgb}"
+    except (AttributeError, ValueError):
+        return None
+
+
 def pixel_hash(source):
     with Image.open(source) as im:
         im = ImageOps.exif_transpose(im).convert("RGBA")
@@ -216,6 +223,38 @@ def audit(pptx: Path, scene_path: Path | None = None) -> dict:
                         errors.append(
                             f"{label}: chart has no embedded editable workbook"
                         )
+                    style_differs = False
+                    if "data_label_color" in e:
+                        style_differs |= (
+                            not chart.plots[0].has_data_labels
+                            or color_hex(chart.plots[0].data_labels.font.color)
+                            != e["data_label_color"].upper()
+                        )
+                    if e["chart_type"] not in ("pie", "doughnut"):
+                        value_axis = chart.value_axis
+                        for field, actual_scale in (
+                            ("value_axis_min", value_axis.minimum_scale),
+                            ("value_axis_max", value_axis.maximum_scale),
+                        ):
+                            if field in e:
+                                style_differs |= actual_scale != e[field]
+                        if "major_gridlines" in e or "major_gridline_color" in e:
+                            style_differs |= value_axis.has_major_gridlines != e.get(
+                                "major_gridlines", True
+                            )
+                        if "major_gridline_color" in e and value_axis.has_major_gridlines:
+                            style_differs |= (
+                                color_hex(value_axis.major_gridlines.format.line.color)
+                                != e["major_gridline_color"].upper()
+                            )
+                        if "tick_label_color" in e:
+                            style_differs |= any(
+                                color_hex(axis.tick_labels.font.color)
+                                != e["tick_label_color"].upper()
+                                for axis in (chart.category_axis, value_axis)
+                            )
+                    if style_differs:
+                        errors.append(f"{label}: chart style differs from scene")
                 if e["type"] == "image" and e.get("role") == "reference":
                     errors.append(f"{label}: reference image packaged as slide content")
             if [s.name.split(" | ", 1)[0] for s in slide.shapes] != [
