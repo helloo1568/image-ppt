@@ -4,7 +4,7 @@
 
 ## 报告问题
 
-通过 [GitHub Issues](https://github.com/helloo1568/slidemuse/issues) 提供：
+通过 [GitHub Discussions](https://github.com/helloo1568/slidemuse/discussions) 提供：
 
 - 使用的 Agent、操作系统、Python 和技能版本。
 - 问题出现在哪个阶段，以及最短复现步骤。
@@ -33,7 +33,7 @@ python scripts/validate_page_spec.py examples/page-spec.example.json --strict
 
 Contributions to prompts, documentation, Page Spec / Scene contracts, exporters, tests, and authorized showcase images are welcome.
 
-- **Bugs:** open an [issue](https://github.com/helloo1568/slidemuse/issues) with your agent, OS, Python and skill versions, workflow stage, reproduction steps, expected/actual behavior, and a minimal sanitized example.
+- **Bugs:** start a [discussion](https://github.com/helloo1568/slidemuse/discussions) with your agent, OS, Python and skill versions, workflow stage, reproduction steps, expected/actual behavior, and a minimal sanitized example.
 - **Changes:** fork from `main`, keep the scope focused, update both language versions and the changelog where relevant, and run the checks above for code or contract changes.
 - **Pull requests:** explain the problem, resulting behavior, and validation. Include previews for visual changes and note compatibility implications for workflow changes.
 - **Shared files:** exclude credentials, private documents, and content you do not have permission to publish. Structural tests do not replace rendered visual inspection.

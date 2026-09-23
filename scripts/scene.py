@@ -104,6 +104,29 @@ def validate_scene(scene: dict, base: Path) -> list[str]:
             if kind == "chart":
                 if any(len(s["values"]) != len(e["categories"]) for s in e["series"]):
                     raise ValueError(f"Chart categories/values mismatch: {label}")
+                axis_options = (
+                    "value_axis_min",
+                    "value_axis_max",
+                    "major_gridlines",
+                    "major_gridline_color",
+                    "tick_label_color",
+                )
+                if e["chart_type"] in ("pie", "doughnut") and any(
+                    option in e for option in axis_options
+                ):
+                    raise ValueError(f"Pie/doughnut has no axes: {label}")
+                if (
+                    "value_axis_min" in e
+                    and "value_axis_max" in e
+                    and e["value_axis_min"] >= e["value_axis_max"]
+                ):
+                    raise ValueError(
+                        f"Chart value axis minimum must be below maximum: {label}"
+                    )
+                if e.get("major_gridlines") is False and "major_gridline_color" in e:
+                    raise ValueError(f"Hidden chart gridlines cannot have a color: {label}")
+                if "data_label_color" in e and not e.get("data_labels", False):
+                    raise ValueError(f"Chart data label color requires data_labels: {label}")
                 if e["chart_type"] in ("pie", "doughnut") and (
                     len(e["series"]) != 1
                     or any(v < 0 for v in e["series"][0]["values"])

@@ -7,6 +7,8 @@ import re
 import shutil
 import subprocess
 import sys
+import tempfile
+import uuid
 import venv
 from pathlib import Path
 
@@ -68,33 +70,31 @@ def venv_python(venv_dir: Path) -> Path:
     return venv_dir / "bin" / "python"
 
 
-def copy_runtime(root: Path, target: Path, force: bool) -> None:
+def check_target(target: Path, force: bool) -> None:
     marker = target / ".skill-install.json"
+    if target.is_symlink() or (target.exists() and not target.is_dir()):
+        raise RuntimeError(f"{target} is not a regular skill directory.")
     if target.exists() and not marker.exists() and any(target.iterdir()) and not force:
         raise RuntimeError(
             f"{target} already exists and was not created by this installer. "
             "Use --force only if you intend to replace it."
         )
 
-    if force and target.exists() and not marker.exists():
-        shutil.rmtree(target)
 
-    target.mkdir(parents=True, exist_ok=True)
-
+def copy_runtime(root: Path, target: Path) -> None:
+    missing = [str(root / name) for name in RUNTIME_PATHS if not (root / name).exists()]
+    if missing:
+        raise RuntimeError(f"Missing runtime paths: {', '.join(missing)}")
     for name in RUNTIME_PATHS:
         source = root / name
         destination = target / name
-        if not source.exists():
-            raise RuntimeError(f"Missing runtime path: {source}")
         if source.is_dir():
-            if destination.exists():
-                shutil.rmtree(destination)
             shutil.copytree(source, destination)
         else:
             shutil.copy2(source, destination)
 
 
-def install_dependencies(target: Path) -> Path:
+def install_dependencies(target: Path, final_target: Path) -> Path:
     env_dir = target / ".venv"
     python = venv_python(env_dir)
     if not python.exists():
@@ -112,7 +112,7 @@ def install_dependencies(target: Path) -> Path:
         check=True,
     )
     (target / ".skill-python").write_text(
-        str(python.resolve()) + "\n",
+        str(venv_python(final_target / ".venv")) + "\n",
         encoding="utf-8",
     )
     return python
@@ -130,11 +130,72 @@ def validate_install(target: Path, python: Path) -> None:
     )
 
 
-def legacy_install(home: Path, client: str, skill_name: str) -> Path | None:
-    legacy = home / CLIENT_DIRS[client] / LEGACY_SKILL_NAME
-    if skill_name == LEGACY_SKILL_NAME or not legacy.exists():
-        return None
-    return legacy
+def legacy_installs(home: Path, client: str, skill_name: str) -> list[Path]:
+    if skill_name == LEGACY_SKILL_NAME:
+        return []
+    parents = [home / CLIENT_DIRS[client]]
+    if client == "codex":
+        parents.append(home / ".codex" / "skills")
+    return [parent / LEGACY_SKILL_NAME for parent in parents if (parent / LEGACY_SKILL_NAME).exists()]
+
+
+def install_skill(
+    root: Path, target: Path, client: str, skill_name: str, force: bool, skip_deps: bool
+) -> Path:
+    check_target(target, force)
+    target.parent.mkdir(parents=True, exist_ok=True)
+    staging = Path(tempfile.mkdtemp(prefix=f".{target.name}-stage-", dir=target.parent))
+    backup: Path | None = None
+    activated = False
+    try:
+        copy_runtime(root, staging)
+        python = Path(sys.executable)
+        if not skip_deps:
+            python = install_dependencies(staging, target)
+
+        marker = {
+            "installer": "slidemuse",
+            "brand": BRAND_NAME,
+            "skill": skill_name,
+            "client": client,
+            "source": str(root),
+        }
+        (staging / ".skill-install.json").write_text(
+            json.dumps(marker, ensure_ascii=False, indent=2) + "\n",
+            encoding="utf-8",
+        )
+        if not skip_deps:
+            validate_install(staging, python)
+
+        if target.exists():
+            backup = target.with_name(f".{target.name}-backup-{uuid.uuid4().hex}")
+            target.replace(backup)
+        staging.replace(target)
+        activated = True
+
+        final_python = venv_python(target / ".venv") if not skip_deps else python
+        if not skip_deps:
+            validate_install(target, final_python)
+    except BaseException:
+        failed: Path | None = None
+        if activated:
+            failed = target.with_name(f".{target.name}-failed-{uuid.uuid4().hex}")
+            target.replace(failed)
+        if backup is not None and backup.exists():
+            backup.replace(target)
+        if failed is not None:
+            shutil.rmtree(failed)
+        raise
+    finally:
+        if staging.exists():
+            shutil.rmtree(staging)
+
+    if backup is not None:
+        try:
+            shutil.rmtree(backup)
+        except OSError as exc:
+            print(f"install: warning: could not remove old backup {backup}: {exc}", file=sys.stderr)
+    return final_python
 
 
 def emit(result: dict[str, object], as_json: bool) -> None:
@@ -151,9 +212,9 @@ def emit(result: dict[str, object], as_json: bool) -> None:
     print(f"  Path:   {result['target']}")
     if result.get("python"):
         print(f"  Python: {result['python']}")
-    if result.get("legacy_target"):
+    for legacy in result.get("legacy_targets", []):
         print(
-            f"  Note: legacy install found at {result['legacy_target']}. "
+            f"  Note: legacy install found at {legacy}. "
             "You can remove it after confirming $slidemuse works."
         )
 
@@ -203,7 +264,7 @@ def main() -> None:
     except RuntimeError as exc:
         parser.exit(2, f"install: error: {exc}\n")
     target = args.home / CLIENT_DIRS[client] / skill_name
-    legacy = legacy_install(args.home, client, skill_name)
+    legacy = legacy_installs(args.home, client, skill_name)
 
     result: dict[str, object] = {
         "ok": True,
@@ -211,8 +272,9 @@ def main() -> None:
         "skill": skill_name,
         "target": str(target),
     }
-    if legacy is not None:
-        result["legacy_target"] = str(legacy)
+    if legacy:
+        result["legacy_targets"] = [str(path) for path in legacy]
+        result["legacy_target"] = str(legacy[0])
 
     if args.dry_run:
         result["dry_run"] = True
@@ -220,25 +282,7 @@ def main() -> None:
         return
 
     try:
-        copy_runtime(root, target, args.force)
-        python = Path(sys.executable)
-        if not args.skip_deps:
-            python = install_dependencies(target)
-
-        marker = {
-            "installer": "slidemuse",
-            "brand": BRAND_NAME,
-            "skill": skill_name,
-            "client": client,
-            "source": str(root),
-        }
-        (target / ".skill-install.json").write_text(
-            json.dumps(marker, ensure_ascii=False, indent=2) + "\n",
-            encoding="utf-8",
-        )
-
-        if not args.skip_deps:
-            validate_install(target, python)
+        python = install_skill(root, target, client, skill_name, args.force, args.skip_deps)
     except (OSError, RuntimeError, subprocess.CalledProcessError) as exc:
         parser.exit(2, f"install: error: {exc}\n")
 

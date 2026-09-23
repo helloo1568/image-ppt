@@ -152,6 +152,47 @@ def test_chart_types(scene_file, chart_type):
     assert audit(output, scene_file)["errors"] == []
 
 
+def test_chart_style_roundtrip_and_audit(scene_file):
+    scene, _ = load_scene(scene_file)
+    chart = scene["slides"][0]["elements"][-1]
+    chart.update(
+        data_labels=True,
+        value_axis_min=0,
+        value_axis_max=50,
+        major_gridlines=True,
+        major_gridline_color="#AABBCC",
+        tick_label_color="#123456",
+        data_label_color="#654321",
+    )
+    scene_file.write_text(json.dumps(scene), encoding="utf-8")
+    output = scene_file.with_suffix(".pptx")
+    build_deck(scene_file, output)
+    assert audit(output, scene_file)["errors"] == []
+
+    prs = Presentation(output)
+    prs.slides[0].shapes[-1].chart.value_axis.maximum_scale = 60
+    prs.save(output)
+    assert any(
+        "chart style differs" in error for error in audit(output, scene_file)["errors"]
+    )
+
+
+@pytest.mark.parametrize(
+    "change",
+    [
+        {"chart_type": "pie", "value_axis_min": 0},
+        {"value_axis_min": 50, "value_axis_max": 0},
+        {"major_gridlines": False, "major_gridline_color": "#AABBCC"},
+        {"data_label_color": "#AABBCC"},
+    ],
+)
+def test_invalid_chart_style_rejected(scene_file, change):
+    scene, _ = load_scene(scene_file)
+    scene["slides"][0]["elements"][-1].update(change)
+    with pytest.raises(ValueError):
+        validate_scene(scene, scene_file.parent)
+
+
 @pytest.mark.parametrize("fit", ["contain", "cover", "stretch"])
 def test_image_fit_preserves_alpha(scene_file, fit):
     scene, _ = load_scene(scene_file)

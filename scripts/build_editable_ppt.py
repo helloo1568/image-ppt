@@ -220,9 +220,23 @@ def add_element(shapes, e, base, sx, sy):
             plot.data_labels.number_format = e.get("number_format", "General")
             plot.data_labels.number_format_is_linked = False
             east_asian_font(plot.data_labels.font, e.get("font", "Arial"))
+            if "data_label_color" in e:
+                plot.data_labels.font.color.rgb = rgb(e["data_label_color"])
         if e["chart_type"] not in ("pie", "doughnut"):
             for axis in (chart.category_axis, chart.value_axis):
                 east_asian_font(axis.tick_labels.font, e.get("font", "Arial"))
+                if "tick_label_color" in e:
+                    axis.tick_labels.font.color.rgb = rgb(e["tick_label_color"])
+            if "value_axis_min" in e:
+                chart.value_axis.minimum_scale = e["value_axis_min"]
+            if "value_axis_max" in e:
+                chart.value_axis.maximum_scale = e["value_axis_max"]
+            if "major_gridlines" in e or "major_gridline_color" in e:
+                chart.value_axis.has_major_gridlines = e.get("major_gridlines", True)
+            if "major_gridline_color" in e:
+                chart.value_axis.major_gridlines.format.line.color.rgb = rgb(
+                    e["major_gridline_color"]
+                )
         for series, spec in zip(chart.series, e["series"]):
             if spec.get("color"):
                 series.format.fill.solid()

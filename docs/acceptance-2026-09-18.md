@@ -31,4 +31,4 @@ The local three-slide blueprint trial passed image export, real PowerPoint rende
 
 Thumbnail layout used existing images locally with zero image-generation calls. The earlier exploratory run included retries; four calls is the updated normal preview workflow, not a claim about that run's total usage or provider billing.
 
-Complex artwork remains raster, and AI reconstruction and font substitution are not pixel-exact. Chart appearance currently uses a task-local reproducible postprocessor for settings absent from Scene v1. Preserve that script with the delivery; compiling Scene alone does not reproduce every visual setting. These are local acceptance results, not a remote CI result or a published release.
+Complex artwork remains raster, and AI reconstruction and font substitution are not pixel-exact. This trial used a task-local reproducible chart postprocessor; later Scene support covers value-axis bounds, major gridlines, and tick/data-label colors, while other unsupported chart settings still require the postprocessor. Preserve it with the delivery. These are local acceptance results, not a remote CI result or a published release.

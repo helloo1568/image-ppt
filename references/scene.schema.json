@@ -642,6 +642,24 @@
             "font": {
               "type": "string",
               "minLength": 1
+            },
+            "value_axis_min": {
+              "type": "number"
+            },
+            "value_axis_max": {
+              "type": "number"
+            },
+            "major_gridlines": {
+              "type": "boolean"
+            },
+            "major_gridline_color": {
+              "$ref": "#/$defs/color"
+            },
+            "tick_label_color": {
+              "$ref": "#/$defs/color"
+            },
+            "data_label_color": {
+              "$ref": "#/$defs/color"
             }
           },
           "required": [
