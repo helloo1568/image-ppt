@@ -8,6 +8,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import time
 import uuid
 import venv
 from pathlib import Path
@@ -130,6 +131,24 @@ def validate_install(target: Path, python: Path) -> None:
     )
 
 
+def retryable_replace_error(exc: OSError) -> bool:
+    return os.name == "nt" and getattr(exc, "winerror", None) in (5, 32, 33)
+
+
+def replace_directory(source: Path, destination: Path) -> None:
+    """Allow Windows a moment to release a newly used virtual environment."""
+    delays = (0, 0.25, 0.5, 1, 2, 4)
+    for attempt, delay in enumerate(delays):
+        if delay:
+            time.sleep(delay)
+        try:
+            source.replace(destination)
+            return
+        except OSError as exc:
+            if attempt == len(delays) - 1 or not retryable_replace_error(exc):
+                raise
+
+
 def legacy_installs(home: Path, client: str, skill_name: str) -> list[Path]:
     if skill_name == LEGACY_SKILL_NAME:
         return []
@@ -169,8 +188,8 @@ def install_skill(
 
         if target.exists():
             backup = target.with_name(f".{target.name}-backup-{uuid.uuid4().hex}")
-            target.replace(backup)
-        staging.replace(target)
+            replace_directory(target, backup)
+        replace_directory(staging, target)
         activated = True
 
         final_python = venv_python(target / ".venv") if not skip_deps else python
@@ -180,9 +199,9 @@ def install_skill(
         failed: Path | None = None
         if activated:
             failed = target.with_name(f".{target.name}-failed-{uuid.uuid4().hex}")
-            target.replace(failed)
+            replace_directory(target, failed)
         if backup is not None and backup.exists():
-            backup.replace(target)
+            replace_directory(backup, target)
         if failed is not None:
             shutil.rmtree(failed)
         raise

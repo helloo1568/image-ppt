@@ -95,6 +95,54 @@ def existing_install(target: Path) -> None:
     (target / ".skill-python").write_text("old python")
 
 
+def test_replace_directory_retries_transient_lock(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    source, destination = tmp_path / "stage", tmp_path / "installed"
+    source.mkdir()
+    original_replace = Path.replace
+    attempts = 0
+    delays: list[float] = []
+
+    def locked_once(path: Path, target: Path) -> Path:
+        nonlocal attempts
+        attempts += 1
+        if attempts == 1:
+            raise PermissionError("virtual environment temporarily locked")
+        return original_replace(path, target)
+
+    monkeypatch.setattr(Path, "replace", locked_once)
+    monkeypatch.setattr(installer, "retryable_replace_error", lambda exc: True)
+    monkeypatch.setattr(installer.time, "sleep", delays.append)
+
+    installer.replace_directory(source, destination)
+
+    assert attempts == 2
+    assert delays == [0.25]
+    assert not source.exists() and destination.is_dir()
+
+
+def test_replace_directory_preserves_permanent_error(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    source = tmp_path / "stage"
+    source.mkdir()
+    attempts = 0
+
+    def denied(path: Path, target: Path) -> Path:
+        nonlocal attempts
+        attempts += 1
+        raise PermissionError("permanent denial")
+
+    monkeypatch.setattr(Path, "replace", denied)
+    monkeypatch.setattr(installer, "retryable_replace_error", lambda exc: False)
+    with pytest.raises(PermissionError, match="permanent denial"):
+        installer.replace_directory(source, tmp_path / "installed")
+
+    assert attempts == 1
+    assert source.is_dir()
+
+
 def test_dependency_failure_keeps_existing_install(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     target = tmp_path / ".agents" / "skills" / "slidemuse"
     existing_install(target)
