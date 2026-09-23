@@ -61,6 +61,8 @@ python slidemuse/install.py --client claude
 python slidemuse/install.py --client opencode
 ```
 
+It stages and validates the new version before replacing an existing installation, and restores the old version if final validation fails. If a skill with the previous name is present, the installer reports its location so you can remove it after confirming `$slidemuse` works.
+
 Invoke it as `$slidemuse` after installation. Keep task materials and outputs in a separate working directory.
 
 ## Runtime environments

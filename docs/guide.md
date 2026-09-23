@@ -61,6 +61,8 @@ python slidemuse/install.py --client claude
 python slidemuse/install.py --client opencode
 ```
 
+安装器会先在临时目录完成新版本安装和验证，失败时保留原有版本。若发现旧名称的技能目录，会提示其位置；确认 `$slidemuse` 可用后再自行移除旧目录。
+
 安装完成后使用 `$slidemuse` 调用。任务材料和产物继续放在独立工作目录，不要写入 Skill 安装目录。
 
 ## 运行环境

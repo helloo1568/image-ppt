@@ -168,6 +168,8 @@ python slidemuse/install.py --client claude
 python slidemuse/install.py --client opencode
 ```
 
+For upgrades, installation and validation happen in a temporary directory first. A failed upgrade keeps the previous version. If the installer finds a skill under the old name, it reports its location; remove it yourself after confirming `$slidemuse` works.
+
 Keep source materials and deliverables in a separate working directory, not inside the installed skill.
 
 ### 3. Attach your material and ask
