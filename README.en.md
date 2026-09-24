@@ -11,7 +11,7 @@ Especially strong for **university competition presentations**—including Chall
 Reconstruct slide images as native editable PowerPoint (PPTX) when needed.
 
 [![CI](https://github.com/helloo1568/slidemuse/actions/workflows/ci.yml/badge.svg)](https://github.com/helloo1568/slidemuse/actions/workflows/ci.yml)
-[![Version](https://img.shields.io/badge/version-2.2.3-79e9d1?labelColor=14243c)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-2.5.0-79e9d1?labelColor=14243c)](CHANGELOG.md)
 [![Python](https://img.shields.io/badge/Python-3.10%2B-82b5ff?labelColor=14243c)](requirements.txt)
 [![License: MIT](https://img.shields.io/badge/License-MIT-f2c98a?labelColor=14243c)](LICENSE)
 
@@ -93,9 +93,9 @@ A competition presentation that connects the problem, solution, and craft techno
 | :--- | :--- |
 | **🎨 Choose a direction first** | Approve the content outline, then compare **4 slide-sorter overviews** using the same content before full production. |
 | **🧩 Designed to keep editing** | Optional reconstruction into native text, shapes, tables, and **5 chart types**. Photos and complex artwork become separate, replaceable images. |
-| **📝 Preserve approved content** | **Page Spec** records exact text, numbers, sources, and stable element IDs. Reconstruction reuses known content instead of recognizing it again. |
+| **📝 Preserve approved content** | **Page Spec** records exact text, numbers, sources, and stable element IDs. Hash-bound visual transcripts can flag missing facts, and update plans identify affected slides. |
 | **🔁 Resume and revise** | `deck-spec.md` tracks production state; `scene.json` stores layout. Update affected elements and assets, then export again. |
-| **🔍 Inspect the deliverable** | Audit objects, text, table and chart data, stacking, and full-page background remnants; follow with rendered visual review. |
+| **🔍 Inspect the deliverable** | Audit objects, text, table and chart data, stacking, and full-page background remnants; render every slide with a review sheet and optional source comparison, with a version-bound scorecard for regression checks. |
 | **🔓 Open and adaptable** | **MIT licensed**, with support for agents that provide the required capabilities. Local Python tools make no network requests and need no API key. |
 
 > **How it runs:** SlideMuse is an agent skill. The host reads materials, interprets images, and generates artwork; local scripts assemble, crop, compile, and audit. End-to-end production requires those host capabilities. See [runtime and model notes](references/models.md).

@@ -3,7 +3,7 @@ name: slidemuse
 description: 将书籍、PDF、论文、报告或文字材料制作成视觉优先的图片版 PPT，适用于竞赛、答辩、路演、课程展示和读书分享；在用户明确要求时按 Scene v1 还原可编辑 PPTX。流程包含需求和大纲确认、四套风格选型及逐页生图；不用于直接修改已有可编辑 PPTX。
 ---
 
-# SlideMuse · 2.2.3
+# SlideMuse · 2.5.0
 
 本技能只有一条主流程：**内容提炼 → 图片 PPT 生成 → 可编辑 PPTX 还原**。
 用户负责确认内容与风格，Agent 负责按已确认规格执行；不得把流程改写成“先做原生信息层”的编辑优先路线。
@@ -107,7 +107,7 @@ python "<skill-dir>/scripts/validate_style_options.py" "<work>/style-options.jso
 
 进入后读取 [Prompt 2](references/prompts.md)、[Page Spec](references/page-spec.md) 和 [模型说明](references/models.md)。
 
-1. 把确认后的内容与锁定视觉规范写入 `page-spec.json`。每页为所有已知文字、数据、视觉主体和图表分配稳定 ID；位置可先写 `bbox_hint`。
+1. 把确认后的内容与锁定视觉规范写入 `page-spec.json`。新任务把配色、字体字号、网格间距和图片处理写入 `style.tokens`，保留可读的 `visual_spec`；若有已选参考图，写入 `reference_images`。每页为所有已知文字、数据、视觉主体和图表分配稳定 ID；位置可先写 `bbox_hint`。
 2. 生成第一张图片前必须运行：
 
 ```sh
@@ -115,7 +115,7 @@ python "<skill-dir>/scripts/validate_page_spec.py" "<work>/page-spec.json" --str
 ```
 
 3. 按 `01-title.png`、`02-title.png` 的零填充序号逐页生成。每次提示包含锁定视觉规范、Page Spec 中的准确内容、页码和总页数。
-4. 每页立即检查画幅、文字、数据、裁切、溢出和跨页一致性；通过后更新最终图片路径、状态、提示词和必要的 `bbox_hint`。失败只重做对应页。
+4. 每页立即检查画幅、文字、数据、裁切、溢出和跨页一致性。含关键数字、日期、专名或必现图表标签的页面，可按 [Page Spec 内容核对](references/page-spec.md)建立绑定当前图片哈希的看图记录，并运行 `audit_page_content.py`；缺失项修复后才能批准该页。脚本只比对观察记录，不负责 OCR；图表数据及未识别的小字仍需视觉核对。通过后更新最终图片路径、状态、提示词和必要的 `bbox_hint`。失败只重做对应页。
 5. 同一页文字连续两次不准确时停止重试：按 Prompt 2A 生成保留全部主视觉的无字页面，再用 `scripts/overlay_text.py` 叠加准确文字并栅格化；叠字前后核对主视觉未丢失。Step 2 不提前移除 Step 3 才需拆分的主体。
 6. 全部页面通过后运行交付验证和合并：
 
@@ -124,7 +124,11 @@ python "<skill-dir>/scripts/validate_page_spec.py" "<work>/page-spec.json" --req
 python "<skill-dir>/scripts/build_image_ppt.py" "<work>/page-spec.json" "<work>/output/image-deck.pptx"
 ```
 
-7. 导出按 Page Spec 的批准图片清单、页序和画幅进行；旧稿留在目录中不会加入成品。重新打开或渲染 PPTX，核对页数、页序、画幅和文件可打开性。未授权 S6 时记录 DONE 并交付；已授权时更新规格后进入 S6。
+7. 导出按 Page Spec 的批准图片清单、页序和画幅进行；旧稿留在目录中不会加入成品。使用 `render_deck.py` 渲染并查看 `review.png`、`render-report.json`，核对页数、页序、画幅、文字和裁切。无可用渲染器时记录限制，不得声称视觉验收通过。未授权 S6 时记录 DONE 并交付；已授权时更新规格后进入 S6。
+
+```sh
+python "<skill-dir>/scripts/render_deck.py" "<work>/output/image-deck.pptx" "<work>/output/image-review" --page-spec "<work>/page-spec.json"
+```
 
 ## Step 3：还原可编辑 PPTX（S6）
 
@@ -141,7 +145,13 @@ python "<skill-dir>/scripts/build_editable_ppt.py" "<work>/scene.json" "<work>/o
 python "<skill-dir>/scripts/audit_editability.py" "<work>/output/editable.pptx" --scene "<work>/scene.json" --output "<work>/output/editability.json"
 ```
 
-6. 实际渲染并与基准图逐页核对；再抽查移动主体、修改文字和编辑图表数据。问题只修对应 Scene 元素或素材；同一问题连续两次无效时记录限制。
+6. 使用 `render_deck.py` 实际渲染并与 Page Spec 中已验收的基准图逐页核对，再抽查移动主体、修改文字和编辑图表数据。`review.png` 的第三列是像素差异，仅供定位，不能单凭差异数值判定合格。问题只修对应 Scene 元素或素材；同一问题连续两次无效时记录限制。
+
+```sh
+python "<skill-dir>/scripts/render_deck.py" "<work>/output/editable.pptx" "<work>/output/editable-review" --page-spec "<work>/page-spec.json"
+```
+
+质量回归或版本发布时读取[交付评测](references/evaluation.md)，为整套页面建立内容观察和逐页视觉复核记录，再运行 `evaluate_delivery.py` 生成与当前 PPTX、Page Spec、渲染图和记录哈希绑定的评分卡；可编辑版同时传入 Scene。评分卡为 `pass` 才可声称该版本通过完整评测，`incomplete` 不能视为通过。普通交付仍按上述逐页验收，不强制生成评测记录。
 
 ## 交付契约
 
@@ -159,6 +169,11 @@ python "<skill-dir>/scripts/audit_editability.py" "<work>/output/editable.pptx" 
 - [workflow-updates.md](references/workflow-updates.md)：仅用户改需求、交付后修改或跨版本恢复时读取。
 - [models.md](references/models.md)：S3/S5 生图，以及 S6 需要背景清理/主体分离时读取。
 - [reconstruction.md](references/reconstruction.md) 与 [scene-format.md](references/scene-format.md)：仅 S6 读取。
+- [evaluation.md](references/evaluation.md)：仅质量回归、版本发布或需要可复跑评分卡时读取。
 - `validate_page_spec.py`：验证内容确认、页序、稳定 ID、画布边界和图片交付状态。
 - `overlay_text.py`：仅作为 Step 2 图片页的准确文字兜底。
 - `build_image_ppt.py`：仅用于 Step 2 图片版合并。
+- `render_deck.py`：渲染 PPTX 全部页面，生成逐页 PNG、总览和可选基准图对照；自动选择可用的 PowerPoint 或 LibreOffice/Poppler 后端。
+- `audit_page_content.py`：比对看图或 OCR 的逐页文字观察记录与 Page Spec，并拒绝复用图片哈希已变化的旧记录。
+- `plan_deck_update.py`：修改前保存已批准页面和参考图哈希，修改后规划需重做、复查或可复用的页面；不自动更改批准状态。
+- `evaluate_delivery.py`：汇总内容、视觉和可编辑性证据，拒绝旧版渲染或复核记录，产出交付评分卡。

@@ -239,6 +239,16 @@ def test_rejects_missing_text_field(tmp_path):
     assert "text" in proc.stderr
 
 
+def test_rejects_vertical_overflow_without_writing_page(tmp_path):
+    spec = {"pages": [{"background": "#FFFFFF", "width": 640, "height": 360,
+                       "output": "01.png", "texts": [{"text": "long line\nsecond line", "x": 0.1,
+                       "y": 0.1, "w": 0.8, "h": 0.05, "font_size": 48}]}]}
+    proc = run_overlay(write_spec(tmp_path, spec), "--font", find_test_font())
+    assert proc.returncode != 0
+    assert "overflows its box" in proc.stderr
+    assert not (tmp_path / "01.png").exists()
+
+
 def test_defaults_apply_across_pages(tmp_path):
     font = find_test_font()
     Image.new("RGB", (800, 450), "#F0F0F0").save(tmp_path / "bg.png")

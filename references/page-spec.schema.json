@@ -39,7 +39,42 @@
         },
         "choice": {"type": "string"},
         "authorization": {"type": "string", "minLength": 1},
-        "visual_spec": {"type": "string", "minLength": 1}
+        "visual_spec": {"type": "string", "minLength": 1},
+        "tokens": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["palette", "typography", "layout", "image_treatment"],
+          "properties": {
+            "palette": {
+              "type": "object",
+              "additionalProperties": {"type": "string", "pattern": "^#[0-9A-Fa-f]{6}$"},
+              "required": ["background", "text", "primary", "accent"]
+            },
+            "typography": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["heading_font", "body_font", "heading_size", "body_size"],
+              "properties": {
+                "heading_font": {"type": "string", "minLength": 1},
+                "body_font": {"type": "string", "minLength": 1},
+                "heading_size": {"type": "number", "exclusiveMinimum": 0},
+                "body_size": {"type": "number", "exclusiveMinimum": 0}
+              }
+            },
+            "layout": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["grid", "margin_px", "spacing_px"],
+              "properties": {
+                "grid": {"type": "string", "minLength": 1},
+                "margin_px": {"type": "number", "minimum": 0},
+                "spacing_px": {"type": "number", "minimum": 0}
+              }
+            },
+            "image_treatment": {"type": "string", "minLength": 1},
+            "reference_images": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true}
+          }
+        }
       }
     },
     "slides": {
@@ -69,6 +104,11 @@
         "core_message": {"type": "string", "minLength": 1},
         "visual_brief": {"type": "string", "minLength": 1},
         "source_refs": {
+          "type": "array",
+          "items": {"type": "string", "minLength": 1},
+          "uniqueItems": true
+        },
+        "required_visible_values": {
           "type": "array",
           "items": {"type": "string", "minLength": 1},
           "uniqueItems": true

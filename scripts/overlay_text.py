@@ -5,7 +5,6 @@ from __future__ import annotations
 import argparse
 import json
 import re
-import sys
 from pathlib import Path
 
 from PIL import Image, ImageDraw, ImageFont, ImageOps
@@ -120,22 +119,27 @@ def render_page(page: dict, spec_dir: Path, defaults: dict, cli_font: str) -> Pa
         box_width = settings["w"] * page_width
         box_height = settings["h"] * page_height
         lines = wrap_text(draw, str(settings["text"]), font, box_width)
+        if any(draw.textlength(line, font=font) > box_width + 1 for line in lines):
+            fail(f"text overflows its width on {page['output']}; increase the box or reduce font size")
         line_height = settings["font_size"] * settings["line_spacing"]
-        total_height = line_height * len(lines)
-        if total_height > box_height + 1:
-            print(
-                f"overlay_text: warning: text overflows its box on {page['output']}: "
-                f"{total_height:.0f}px > {box_height:.0f}px",
-                file=sys.stderr,
+        stroke_width = 1 if settings["bold"] else 0
+        visible_height = max(
+            index * line_height + draw.textbbox((0, 0), line or " ", font=font, anchor="la", stroke_width=stroke_width)[3]
+            for index, line in enumerate(lines)
+        )
+        if visible_height > box_height + 1:
+            fail(
+                f"text overflows its box on {page['output']}: "
+                f"{visible_height:.0f}px > {box_height:.0f}px; "
+                "increase the box or reduce font size"
             )
         if settings["valign"] == "center":
-            top = box_top + (box_height - total_height) / 2
+            top = box_top + (box_height - visible_height) / 2
         elif settings["valign"] == "bottom":
-            top = box_top + box_height - total_height
+            top = box_top + box_height - visible_height
         else:
             top = box_top
         top = max(top, box_top)
-        stroke_width = 1 if settings["bold"] else 0
         x, anchor = {
             "left": (box_left, "la"),
             "center": (box_left + box_width / 2, "ma"),

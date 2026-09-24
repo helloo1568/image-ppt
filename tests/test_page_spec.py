@@ -123,3 +123,22 @@ def test_strict_rejects_unresolved(page_spec):
     assert validate_page_spec(spec, page_spec.parent)["unresolved"] == 1
     with pytest.raises(ValueError, match="1 unresolved"):
         validate_page_spec(spec, page_spec.parent, strict=True)
+
+
+def test_style_reference_must_exist_inside_task(page_spec):
+    spec, _ = load_page_spec(page_spec)
+    spec["style"]["tokens"] = {
+        "palette": {"background": "#FFFFFF", "text": "#111111", "primary": "#123456", "accent": "#ABCDEF"},
+        "typography": {"heading_font": "Arial", "body_font": "Arial", "heading_size": 50, "body_size": 24},
+        "layout": {"grid": "two columns", "margin_px": 100, "spacing_px": 24},
+        "image_treatment": "soft light", "reference_images": ["styles/selected.png"],
+    }
+    with pytest.raises(ValueError, match="Missing style reference"):
+        validate_page_spec(spec, page_spec.parent)
+    target = page_spec.parent / "styles/selected.png"
+    target.parent.mkdir()
+    Image.new("RGB", (16, 9), "white").save(target)
+    assert validate_page_spec(spec, page_spec.parent)["slides"] == 1
+    spec["style"]["tokens"]["reference_images"] = ["../outside.png"]
+    with pytest.raises(ValueError, match="inside Page Spec directory"):
+        validate_page_spec(spec, page_spec.parent)

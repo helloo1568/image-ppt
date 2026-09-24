@@ -45,6 +45,13 @@ def validate_page_spec(
         location = "/".join(str(p) for p in error.absolute_path) or "root"
         raise ValueError(f"Page Spec schema at {location}: {error.message}")
 
+    for reference in spec["style"].get("tokens", {}).get("reference_images", []):
+        path = _relative_path(base, reference)
+        if not path.is_file():
+            raise ValueError(f"Missing style reference image: {reference}")
+        with Image.open(path) as image:
+            image.verify()
+
     width, height = spec["canvas"]["width"], spec["canvas"]["height"]
     slide_ids, page_numbers, element_count, unresolved = set(), set(), 0, 0
     image_paths = set()

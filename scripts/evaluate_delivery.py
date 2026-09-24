@@ -1,0 +1,134 @@
+#!/usr/bin/env python3
+"""Create a hash-bound delivery scorecard from rendered slides and review evidence."""
+from __future__ import annotations
+
+import argparse
+import json
+from pathlib import Path
+
+from audit_editability import audit as audit_editability
+from audit_page_content import audit as audit_content
+from render_deck import sha256
+from validate_page_spec import load_page_spec
+
+
+def verified_render(report_path: Path, spec_path: Path, count: int) -> tuple[dict, Path]:
+    report = json.loads(report_path.read_text(encoding="utf-8"))
+    deck = Path(report["deck"]).resolve()
+    if not deck.is_file() or report.get("deck_sha256") != sha256(deck):
+        raise ValueError("Render report is stale or lacks a deck hash; rerun render_deck.py")
+    if report.get("page_spec_sha256") != sha256(spec_path):
+        raise ValueError("Render report lacks the current Page Spec hash; rerun render_deck.py --page-spec")
+    pages = report.get("slides", [])
+    if len(pages) != count:
+        raise ValueError("Render report slide count differs from Page Spec")
+    for number, page in enumerate(pages, 1):
+        rendered = Path(page["rendered"]).resolve()
+        if page.get("slide") != number or not rendered.is_file() or page.get("rendered_sha256") != sha256(rendered):
+            raise ValueError(f"Rendered slide {number} changed or is missing")
+    return report, deck
+
+
+def review_template(spec: dict, render: dict) -> dict:
+    return {"version": "1.0", "deck_sha256": render["deck_sha256"], "slides": [
+        {"id": slide["id"], "rendered_sha256": page["rendered_sha256"],
+         "status": "pending", "notes": ""}
+        for slide, page in zip(spec["slides"], render["slides"])
+    ]}
+
+
+def verified_visual_review(review_path: Path, spec: dict, render: dict) -> dict:
+    review = json.loads(review_path.read_text(encoding="utf-8"))
+    if review.get("version") != "1.0" or review.get("deck_sha256") != render["deck_sha256"]:
+        raise ValueError("Visual review is stale or has an invalid version")
+    items = review.get("slides", [])
+    if len(items) != len(spec["slides"]):
+        raise ValueError("Visual review slide count differs from Page Spec")
+    for slide, page, item in zip(spec["slides"], render["slides"], items):
+        if item.get("id") != slide["id"] or item.get("rendered_sha256") != page["rendered_sha256"]:
+            raise ValueError(f"Visual review is stale or out of order at {slide['id']}")
+        if item.get("status") not in ("pass", "fail", "pending") or not isinstance(item.get("notes"), str):
+            raise ValueError(f"Invalid visual review status at {slide['id']}")
+    return review
+
+
+def evaluate(spec_path: Path, render_path: Path, review_path: Path,
+             observation_paths: list[Path], scene_path: Path | None = None) -> dict:
+    spec, _ = load_page_spec(spec_path)
+    render, deck = verified_render(render_path, spec_path, len(spec["slides"]))
+    review = verified_visual_review(review_path, spec, render)
+    observations = {"version": "1.0", "slides": []}
+    for path in observation_paths:
+        item = json.loads(path.read_text(encoding="utf-8"))
+        if item.get("version") != "1.0" or not isinstance(item.get("slides"), list):
+            raise ValueError(f"Invalid observation file: {path}")
+        observations["slides"].extend(item["slides"])
+    content = audit_content(spec_path, spec["slides"], observations)
+    visual_failed = [item["id"] for item in review["slides"] if item["status"] == "fail"]
+    visual_pending = [item["id"] for item in review["slides"] if item["status"] == "pending"]
+    editability = audit_editability(deck, scene_path) if scene_path else None
+    edit_errors = editability["errors"] if editability else []
+    if content["issues"] or visual_failed or edit_errors:
+        status = "fail"
+    elif content["incomplete"] or visual_pending:
+        status = "incomplete"
+    else:
+        status = "pass"
+    return {
+        "status": status,
+        "deck": str(deck), "deck_sha256": render["deck_sha256"],
+        "page_spec_sha256": sha256(spec_path),
+        "evidence": {"render_report_sha256": sha256(render_path),
+                     "visual_review_sha256": sha256(review_path),
+                     "observation_sha256": {str(path): sha256(path) for path in observation_paths},
+                     "scene_sha256": sha256(scene_path) if scene_path else None},
+        "slides": len(spec["slides"]),
+        "render_backend": render["backend"],
+        "content": {"issues": content["issues"], "incomplete": content["incomplete"],
+                    "missing_observations": content["missing_observations"],
+                    "findings": {item["id"]: item["findings"] for item in content["slides"] if item["findings"]}},
+        "visual": {"passed": sum(item["status"] == "pass" for item in review["slides"]),
+                   "failed": visual_failed, "pending": visual_pending,
+                   "difference_means": [page.get("mean_absolute_difference") for page in render["slides"]]},
+        "editability": {"checked": bool(editability), "errors": edit_errors,
+                        "warnings": editability["warnings"] if editability else []},
+        "note": "A pass reflects recorded checks for this artifact version; pixel difference is diagnostic, not a quality threshold.",
+    }
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("page_spec", type=Path)
+    parser.add_argument("render_report", type=Path)
+    parser.add_argument("visual_review", type=Path)
+    parser.add_argument("--init-review", action="store_true", help="Create a hash-bound visual review template")
+    parser.add_argument("--observations", type=Path, action="append", default=[])
+    parser.add_argument("--scene", type=Path, help="Audit current PPTX editability against this Scene")
+    parser.add_argument("--output", type=Path, help="Write the evaluation JSON")
+    args = parser.parse_args()
+    spec_path = args.page_spec.resolve()
+    render_path = args.render_report.resolve()
+    review_path = args.visual_review.resolve()
+    if args.init_review:
+        if review_path.exists():
+            parser.error("visual review file already exists")
+        spec, _ = load_page_spec(spec_path)
+        render, _ = verified_render(render_path, spec_path, len(spec["slides"]))
+        review_path.parent.mkdir(parents=True, exist_ok=True)
+        review_path.write_text(json.dumps(review_template(spec, render), ensure_ascii=False, indent=2), encoding="utf-8")
+        print(review_path)
+        return
+    result = evaluate(spec_path, render_path, review_path,
+                      [path.resolve() for path in args.observations],
+                      args.scene.resolve() if args.scene else None)
+    if args.output:
+        args.output.parent.mkdir(parents=True, exist_ok=True)
+        args.output.write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8")
+    print(json.dumps({"status": result["status"], "slides": result["slides"],
+                      "content_issues": result["content"]["issues"]}, ensure_ascii=False))
+    if result["status"] != "pass":
+        raise SystemExit(1)
+
+
+if __name__ == "__main__":
+    main()

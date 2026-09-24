@@ -4,6 +4,32 @@
 
 ## [Unreleased]
 
+## [2.5.0] - 2026-09-24
+
+### Added
+
+- `evaluate_delivery.py` combines hash-bound render output, complete content observations, per-slide visual review, and optional Scene editability audit into a repeatable delivery scorecard. Missing review evidence remains `incomplete`; stale artifacts are rejected.
+- Render reports now record the PPTX, Page Spec, and per-slide PNG hashes so evaluation cannot silently reuse an earlier render.
+
+## [2.4.0] - 2026-09-24
+
+### Added
+
+- `audit_page_content.py` compares hash-bound visual transcriptions with confirmed Page Spec text and explicitly required visible values. Incomplete or stale observations cannot pass its strict gate.
+- `plan_deck_update.py` snapshots approved page and style-reference hashes, then reports slides to reuse, review or regenerate after content, order or style changes.
+- Optional per-slide `required_visible_values` captures chart labels and other facts that must be readable in the final image.
+
+## [2.3.0] - 2026-09-24
+
+### Added
+
+- `render_deck.py` renders every PPTX slide using PowerPoint or LibreOffice/Poppler, producing numbered PNGs, a review sheet, and a JSON report. With Page Spec it adds source/render/difference comparison, including historical `revision` references.
+- Optional structured `style.tokens` in Page Spec records palette, typography, layout, image treatment and selected reference images; new tasks use it while older specs remain valid.
+
+### Changed
+
+- Raster text overlay fails instead of exporting a page when text exceeds its box. Documentation and skill steps now route image and editable PPTX through the same rendering review tool.
+
 ## [2.2.3] - 2026-09-23
 
 ### Fixed
