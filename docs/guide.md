@@ -125,16 +125,28 @@ Step 3  Page Spec + 页面图片 → scene.json → 原生可编辑 PPTX → 结
 | scripts/extract_assets.py | 根据已知 bbox 和可选灰度遮罩裁剪素材 |
 | scripts/build_image_ppt.py | 按 Page Spec 的批准图片清单、页序与比例导出；兼容目录自然排序模式 |
 | scripts/overlay_text.py | 兼容旧版：将准确文字栅格叠加到背景 |
+| scripts/render_deck.py | 渲染全部 PPTX 页面，输出逐页 PNG、总览图和可选基准对照报告 |
+| scripts/audit_page_content.py | 把看图或 OCR 的观察记录与 Page Spec 的准确文字、必现数字比对，并检查图片哈希 |
+| scripts/plan_deck_update.py | 修改前保存批准版本，修改后列出可复用、需复查和需重做的页面 |
+| scripts/evaluate_delivery.py | 汇总当前 PPTX 的内容、逐页视觉复核与可选 Scene 可编辑性审查，生成哈希绑定评分卡 |
 
 ```sh
 python scripts/validate_page_spec.py work/page-spec.json --require-images --strict
 python scripts/extract_assets.py work/extract.json work/assets/slide-01
 python scripts/build_image_ppt.py work/page-spec.json output/image-deck.pptx
 python scripts/overlay_text.py work/overlay.json
+python scripts/render_deck.py output/image-deck.pptx output/image-review --page-spec work/page-spec.json
+python scripts/render_deck.py output/editable.pptx output/editable-review --page-spec work/page-spec.json
+python scripts/audit_page_content.py work/page-spec.json work/observations-s02.json --init --slide s02
+python scripts/plan_deck_update.py snapshot work/page-spec.json work/snapshots/baseline.json
 ```
 
 图片生成与可编辑还原之间的语义契约见 [Page Spec](../references/page-spec.md)，最终坐标、路径、支持字段与局部修改见 [场景协议](../references/scene-format.md)；
 overlay.json 可参考 examples/overlay-spec.example.json，先填入实际背景路径；该旧版规格是模板，背景图未随仓库提供。
+叠字时若文字超出指定框，脚本现在报错并停止该页输出；先调整文字框或字号，再重新运行。
+渲染器在 Windows 优先调用已安装的 PowerPoint；否则使用 `soffice` 和 `pdftoppm`。输出目录须为空，复查同一目录时传 `--overwrite`。`review.png` 可逐页查看；指定 Page Spec 时按“基准 / 新渲染 / 像素差异”排列。`render-report.json` 给出逐页尺寸和差异均值，数值只用于定位变化，不能代替人工判断。可编辑版已授权局部修改时，历史基准可标为 `revision`，对照图会显示预期变化。
+内容观察模板创建后，把图片中实际可见文字填入 `observed_text`，完整转录时设为 `complete`；运行 `audit_page_content.py ... --require-complete --output work/content-audit.json`。它会标出缺失项，图片变化时拒绝旧转录；OCR 结果不能覆盖已确认内容。变更规划命令见[变更与恢复规则](../references/workflow-updates.md)，只输出影响范围，不自动修改 Page Spec 或生成图片。
+质量回归或发布时，再按[交付评测](../references/evaluation.md)对所有页面填写内容观察和渲染视觉复核，运行 `evaluate_delivery.py` 生成评分卡。只有 `pass` 且可编辑版包含 Scene 审查时，才可声称完成该版本的完整评测。
 Page Spec 导出自动严格验证，只使用清单中的已批准图片，目录中额外的旧稿不参与导出。默认沿用画布比例；`--width` / `--height` 可调整物理尺寸，同时指定时须保持该比例。重复图片路径、缺图、未批准图片或错误画幅会阻止导出，并保留既有输出。没有 Page Spec 的独立合并仍可使用 `python scripts/build_image_ppt.py work/slides output/image-deck.pptx`。
 遮挡、透明度、背景清理见 [重建指南](../references/reconstruction.md)。
 本版不提供通用 SVG 导入、合并表格单元格、自动吸附连线或富文本段内样式。

@@ -117,12 +117,23 @@ Follow-up edits to this skill's existing Scene continue in S6. Save the baseline
 - extract_assets.py: crop known regions, apply supplied masks, record coordinates and hashes.
 - build_image_ppt.py: assemble only the approved images listed in Page Spec, preserving its page order and aspect ratio; legacy directory sorting remains supported.
 - overlay_text.py: existing deterministic raster text overlay.
+- render_deck.py: render every PPTX slide, write a review sheet, and optionally compare with approved Page Spec images.
+- audit_page_content.py: compare a hash-bound visual transcription with confirmed text and required visible values.
+- plan_deck_update.py: snapshot approved inputs and plan which slides to reuse, review or regenerate after edits.
+- evaluate_delivery.py: combine current PPTX content observations, rendered-slide review, and optional Scene editability checks into a hash-bound scorecard.
 
 ```sh
 python scripts/build_image_ppt.py work/page-spec.json output/image-deck.pptx
+python scripts/render_deck.py output/image-deck.pptx output/image-review --page-spec work/page-spec.json
+python scripts/render_deck.py output/editable.pptx output/editable-review --page-spec work/page-spec.json
+python scripts/audit_page_content.py work/page-spec.json work/observations-s02.json --init --slide s02
+python scripts/plan_deck_update.py snapshot work/page-spec.json work/snapshots/baseline.json
 ```
 
 Page Spec export runs strict image validation automatically. Extra drafts in the directory are ignored; duplicate paths, missing or unapproved images, and mismatched aspect ratios stop export without replacing an existing output. `--width` or `--height` adjusts physical size; if both are supplied, they must preserve the canvas ratio. For standalone merging without a Page Spec, the legacy command remains `python scripts/build_image_ppt.py work/slides output/image-deck.pptx`.
+Raster text overlay now fails when a text box overflows; adjust its size or font before rerunning. The renderer uses PowerPoint on Windows when available, or LibreOffice plus Poppler (`soffice` and `pdftoppm`). Its output directory must be empty unless `--overwrite` is given. The comparison sheet shows source, rendered slide and pixel difference; the numeric difference is diagnostic and still needs visual review. Historical reference images marked `revision` are accepted for authorized editable changes.
+After generating an observation template, fill `observed_text` with the text actually visible in the image and set `status` to `complete` only after a full transcription. Run `audit_page_content.py ... --require-complete --output work/content-audit.json`; a changed page image invalidates its old observation. The update planner only reports affected slides and does not change Page Spec approval. See [revision rules](../references/workflow-updates.md).
+For regression or release checks, record observations and a visual review for every rendered slide, then run `evaluate_delivery.py` as described in the [delivery evaluation guide](../references/evaluation.md). An editable deliverable must include `--scene` to count editability in its scorecard.
 
 [Page Spec](../references/page-spec.md) · [Scene format](../references/scene-format.md) · [Layer reconstruction](../references/reconstruction.md) · [Models](../references/models.md)
 

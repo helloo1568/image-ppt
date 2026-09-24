@@ -8,6 +8,15 @@
 
 首次更改已验收页面前，把当前 Page Spec 保存为 `snapshots/page-spec-<旧版本>.json`，保留原基准图片。为每页记录基准图片路径、SHA-256、内容版本和风格版本；同一路径被替换后必须重新核对，不能沿用旧验收。
 
+可用下列命令同时保存批准图片、风格参考图和语义内容的哈希；修改 Page Spec 后生成只读影响计划：
+
+```sh
+python "<skill-dir>/scripts/plan_deck_update.py" snapshot "<work>/page-spec.json" "<work>/snapshots/baseline.json"
+python "<skill-dir>/scripts/plan_deck_update.py" plan "<work>/snapshots/baseline.json" "<work>/page-spec.json" "<work>/update-plan.json"
+```
+
+计划把页面分为 `reuse`、`review_existing`、`regenerate`。全局风格、参考图像素或总页数变化会影响所有页；单页内容变化只影响该页，除非页码或总页数也变了。`stale_approval: true` 表示语义已变而 Page Spec 仍写 `approved`，必须按实际交付范围修正状态并重新验收。计划不修改用户授权、Page Spec 或图片；可编辑版局部修改仍按下文保留历史基准。
+
 ## 变更影响表
 
 | 变更 | 状态与确认 | 需要更新或失效的产物 |
